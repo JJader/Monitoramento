@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { SectionList, StyleSheet, Text, } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import ModalEscolas from '../../components/modalEscolas'
+import ItemModal from '../../components/modal/itemModal';
 const DATA = [
   {
     title: 'Bairro 1',
@@ -105,7 +105,12 @@ export default class AlunosRotas extends Component {
           sections={DATA}
           renderItem={({ item }) => {
             return (
-              <ModalEscolas data = {item}/>
+              <ItemModal 
+              data = {
+              [["Nome", item.nome],
+              ["Endereço", item.endereco],
+              ["Número", item.numero],]
+            }/>
             )
           }
           }

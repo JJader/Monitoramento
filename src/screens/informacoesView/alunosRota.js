@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { SectionList, StyleSheet, Text, } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import ModalAlunos from '../../components/modalAlunos'
+import ItemModal from '../../components/modal/itemModal'
 const DATA = [
   {
     title: 'Ponto 1',
@@ -54,14 +54,14 @@ const DATA = [
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 8,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 9,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
@@ -73,35 +73,35 @@ const DATA = [
     title: 'Ponto 3',
     data: [
       {
-        id: 4,
+        id: 10,
         nome: 'Vanessa',
         idade: '15',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 6,
+        id: 11,
         nome: 'Carla',
         idade: '18',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 12,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 13,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 14,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
@@ -113,35 +113,35 @@ const DATA = [
     title: 'Ponto 4',
     data: [
       {
-        id: 4,
+        id: 15,
         nome: 'Vanessa',
         idade: '15',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 6,
+        id: 16,
         nome: 'Carla',
         idade: '18',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 17,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 18,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 19,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
@@ -153,35 +153,35 @@ const DATA = [
     title: 'Ponto 5',
     data: [
       {
-        id: 4,
+        id: 20,
         nome: 'Vanessa',
         idade: '15',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 6,
+        id: 21,
         nome: 'Carla',
         idade: '18',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 22,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 23,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
         turno: 'Manha'
       },
       {
-        id: 7,
+        id: 24,
         nome: 'Sida',
         idade: '13',
         escola: 'UFOP',
@@ -196,6 +196,7 @@ export default class AlunosRotas extends Component {
     super(props);
     this.state = {
       modalItem: {
+        id : '-1',
         nome: 'Anonimo',
         idade: '-1',
         escola: 'xxx',
@@ -210,7 +211,14 @@ export default class AlunosRotas extends Component {
           sections={DATA}
           renderItem={({ item }) => {
             return (
-              <ModalAlunos data={item} />
+              <ItemModal 
+              data={
+                [["Nome", item.nome],
+                ["Idade", item.idade],
+                ["Escola", item.escola],
+                ["Turno", item.turno],]
+              }
+               />
             )
           }
           }
