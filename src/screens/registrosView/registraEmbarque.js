@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import ModalPonto from '../../components/modal/modalPonto';
-import { FlatList } from 'react-native-gesture-handler';
+import stylesContainer from '../../styles/Modal';
 
 const DATA = [
   {
@@ -219,33 +219,47 @@ class registraEmbarque extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      DATA : DATA,
+      DATA: DATA,
+      refresh: false,
     };
   }
 
-  PresencaAluno(ponto, aluno, presenca){
+  PresencaAluno(ponto, aluno, presenca) {
     let DATA = this.state.DATA
     DATA[ponto].data[aluno].presenca = presenca
-    this.setState({DATA})
+    this.setState({ DATA })
     alert(this.state.DATA[ponto].data[aluno].presenca)
+  }
+
+  FinalizarEmbarque(ponto) {
+    let DATA = this.state.DATA
+    //DATA.splice(ponto,1)
+    DATA.shift()
+    this.setState({ DATA })
+    this.setState({ refresh: false })
   }
 
   render() {
     return (
-      <View>
-        <FlatList
-          keyExtractor = {item => item.title}
-          data = {this.state.DATA}
-          renderItem = {
-            ({item, index}) =>{
-              this.IncrementaPonto
-              return (
-                <ModalPonto 
-                data = {item}
-                ponto = {index}
-                PresencaAluno = {(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}/>)
-            }
-          }/>
+      <View style={stylesContainer.background}>
+        <View style={stylesContainer.conteiner}>
+          <FlatList
+            keyExtractor={item => item.title}
+            data={this.state.DATA}
+            refreshing={this.state.refresh}
+            onRefresh={() => this.setState({ refresh: true })}
+            renderItem={
+              ({ item, index }) => {
+                return (
+                  <ModalPonto
+                    data={item}
+                    ponto={index}
+                    PresencaAluno={(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}
+                    FinalizarEmbarque={(ponto) => this.FinalizarEmbarque(ponto)}
+                  />)
+              }
+            } />
+        </View>
       </View>
     );
   }

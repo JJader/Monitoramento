@@ -16,11 +16,18 @@ export default class PresencaAluno extends Component {
         this.props.PresencaAluno(this.props.aluno,presente)
         this.setState({ presente })
     }
+
+    TodosAlunos(){
+            return (
+                this.props.aluno == -1 ? {fontWeight: 'bold'} : 
+                {fontWeight: 'normal',}
+                    )
+    }
     render() {
         return (
-            <View style={stylesText.view}>
+            <View style={[stylesText.view,this.TodosAlunos()]}>
                 <View style = {stylesComponets.switch}>
-                    <Text style = {stylesText.text}>{this.props.nome}</Text>
+                    <Text style = {[stylesText.text, this.TodosAlunos()]}>{this.props.nome}</Text>
                 </View>
                 <View>
                     <Switch

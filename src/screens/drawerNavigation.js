@@ -72,7 +72,7 @@ const MyDrawerNavigation =
       },
     },
     {
-      initialRouteName: 'RegistraE',
+      initialRouteName: 'Desembarque',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

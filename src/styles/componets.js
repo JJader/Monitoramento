@@ -19,11 +19,20 @@ export default StyleSheet.create({
         margin: 20,
         marginVertical: '20%'
     },
-    botao: {
+    ponto: {
         backgroundColor: '#0279be', 
         margin: 20, 
         minHeight: 50, 
         borderRadius: 20,
+        justifyContent: "center", 
+        alignItems: 'center', 
+        flexDirection: 'row'
+    },
+    botao: {
+        backgroundColor: '#0279be', 
+        margin: 10, 
+        minHeight: 50, 
+        borderRadius: 15,
         justifyContent: "center", 
         alignItems: 'center', 
         flexDirection: 'row'

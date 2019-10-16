@@ -15,8 +15,16 @@ class modalAlunos extends Component {
             isVisible: false,
             data: this.props.data,
             presente: false,
-            ca: null
+            setChaves: [],
+            ponto: this.props.ponto,
         };
+    }
+
+    InsereChave(componet){
+        
+        let setChaves = this.state.setChaves
+        setChaves.push(componet)
+        this.setState({setChaves})
     }
 
     ModalSet(estado) {
@@ -24,20 +32,27 @@ class modalAlunos extends Component {
     }
 
     PresencaAluno(aluno, presenca) {
-        this.props.PresencaAluno(this.props.ponto, aluno, presenca)
+        this.props.PresencaAluno(this.state.ponto, aluno, presenca)
     }
 
     PresencaTodosAluno(){
-        if (this.state.ca != null){
-            this.state.ca.AlteraPresenca(!this.state.presente)
+        if (this.state.setChaves.length != 0){
+            for (let x = 0 ; x < this.state.setChaves.length; x++ ){
+            this.state.setChaves[x].AlteraPresenca(!this.state.presente)
+            }
+            this.setState({presente: !this.state.presente})
         }
+    }
+
+    FinalizarEmbarque(){
+        this.props.FinalizarEmbarque(this.state.ponto)
     }
 
     render() {
         return (
             <View style={styles.conteiner}>
                 <TouchableOpacity onPress={() => this.ModalSet(true)}>
-                    <View style={stylesComponets.botao}>
+                    <View style={stylesComponets.ponto}>
                         <Text style={stylesText.cabecalho}>
                             {this.state.data.title}
                         </Text>
@@ -54,11 +69,12 @@ class modalAlunos extends Component {
                             <View style={stylesText.viewCabecalho}>
                                 <Text style={stylesText.cabecalho}>Embarque</Text>
                             </View>
-                            <View>
+                            <View style = {{marginBottom: 10}}>
                                 <PresencaAluno
                                     PresencaAluno={() => this.PresencaTodosAluno()}
                                     nome = "Todos os Alunos"
                                     aluno = {-1}
+                                    presente = {this.state.presente}
                                 />
                             </View>
                             <FlatList
@@ -72,14 +88,15 @@ class modalAlunos extends Component {
                                                 nome={item.nome}
                                                 aluno={index}
                                                 presente = {this.state.presente}
-                                                ref = {(Component) => this.setState({ca: Component})}
+                                                ref = {(Component) => this.InsereChave(Component)}
                                             />
                                         )
                                     }
                                 }/>
-                            <BotaoPonto
-                                ModalSet={(estado) => this.ModalSet(estado)}
-                            />
+                                <BotaoPonto
+                                    FinalizarEmbarque={() => this.FinalizarEmbarque()}
+                                    ModalSet = {(estado) => this.ModalSet(estado)}
+                                />
                         </ScrollView>
                     </Modal>
                 </View>
