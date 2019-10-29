@@ -106,10 +106,12 @@ export default class AlunosRotas extends Component {
           renderItem={({ item }) => {
             return (
               <ItemModal 
-              data = {
+              data = {{
+              id:item.id,
+              data:
               [["Nome", item.nome],
               ["Endereço", item.endereco],
-              ["Número", item.numero],]
+              ["Número", item.numero],]}
             }/>
             )
           }

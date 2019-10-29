@@ -31,10 +31,10 @@ class registraRota extends Component {
     return (
       <View style={stylesContainer.background}>
         <View style={stylesContainer.conteiner}>
-          <View style={{ flex: 1 , margin: 10}}>
+          <View style={{ flex: 1 , marginHorizontal: 10}}>
             <View style={styles.viewPicker}>
 
-              <View style={styles.viewTurno}>
+              <View style={styles.viewVeiculo}>
                 <Ionicons
                   name="ios-partly-sunny"
                   size={35}
@@ -105,7 +105,7 @@ class registraRota extends Component {
               () => this.props.navigation.navigate('Iniciar')}
             style={{ marginVertical: 10 }}>
             <View style={stylesComponets.botao}>
-              <Text style={stylesText.cabecalho}>Registrar</Text>
+              <Text style={stylesText.cabecalho}>Iniciar rota</Text>
             </View>
           </TouchableOpacity>
 

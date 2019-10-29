@@ -60,7 +60,7 @@ const MyDrawerNavigation =
         screen: Desembarque,
         navigationOptions: ({navigation}) => ({
             drawerLabel: 'Desembarque',
-            drawerIcon: <Ionicons name="ios-done-all" size={30} color="white" />,
+            drawerIcon: <Ionicons name="md-pin" size={30} color="white" />,
           })
       },
       Informacao: {
@@ -72,7 +72,7 @@ const MyDrawerNavigation =
       },
     },
     {
-      initialRouteName: 'Desembarque',
+      initialRouteName: 'RegistraE',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

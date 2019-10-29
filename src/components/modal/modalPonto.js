@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Modal, TouchableOpacity, Switch, ScrollView, FlatList } from 'react-native';
-import PresencaAluno from './PresencaAluno';
 
+import PresencaAluno from './PresencaAluno';
 import styles from '../../styles/Modal'
 import stylesText from '../../styles/text';
 import stylesComponets from '../../styles/componets';
@@ -14,45 +14,45 @@ class modalAlunos extends Component {
         this.state = {
             isVisible: false,
             data: this.props.data,
-            presente: false,
-            setChaves: [],
             ponto: this.props.ponto,
+            backgColor: '#0279be',
+            refresh: false,
         };
-    }
-
-    InsereChave(componet){
-        
-        let setChaves = this.state.setChaves
-        setChaves.push(componet)
-        this.setState({setChaves})
     }
 
     ModalSet(estado) {
         this.setState({ isVisible: estado })
+        
     }
 
     PresencaAluno(aluno, presenca) {
-        this.props.PresencaAluno(this.state.ponto, aluno, presenca)
+        let data = this.state.data
+        data.data[aluno].presenca = presenca
+        this.setState({ data })
+        this.setState({refresh: !this.state.refresh})
     }
 
-    PresencaTodosAluno(){
-        if (this.state.setChaves.length != 0){
-            for (let x = 0 ; x < this.state.setChaves.length; x++ ){
-            this.state.setChaves[x].AlteraPresenca(!this.state.presente)
+    PresencaTodosAluno(aluno, presenca){
+        if (this.state.data.data.length != 0){
+            for (aluno = 0 ; aluno < this.state.data.data.length; aluno++ ){
+                this.PresencaAluno(aluno,presenca)
             }
-            this.setState({presente: !this.state.presente})
         }
     }
-
+    
     FinalizarEmbarque(){
-        this.props.FinalizarEmbarque(this.state.ponto)
+        this.setState({backgColor: '#32CD32'})
+        this.setState({isVisible: !this.state.isVisible})
+        this.setState({refresh: !this.state.refresh})
+        this.props.FinalizarEmbarque(this.state.ponto, this.state.data)
+        
     }
 
     render() {
         return (
             <View style={styles.conteiner}>
                 <TouchableOpacity onPress={() => this.ModalSet(true)}>
-                    <View style={stylesComponets.ponto}>
+                    <View style={[stylesComponets.ponto, {backgroundColor : this.state.backgColor}]}>
                         <Text style={stylesText.cabecalho}>
                             {this.state.data.title}
                         </Text>
@@ -71,24 +71,25 @@ class modalAlunos extends Component {
                             </View>
                             <View style = {{marginBottom: 10}}>
                                 <PresencaAluno
-                                    PresencaAluno={() => this.PresencaTodosAluno()}
-                                    nome = "Todos os Alunos"
+                                    PresencaAluno={(aluno, presenca) => this.PresencaTodosAluno(aluno, presenca)}
+                                    nome = "Todos Alunos"
                                     aluno = {-1}
-                                    presente = {this.state.presente}
+                                    presenca = {false}
                                 />
                             </View>
                             <FlatList
                                 keyExtractor={item => String(item.id)}
                                 data={this.state.data.data}
+                                extraData = {this.state.refresh}
                                 renderItem={
                                     ({ item, index }) => {
                                         return (
                                             <PresencaAluno
                                                 PresencaAluno={(aluno, presenca) => this.PresencaAluno(aluno, presenca)}
                                                 nome={item.nome}
+                                                escola={item.escola}
                                                 aluno={index}
-                                                presente = {this.state.presente}
-                                                ref = {(Component) => this.InsereChave(Component)}
+                                                presenca = {item.presenca}
                                             />
                                         )
                                     }

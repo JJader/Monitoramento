@@ -213,11 +213,13 @@ export default class AlunosRotas extends Component {
             return (
               <ItemModal 
               data={
-                [["Nome", item.nome],
+                {
+                id : item.id,
+                data: [["Nome", item.nome],
                 ["Idade", item.idade],
                 ["Escola", item.escola],
                 ["Turno", item.turno],]
-              }
+              }}
                />
             )
           }

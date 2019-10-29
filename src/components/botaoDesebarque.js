@@ -19,10 +19,11 @@ class BotaoDesembarque extends Component {
         <Text style={[stylesText.text, {flex: 2}]}>{this.state.nome}</Text>
 
         <View style={{ flex: 1 }}>
-          <Button
-            title="Finalizar"
-          />
+          
         </View>
+        <Button
+            title="Desembarcar"
+          />
       </View>
     );
   }

@@ -224,19 +224,15 @@ class registraEmbarque extends Component {
     };
   }
 
-  PresencaAluno(ponto, aluno, presenca) {
+  FinalizarEmbarque(ponto,AlunosPonto) {
     let DATA = this.state.DATA
-    DATA[ponto].data[aluno].presenca = presenca
+    DATA[ponto] = AlunosPonto
     this.setState({ DATA })
-    alert(this.state.DATA[ponto].data[aluno].presenca)
+    this.RefreshFlat()
   }
 
-  FinalizarEmbarque(ponto) {
-    let DATA = this.state.DATA
-    //DATA.splice(ponto,1)
-    DATA.shift()
-    this.setState({ DATA })
-    this.setState({ refresh: false })
+  RefreshFlat(){
+    this.setState({refresh: !this.state.refresh})
   }
 
   render() {
@@ -246,8 +242,7 @@ class registraEmbarque extends Component {
           <FlatList
             keyExtractor={item => item.title}
             data={this.state.DATA}
-            refreshing={this.state.refresh}
-            onRefresh={() => this.setState({ refresh: true })}
+            extraData = {this.state.refresh}
             renderItem={
               ({ item, index }) => {
                 return (
@@ -255,10 +250,12 @@ class registraEmbarque extends Component {
                     data={item}
                     ponto={index}
                     PresencaAluno={(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}
-                    FinalizarEmbarque={(ponto) => this.FinalizarEmbarque(ponto)}
+                    FinalizarEmbarque={(ponto,AlunosPonto) => this.FinalizarEmbarque(ponto,AlunosPonto)}
+                    Refresh = {() => this.RefreshFlat()}
                   />)
               }
             } />
+            
         </View>
       </View>
     );

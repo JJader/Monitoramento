@@ -20,7 +20,6 @@ export default StyleSheet.create({
         marginVertical: '20%'
     },
     ponto: {
-        backgroundColor: '#0279be', 
         margin: 20, 
         minHeight: 50, 
         borderRadius: 20,
