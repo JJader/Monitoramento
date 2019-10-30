@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { SectionList, StyleSheet, Text, } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import ItemModal from '../../components/modal/itemModal';
+import stylesComponets from '../../styles/componets';
+import stylesContainer from '../../styles/Modal';
+import stylesText from '../../styles/text';
+
+
+
+
 const DATA = [
   {
     title: 'Bairro 1',
@@ -90,7 +97,7 @@ export default class AlunosRotas extends Component {
     super(props);
     this.state = {
         isVisible: false,
-        data: this.props.data,
+        data: DATA,
         modalItem: {
           nome: 'Anonimo',
           endereco: '-1',
@@ -100,9 +107,9 @@ export default class AlunosRotas extends Component {
 }
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={stylesContainer.conteiner}>
         <SectionList
-          sections={DATA}
+          sections={this.state.data}
           renderItem={({ item }) => {
             return (
               <ItemModal 
@@ -116,7 +123,7 @@ export default class AlunosRotas extends Component {
             )
           }
           }
-          renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+          renderSectionHeader={({ section }) => <Text style={stylesComponets.sectionHeader}>{section.title}</Text>}
           keyExtractor={(item, index) => index}
         />
       </ScrollView>

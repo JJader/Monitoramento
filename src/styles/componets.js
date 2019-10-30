@@ -28,6 +28,7 @@ export default StyleSheet.create({
         flexDirection: 'row'
     },
     botao: {
+        padding: 10,
         backgroundColor: '#0279be', 
         margin: 10, 
         minHeight: 50, 
@@ -40,6 +41,13 @@ export default StyleSheet.create({
         flex: 1,
         alignItems: "stretch",
         justifyContent: 'space-evenly',
-
-    }
+    },
+    sectionHeader: {
+        padding: 10,
+        marginTop: 15,
+        fontSize: 20,
+        fontWeight: 'bold',
+        backgroundColor: '#0279be',
+        color: 'white',
+      },
 })

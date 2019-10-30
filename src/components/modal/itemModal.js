@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import styles from '../../styles/Modal'
 import stylesText from '../../styles/text'
 import stylesComponent from '../../styles/componets'
 
+const WIDTH = Dimensions.get('screen').width/10
 class itemModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isVisible: false,
             data: this.props.data.data,
-            nome: this.props.data.data[0][1].split(' '), //[0] nome [1] idade [2] escola [3] turno
+            nome: this.props.data.data[0][1], //[0] nome [1] idade [2] escola [3] turno
         };
+    }
+    
+    StringCorte(str){
+      return(
+        str.length <= WIDTH ? 
+          str:
+          str.substring(0, WIDTH) + " ..."
+      )     
     }
 
     render() {
@@ -19,7 +28,7 @@ class itemModal extends Component {
             <View style={styles.conteiner}>
                 <TouchableOpacity style={stylesText.view} 
                     onPress={() => { this.setState({ isVisible: true }) }}>
-                    <Text style={stylesText.text}>{this.state.nome[0]} {this.state.nome.slice(-1)}</Text>
+                    <Text style={stylesText.text}>{this.StringCorte(this.state.nome)}</Text>
                 </TouchableOpacity>
                 <Modal
                     animationType="slide"

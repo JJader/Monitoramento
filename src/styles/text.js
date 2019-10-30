@@ -25,7 +25,7 @@ export default StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'stretch', 
-        borderColor: 'white',
+        borderColor: 'transparent',
         borderBottomColor: '#C8C8C8',
         borderWidth: 3,
         //borderRadius: 15,
