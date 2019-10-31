@@ -81,7 +81,7 @@ const MyDrawerNavigation =
       },
     },
     {
-      initialRouteName: 'Login',
+      initialRouteName: 'Iniciar',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
