@@ -26,10 +26,12 @@ class itemModal extends Component {
     render() {
         return (
             <View style={styles.conteiner}>
+
                 <TouchableOpacity style={stylesText.view}
                     onPress={() => { this.setState({ isVisible: true }) }}>
                     <Text style={stylesText.text}>{this.StringCorte(this.state.nome)}</Text>
                 </TouchableOpacity>
+                
                 <Modal
                     animationType="slide"
                     transparent={true}

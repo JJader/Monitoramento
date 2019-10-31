@@ -10,21 +10,23 @@ import RegistraRota from './registrosDraw/registraRota';
 import RegistraEmbarque from './registrosDraw/registraEmbarque';
 import Desembarque from './registrosDraw/desembarque';
 import Informacao from './informacoesDraw/InformacaoDrawer'
+import Login from './login/login';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const CustomDrawerContentComponent = props => (
-  <ScrollView style={{ flex: 1, backgroundColor: '#43484d' }}>
+  <ScrollView style={{ flex: 1, backgroundColor: '#43484d', flexDirection: 'column'}}>
     <View
-      style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}
+      style={{ marginTop: 30, justifyContent: 'space-around', alignItems: 'center' , flex: 1}}
     >
       <Image
         source={require('../assets/logo/logo.png')}
-        style={{ width: Math.min(WINDOW_WIDTH * 0.80, 250) }}
+        style={{ width: WINDOW_WIDTH * 0.80, height: WINDOW_WIDTH * 0.80 }}
         resizeMode="cover"
+        
       />
     </View>
-    <View style={{ marginLeft: 30 }}>
+    <View style={{ marginLeft: 30, flex: 1 }}>
       <DrawerNavigatorItems {...props} />
     </View>
   </ScrollView>
@@ -35,6 +37,13 @@ const CustomDrawerContentComponent = props => (
 const MyDrawerNavigation =
   createDrawerNavigator(
     {
+      Login: {
+        screen: Login,
+        navigationOptions: ({navigation}) => ({
+          drawerLabel: 'Login',
+          drawerIcon: <Ionicons name="ios-body" size={30} color="white" />,
+        })
+      },
       Iniciar: {
         screen: Iniciar,
         navigationOptions: ({navigation}) => ({
@@ -72,7 +81,7 @@ const MyDrawerNavigation =
       },
     },
     {
-      initialRouteName: 'Iniciar',
+      initialRouteName: 'Login',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
