@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { SectionList, StyleSheet, Text, } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { SectionList, StyleSheet, Text, View } from 'react-native';
 import ItemModal from '../../components/modal/itemModal'
 const DATA = [
   {
@@ -206,7 +205,7 @@ export default class AlunosRotas extends Component {
   }
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <SectionList
           sections={DATA}
           renderItem={({ item }) => {
@@ -227,7 +226,7 @@ export default class AlunosRotas extends Component {
           renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
           keyExtractor={(item, index) => index}
         />
-      </ScrollView>
+      </View>
     );
   }
 }

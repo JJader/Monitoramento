@@ -24,7 +24,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sbrp.monitoramento"
+    },
+    "android": {
+      "package": "com.sbrp.monitoramento",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBnecqeIWBDeEXI5nAqTfwDE6qEWL1OJPc"
+        }
+      }
     }
   }
 }

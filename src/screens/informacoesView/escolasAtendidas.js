@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { SectionList, StyleSheet, Text, } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { SectionList, StyleSheet, Text, View } from 'react-native';
+
 import ItemModal from '../../components/modal/itemModal';
 import stylesComponets from '../../styles/componets';
 import stylesContainer from '../../styles/Modal';
@@ -107,7 +107,7 @@ export default class AlunosRotas extends Component {
 }
   render() {
     return (
-      <ScrollView style={stylesContainer.conteiner}>
+      <View style={stylesContainer.conteiner}>
         <SectionList
           sections={this.state.data}
           renderItem={({ item }) => {
@@ -126,7 +126,7 @@ export default class AlunosRotas extends Component {
           renderSectionHeader={({ section }) => <Text style={stylesComponets.sectionHeader}>{section.title}</Text>}
           keyExtractor={(item, index) => index}
         />
-      </ScrollView>
+      </View>
     );
   }
 }

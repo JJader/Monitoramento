@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, Platform, Text, View } from 'react-native';
+import {PROVIDER_GOOGLE} from 'react-native-maps'
 import {MapView} from 'expo'
+
+
 export default class App extends React.Component {
     constructor() {
         super();
@@ -35,10 +38,9 @@ export default class App extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-               <Text>Latitude: {this.state.where.lat}</Text>
-               <Text>Longitude: {this.state.where.lng}</Text>
-                
-            </View>
+            <Text style = {styles.big}>Latitude: {this.state.where.lat}</Text>
+            <Text style = {styles.big}>Longitude: {this.state.where.lng}</Text>
+          </View>
         );
     }
 }
