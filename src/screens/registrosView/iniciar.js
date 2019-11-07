@@ -9,6 +9,7 @@ export default class App extends React.Component {
         super();
         this.state = {
             ready: false,
+            intermediarios: [],
             region: {
                 latitude: null,
                 longitude: null,
@@ -49,38 +50,55 @@ export default class App extends React.Component {
             this.geoFailure,
             geoOptions);
     }
+
+    
+    addMarker(coordinates) {
+        console.log(coordinates);
+        this.setState({
+          intermediarios: [...this.state.intermediarios, 
+            { latlng: coordinates }
+          ]
+        })
+    }
+
     geoSuccess = (position) => {
         console.log(position.coords.latitude);
         let temp = [
-            { latitude: position.coords.latitude, longitude: position.coords.longitude },
-            { latitude: position.coords.latitude + 0.001, longitude: position.coords.longitude + 0.001 },
-            { latitude: position.coords.latitude + 0.005, longitude: position.coords.longitude + 0.005 },
-            { latitude: position.coords.latitude, longitude: position.coords.longitude + 0.002 }
+            { latitude: -19.8137135, longitude: -43.182428 },
+            { latitude: -19.8127134, longitude: -43.181428 },
 
+            { latitude: -19.8127134, longitude: -43.181428 },
+            { latitude: -19.8117135, longitude: -43.180428 },
+
+            { latitude: -19.8117135, longitude: -43.180428 },
+            { latitude: -19.8087135, longitude: -43.177428 },
+            
         ]
+        console.log(temp)
         this.setState({
             ready: true,
             region: {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
+                latitude:  -19.8137135,
+                longitude: -43.182428,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
             region1: {
-                latitude: position.coords.latitude + 0.001,
-                longitude: position.coords.longitude + 0.001,
+                latitude: -19.8127134,
+                longitude: -43.181428,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
             region2: {
-                latitude: position.coords.latitude + 0.005,
-                longitude: position.coords.longitude + 0.005,
+                latitude: -19.8117135,
+                longitude: -43.180428,
+                
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
             region3: {
-                latitude: position.coords.latitude + 0.002,
-                longitude: position.coords.longitude + 0.002,
+                latitude: -19.8087135,
+                longitude: -43.177428,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
@@ -91,12 +109,22 @@ export default class App extends React.Component {
         this.setState({ error: err.message });
     }
 
+
     mostraMapa() {
-        console.log(this.state.polyline)
+        console.log(this.state.region)
+        console.log(this.state.region1)
+        console.log(this.state.region2)
+        console.log(this.state.region3)
         return (
             <MapView
                 style={styles.map}
-                region={this.state.region}>
+                region={this.state.region}
+                onPress={(e) => this.addMarker(e.nativeEvent.coordinate)}>{
+                    this.state.intermediarios.map((marker, i) => (
+                        <Marker key={i} coordinate={marker.latlng} 
+                        title={`${marker.latlng.latitude}, ${marker.latlng.longitude}`} />
+                    ))
+                }
                 <Polyline
                     coordinates={this.state.polyline}
                     strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
