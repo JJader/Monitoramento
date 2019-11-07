@@ -72,7 +72,7 @@ class modalAlunos extends Component {
                             <View style = {{marginBottom: 10}}>
                                 <PresencaAluno
                                     PresencaAluno={(aluno, presenca) => this.PresencaTodosAluno(aluno, presenca)}
-                                    nome = "Todos Alunos"
+                                    nome = "Todos os passageiros"
                                     aluno = {-1}
                                     presenca = {false}
                                 />

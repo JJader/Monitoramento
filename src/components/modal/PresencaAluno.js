@@ -31,7 +31,7 @@ export default class PresencaAluno extends Component {
             this.props.aluno == -1 ? null :
             <View>    
                 <Text style={stylesText.text}>
-                    <Text style={{fontWeight: 'bold'}}>Escola: </Text> {this.props.escola} 
+                    <Text style={{fontWeight: 'bold'}}>Endereço: </Text> {this.props.escola} 
                 </Text>
             </View>
         )
@@ -43,7 +43,7 @@ export default class PresencaAluno extends Component {
                     <Text style={[stylesText.text, this.TodosAlunos()]}>
                         {this.state.nome[0]} {this.state.nome.slice(-1)}
                     </Text>
-                    {this.Escola()}
+                    
                 </View>
                 <View>
                     <Switch
