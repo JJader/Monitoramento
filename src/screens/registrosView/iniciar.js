@@ -7,22 +7,21 @@ import MapView, { Marker, Polyline, } from 'react-native-maps'
 
 // const destination = {latitude: -19.8087135, longitude: -43.177428};   antiga
 
-const origin = {latitude: -19.8137135, longitude: -43.182428};
-const destination = {latitude: -19.8099063, longitude: -43.1806958};
+
 var med = [
-    { lat: -19.8137135, lng: -43.182428 }, // primeiro ponto
-    { lat: -19.8135101, lng: -43.1822062 },
-    { lat: -19.8132837, lng: -43.1819481 },
-    { lat: -19.8129985, lng: -43.1817201 },
-    { lat: -19.8127134, lng: -43.181428}, // segundo ponto
-    { lat: -19.8124749, lng: -43.1812534 },
-    { lat: -19.8122847, lng: -43.1809991 },
-    { lat: -19.8121809, lng: -43.1807468 },
-    { lat: -19.8120708, lng: -43.1805265 }, // terceiro ponto
-    { lat: -19.8116176, lng: -43.1806844 },
-    { lat: -19.8110040, lng: -43.1806505 },
-    { lat: -19.8104467, lng: -43.1807015 },
-    { lat: -19.8099063, lng: -43.1806958 }, // ultimo ponto
+    { latitude: -19.8137135, longitude: -43.182428 }, // primeiro ponto
+    { latitude: -19.8135101, longitude: -43.1822062 },
+    { latitude: -19.8132837, longitude: -43.1819481 },
+    { latitude: -19.8129985, longitude: -43.1817201 },
+    { latitude: -19.8127134, longitude: -43.181428 }, // segundo ponto
+    { latitude: -19.8124749, longitude: -43.1812534 },
+    { latitude: -19.8122847, longitude: -43.1809991 },
+    { latitude: -19.8121809, longitude: -43.1807468 },
+    { latitude: -19.8120708, longitude: -43.1805265 }, // terceiro ponto
+    { latitude: -19.8116176, longitude: -43.1806844 },
+    { latitude: -19.8110040, longitude: -43.1806505 },
+    { latitude: -19.8104467, longitude: -43.1807015 },
+    { latitude: -19.8099063, longitude: -43.1806958 }, // ultimo ponto
 
 ]
 
@@ -30,6 +29,9 @@ export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
+            origin: { latitude: -19.8137135, longitude: -43.182428 },
+            destination: { latitude: -19.8099063, longitude: -43.1806958 },
+
             ready: false,
             intermediarios: [],
             region: {
@@ -60,6 +62,7 @@ export default class App extends React.Component {
             error: null,
             x: (0, 1),
         }
+
     }
     componentDidMount() {
         let geoOptions = {
@@ -78,7 +81,7 @@ export default class App extends React.Component {
         console.log(coordinates);
         this.setState({
             intermediarios: [...this.state.intermediarios,
-            { latlng: coordinates }
+            { longitude: coordinates }
             ]
         })
     }
@@ -131,6 +134,14 @@ export default class App extends React.Component {
         this.setState({ error: err.message });
     }
 
+    updateOrigin() {
+
+        const origin = med.shift()
+        setTimeout(() => {
+            console.log("Entrou")
+            this.setState({ origin: origin })
+        }, 2000);
+    }
 
     mostraMapa() {
         console.log(this.state.region)
@@ -144,13 +155,13 @@ export default class App extends React.Component {
                 loadingEnabled={true}
                 onPress={(e) => this.addMarker(e.nativeEvent.coordinate)}>{
                     this.state.intermediarios.map((marker, i) => (
-                        <Marker key={i} coordinate={marker.latlng}
-                            title={`${marker.latlng.latitude}, ${marker.latlng.longitude}`} />
+                        <Marker key={i} coordinate={marker.latlongitude}
+                            title={`${marker.latlongitude.latitude}, ${marker.latlongitude.longitude}`} />
                     ))
                 }
                 <MapViewDirections
-                    origin={origin}
-                    destination={destination}
+                    origin={this.state.origin}
+                    destination={this.state.destination}
                     apikey={GOOGLE_MAPS_APIKEY}
                     strokeWidth={6}
                 />
@@ -185,6 +196,7 @@ export default class App extends React.Component {
         )
     }
     render() {
+        this.updateOrigin()
         return (
             this.state.ready ? this.mostraMapa() : <Text>{this.state.error}</Text>
         );
