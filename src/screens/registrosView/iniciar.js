@@ -5,11 +5,26 @@ import MapViewDirections from 'react-native-maps-directions';
 const GOOGLE_MAPS_APIKEY = "AIzaSyDTNruUt3WxKm1vr7eFy93r5N37vUQTuuU";
 import MapView, { Marker, Polyline, } from 'react-native-maps'
 
+// const destination = {latitude: -19.8087135, longitude: -43.177428};   antiga
+
 const origin = {latitude: -19.8137135, longitude: -43.182428};
-const destination = {latitude: -19.8087135, longitude: -43.177428};
+const destination = {latitude: -19.8099063, longitude: -43.1806958};
+
 var med = [
-    { lat: -19.8134420, lng: -43.1821677 },
-    { lat: -19.8131165, lng: -43.1818059 },
+    { lat: -19.8137135, lng: -43.182428 }, // primeiro ponto
+    { lat: -19.8135101, lng: -43.1822062 },
+    { lat: -19.8132837, lng: -43.1819481 },
+    { lat: -19.8129985, lng: -43.1817201 },
+    { lat: -19.8127134, lng: -43.181428}, // segundo ponto
+    { lat: -19.8124749, lng: -43.1812534 },
+    { lat: -19.8122847, lng: -43.1809991 },
+    { lat: -19.8121809, lng: -43.1807468 },
+    { lat: -19.8120708, lng: -43.1805265 }, // terceiro ponto
+    { lat: -19.8116176, lng: -43.1806844 },
+    { lat: -19.8110040, lng: -43.1806505 },
+    { lat: -19.8104467, lng: -43.1807015 },
+    { lat: -19.8099063, lng: -43.1806958 }, // ultimo ponto
+
 ]
 
 export default class App extends React.Component {
@@ -98,15 +113,15 @@ export default class App extends React.Component {
                 longitudeDelta: 0.00421,
             },
             region2: {
-                latitude: -19.8117135,
-                longitude: -43.180428,
+                latitude: -19.8120708,
+                longitude: -43.1805265,
 
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
             region3: {
-                latitude: -19.8087135,
-                longitude: -43.177428,
+                latitude: -19.8099063,
+                longitude: -43.1806958,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
@@ -127,6 +142,7 @@ export default class App extends React.Component {
             <MapView
                 style={styles.map}
                 region={this.state.region}
+                loadingEnabled={true}
                 onPress={(e) => this.addMarker(e.nativeEvent.coordinate)}>{
                     this.state.intermediarios.map((marker, i) => (
                         <Marker key={i} coordinate={marker.latlng}
@@ -137,6 +153,7 @@ export default class App extends React.Component {
                     origin={origin}
                     destination={destination}
                     apikey={GOOGLE_MAPS_APIKEY}
+                    strokeWidth={6}
                 />
                 {/* <Polyline
                     coordinates={this.state.polyline}
