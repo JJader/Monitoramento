@@ -22,7 +22,7 @@ const CustomDrawerContentComponent = props => (
       <Image
         source={require('../assets/logo/logo.png')}
         style={{ width: WINDOW_WIDTH * 0.80, height: WINDOW_WIDTH * 0.80 }}
-        resizeMode="cover"
+        resizeMode="contain"
         
       />
     </View>
