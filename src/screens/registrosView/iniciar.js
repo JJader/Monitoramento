@@ -9,7 +9,6 @@ import MapView, { Marker, Polyline, } from 'react-native-maps'
 
 const origin = {latitude: -19.8137135, longitude: -43.182428};
 const destination = {latitude: -19.8099063, longitude: -43.1806958};
-
 var med = [
     { lat: -19.8137135, lng: -43.182428 }, // primeiro ponto
     { lat: -19.8135101, lng: -43.1822062 },
