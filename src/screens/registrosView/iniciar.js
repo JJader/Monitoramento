@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Platform, Text, View } from 'react-native';
 
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, Polyline } from 'react-native-maps'
 
 
 export default class App extends React.Component {
@@ -33,8 +33,9 @@ export default class App extends React.Component {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
             },
+            polyline: [],
             error: null,
-            x : (0,1),
+            x: (0, 1),
         }
     }
     componentDidMount() {
@@ -50,7 +51,13 @@ export default class App extends React.Component {
     }
     geoSuccess = (position) => {
         console.log(position.coords.latitude);
+        let temp = [
+            { latitude: position.coords.latitude, longitude: position.coords.longitude },
+            { latitude: position.coords.latitude + 0.001, longitude: position.coords.longitude + 0.001 },
+            { latitude: position.coords.latitude + 0.005, longitude: position.coords.longitude + 0.005 },
+            { latitude: position.coords.latitude, longitude: position.coords.longitude + 0.002 }
 
+        ]
         this.setState({
             ready: true,
             region: {
@@ -77,6 +84,7 @@ export default class App extends React.Component {
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
+            polyline: temp
         })
     }
     geoFailure = (err) => {
@@ -84,11 +92,17 @@ export default class App extends React.Component {
     }
 
     mostraMapa() {
+        console.log(this.state.polyline)
         return (
             <MapView
                 style={styles.map}
                 region={this.state.region}>
+                <Polyline
+                    coordinates={this.state.polyline}
+                    strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
+                    strokeWidth={6}
 
+                />
                 <Marker
                     coordinate={this.state.region}
                     title={"Ponto 1 "}
