@@ -35,7 +35,6 @@ class botaoPonto extends Component {
           );
     }
 
-
     render() {
         return (
             <View style = {{marginTop: 20}}>
@@ -48,7 +47,7 @@ class botaoPonto extends Component {
 
                     <TouchableOpacity onPress={() => this.ModalSet(false)} style = {{flex: 1}}>
                         <View style={stylesComponets.botao}>
-                            <Text style={stylesText.cabecalho}>Adicionar aluno</Text>
+                            <Text style={stylesText.cabecalho}>Adicionar</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

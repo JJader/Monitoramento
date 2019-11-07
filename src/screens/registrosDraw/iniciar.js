@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 import Iniciar from '../registrosView/iniciar'
 import Header from '../../components/navigationMenu'
+import Modal from '../../styles/Modal';
 
 const IniciarDrawer = createStackNavigator({
   Home: {
@@ -11,7 +12,7 @@ const IniciarDrawer = createStackNavigator({
       title: "Iniciar",
       headerLeft: <Header navigationProps={navigation.toggleDrawer} />,
       headerStyle: {
-        backgroundColor: '#0279be',
+        backgroundColor: Modal.background.backgroundColor,
       },
       headerTintColor: 'white',
       headerTitleStyle:{

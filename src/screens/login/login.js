@@ -22,20 +22,21 @@ class login extends Component {
         <View
           style={styles.cabecalho}
         >
-          <Text style = {styles.cabecalhoText}>Login</Text>
+          
           <Image
-            source={require('../../assets/logo/logo.png')}
+            source={require('../../assets/logo/splash1.png')}
             style={{ flex: 1, resizeMode: "repeat" }}
-            resizeMode="center"
+            resizeMode="contain"
 
           />
+          <Text style = {styles.cabecalhoText}>ambev</Text>
         </View>
 
         <View style = {styles.infomacoes}>
           <Text style = {[stylesText.text, styles.text]}> Usuário : </Text>
           <TextInput style = {styles.textInput}/>
           <Text style = {[stylesText.text, styles.text]}> Senha : </Text>
-          <TextInput style = {styles.textInput}/>
+          <TextInput style = {styles.textInput} secureTextEntry = {true}/>
         </View>
 
       </KeyboardAvoidingView>
@@ -54,8 +55,6 @@ const styles = StyleSheet.create({
   },
   background:{
     flex: 1,
-    borderTopLeftRadius: 110,
-    borderBottomRightRadius: 110,
   },
   cabecalhoText:{
     fontSize: 70,

@@ -15,7 +15,7 @@ class modalAlunos extends Component {
             isVisible: false,
             data: this.props.data,
             ponto: this.props.ponto,
-            backgColor: '#0279be',
+            backgColor: styles.background.backgroundColor,
             refresh: false,
         };
     }
