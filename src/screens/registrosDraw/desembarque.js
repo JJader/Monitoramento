@@ -3,7 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 import Desembarque from '../registrosView/desembarque'
 import Header from '../../components/navigationMenu'
-
+import Modal from '../../styles/Modal';
 
 
 
@@ -14,7 +14,7 @@ const DesembarqueDrawer = createStackNavigator({
       title: "Desembarque",
       headerLeft: <Header navigationProps={navigation.toggleDrawer} />,
       headerStyle: {
-        backgroundColor: '#0279be',
+        backgroundColor: Modal.background.backgroundColor,
       },
       headerTintColor: 'white',
       headerTitleStyle:{
