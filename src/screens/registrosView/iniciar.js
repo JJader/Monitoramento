@@ -7,6 +7,16 @@ import MapView, { Marker, Polyline, } from 'react-native-maps'
 
 // const destination = {latitude: -19.8087135, longitude: -43.177428};   antiga
 
+var chegou0 = false
+var chegou1 = false
+var chegou2 = false
+var chegou3 = false
+
+
+var description1= '';
+var description2= '';
+var description3= '';
+var description4= '';
 
 var med = [
     { latitude: -19.8137135, longitude: -43.182428 }, // primeiro ponto
@@ -31,7 +41,7 @@ export default class App extends React.Component {
         this.state = {
             origin: { latitude: -19.8137135, longitude: -43.182428 },
             destination: { latitude: -19.8099063, longitude: -43.1806958 },
-
+            Data: '',
             ready: false,
             intermediarios: [],
             region: {
@@ -64,7 +74,16 @@ export default class App extends React.Component {
         }
 
     }
+
+    getRouteDetails() {
+        fetch('https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e&start=8.681495,49.41461&end=8.687872,49.420318')
+            .then(resposta => resposta.json())
+            .then(JSON => console.warn(JSON.features));
+
+    }
+
     componentDidMount() {
+
         let geoOptions = {
             enableHighAccuracy: false,
             timeOut: 20000, //20 second  
@@ -76,18 +95,7 @@ export default class App extends React.Component {
             geoOptions);
     }
 
-
-    addMarker(coordinates) {
-        console.log(coordinates);
-        this.setState({
-            intermediarios: [...this.state.intermediarios,
-            { longitude: coordinates }
-            ]
-        })
-    }
-
     geoSuccess = (position) => {
-        console.log(position.coords.latitude);
         let temp = [
             { latitude: -19.8137135, longitude: -43.182428 },
             { latitude: -19.8127134, longitude: -43.181428 },
@@ -99,7 +107,6 @@ export default class App extends React.Component {
             { latitude: -19.8087135, longitude: -43.177428 },
 
         ]
-        console.log(temp)
         this.setState({
             ready: true,
             region: {
@@ -138,33 +145,104 @@ export default class App extends React.Component {
 
         const origin = med.shift()
         setTimeout(() => {
-            console.log("Entrou")
+            // console.log("Entrou")
             this.setState({ origin: origin })
-        }, 2000);
+        }, 5000);
     }
 
     mostraMapa() {
-        console.log(this.state.region)
-        console.log(this.state.region1)
-        console.log(this.state.region2)
-        console.log(this.state.region3)
         return (
             <MapView
                 style={styles.map}
                 region={this.state.region}
                 loadingEnabled={true}
-                onPress={(e) => this.addMarker(e.nativeEvent.coordinate)}>{
-                    this.state.intermediarios.map((marker, i) => (
-                        <Marker key={i} coordinate={marker.latlongitude}
-                            title={`${marker.latlongitude.latitude}, ${marker.latlongitude.longitude}`} />
-                    ))
+                center={this.state.origin}
+                >
+                
+                {
+                    this.state.origin.latitude !== this.state.region.latitude && chegou0 === false
+                        ?
+                        <MapViewDirections
+                            style={{ opacity: 0 }}
+                            origin={this.state.origin}
+                            destination={this.state.region}
+                            apikey={GOOGLE_MAPS_APIKEY}
+                            strokeWidth={6}
+                            resetOnChange={false}
+                            onReady={result => {
+                                // console.log(result)
+                                console.log("PONTO 1")
+                                console.log(`Distance: ${result.distance} km`)
+                                console.log(`Duration: ${result.duration} min.`)
+                            }}
+                        />
+                        : chegou0 = true
                 }
-                <MapViewDirections
-                    origin={this.state.origin}
-                    destination={this.state.destination}
-                    apikey={GOOGLE_MAPS_APIKEY}
-                    strokeWidth={6}
-                />
+
+                {
+                    this.state.origin.latitude !== this.state.region1.latitude && chegou1 === false
+                        ?
+                        <MapViewDirections
+                            style={{ opacity: 0 }}
+                            origin={this.state.origin}
+                            destination={this.state.region1}
+                            apikey={GOOGLE_MAPS_APIKEY}
+                            strokeWidth={6}
+                            resetOnChange={false}
+                            onReady={result => {
+                                description2= `Distance: ${result.distance} km Duration: ${result.duration} min.`
+                                // console.log(result)
+                                // console.log("PONTO 2")
+                                // console.log(`Distance: ${result.distance} km`)
+                                // console.log(`Duration: ${result.duration} min.`)
+                            }}
+                        />
+                        : chegou1 = true
+                }
+                {
+                    this.state.origin.latitude !== this.state.region2.latitude && chegou2 === false
+                        ?
+                        <MapViewDirections
+                            style={{ opacity: 0 }}
+                            origin={this.state.origin}
+                            destination={this.state.region2}
+                            apikey={GOOGLE_MAPS_APIKEY}
+                            strokeWidth={6}
+                            resetOnChange={false}
+                            onReady={result => {
+                                description3= `Distance: ${result.distance} km Duration: ${result.duration} min.`
+                                // console.log(result)
+                                // console.log("PONTO 3")
+                                // console.log(`Distance: ${result.distance} km`)
+                                // console.log(`Duration: ${result.duration} min.`)
+                            }}
+                        />
+                        : chegou2 = true
+                }
+                {
+                    this.state.origin.latitude !== this.state.region3.latitude && chegou3 === false
+                        ?
+                        <MapViewDirections
+
+                            origin={this.state.origin}
+                            destination={this.state.region3}
+                            apikey={GOOGLE_MAPS_APIKEY}
+                            strokeWidth={6}
+                            resetOnChange={false}
+                            onReady={result => {
+                                description4= `Distance: ${result.distance} km Duration: ${result.duration} min.`
+                                // console.log(result)
+                                // console.log("PONTO 4")
+                                // console.log(`Distance: ${result.distance} km`)
+                                // console.log(`Duration: ${result.duration} min.`)
+                            }}
+                        />
+                        : chegou3 = true
+                }
+
+
+
+
                 {/* <Polyline
                     coordinates={this.state.polyline}
                     strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
@@ -174,29 +252,32 @@ export default class App extends React.Component {
                 <Marker
                     coordinate={this.state.region}
                     title={"Ponto 1 "}
-                    description={"Primeiro ponto dos alunos"}
+                    description={"Distancia: 0km  Tempo Restante: 0s"}
                 />
                 <Marker
                     coordinate={this.state.region1}
                     title={"Ponto 2 "}
-                    description={"Segundo ponto dos alunos"}
+                    description={description2}
                 />
                 <Marker
                     coordinate={this.state.region2}
                     title={"Ponto 3 "}
-                    description={"Terceiro ponto dos alunos"}
+                    description={description3}
                 />
                 <Marker
                     coordinate={this.state.region3}
                     title={"Ponto 4 "}
-                    description={"Quarto ponto dos alunos"}
+                    description={description4}
                 />
             </MapView>
 
         )
     }
     render() {
-        this.updateOrigin()
+        if (med.length > 0) {
+            this.updateOrigin()
+        }
+
         return (
             this.state.ready ? this.mostraMapa() : <Text>{this.state.error}</Text>
         );
