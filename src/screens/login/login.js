@@ -25,7 +25,7 @@ class login extends Component {
           <Text style = {styles.cabecalhoText}>Login</Text>
           <Image
             source={require('../../assets/logo/logo.png')}
-            style={{ flex: 1 }}
+            style={{ flex: 1, resizeMode: "repeat" }}
             resizeMode="center"
 
           />
