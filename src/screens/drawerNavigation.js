@@ -19,12 +19,14 @@ const CustomDrawerContentComponent = props => (
     <View
       style={{ marginTop: 30, justifyContent: 'space-around', alignItems: 'center' , flex: 1}}
     >
-      <Image
-        source={require('../assets/logo/logo.png')}
-        style={{ width: WINDOW_WIDTH * 0.80, height: WINDOW_WIDTH * 0.80 }}
-        resizeMode="contain"
+      {//<Image
+        //source={require('../assets/logo/logo.png')}
+        //style={{ width: WINDOW_WIDTH * 0.80, height: WINDOW_WIDTH * 0.80 }}
+        //resizeMode="contain"
         
-      />
+      ///>
+    }
+    <Text style ={{fontSize: 80, fontWeight: 'bold', color: 'white',}}>ambev</Text>
     </View>
     <View style={{ marginLeft: 30, flex: 1 }}>
       <DrawerNavigatorItems {...props} />

@@ -172,8 +172,8 @@ export default class App extends React.Component {
                             onReady={result => {
                                 // console.log(result)
                                 console.log("PONTO 1")
-                                console.log(`Distance: ${result.distance} km`)
-                                console.log(`Duration: ${result.duration} min.`)
+                                console.log(`Distance: ${result.distance.toFixed(2)} km`)
+                                console.log(`Duration: ${result.duration.toFixed(2)} min.`)
                             }}
                         />
                         : chegou0 = true
@@ -190,7 +190,7 @@ export default class App extends React.Component {
                             strokeWidth={6}
                             resetOnChange={false}
                             onReady={result => {
-                                description2= `Distance: ${result.distance} km Duration: ${result.duration} min.`
+                                description2= `Distance: ${result.distance.toFixed(2)} km Duration: ${result.duration.toFixed(2)} min.`
                                 // console.log(result)
                                 // console.log("PONTO 2")
                                 // console.log(`Distance: ${result.distance} km`)
@@ -210,7 +210,7 @@ export default class App extends React.Component {
                             strokeWidth={6}
                             resetOnChange={false}
                             onReady={result => {
-                                description3= `Distance: ${result.distance} km Duration: ${result.duration} min.`
+                                description3= `Distance: ${result.distance.toFixed(2)} km Duration: ${result.duration.toFixed(2)} min.`
                                 // console.log(result)
                                 // console.log("PONTO 3")
                                 // console.log(`Distance: ${result.distance} km`)
@@ -230,7 +230,7 @@ export default class App extends React.Component {
                             strokeWidth={6}
                             resetOnChange={false}
                             onReady={result => {
-                                description4= `Distance: ${result.distance} km Duration: ${result.duration} min.`
+                                description4= `Distance: ${result.distance.toFixed(2)} km Duration: ${result.duration.toFixed(2)} min.`
                                 // console.log(result)
                                 // console.log("PONTO 4")
                                 // console.log(`Distance: ${result.distance} km`)
@@ -268,6 +268,10 @@ export default class App extends React.Component {
                     coordinate={this.state.region3}
                     title={"Ponto 4 "}
                     description={description4}
+                />
+                <Marker
+                    coordinate={this.state.origin}
+                    image = {require('../../assets/logo/busMap.png')}
                 />
             </MapView>
 
