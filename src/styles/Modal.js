@@ -11,6 +11,6 @@ export default StyleSheet.create({
     },
     background:{
         flex: 1, 
-        backgroundColor: '#0279be' 
+        backgroundColor: '#20409a' 
     },
 });

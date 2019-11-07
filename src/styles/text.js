@@ -32,7 +32,7 @@ export default StyleSheet.create({
     },
     viewCabecalho: {
         flex: 1,
-        backgroundColor: '#0279be',
+        backgroundColor: '#20409a',
         fontWeight: 'bold',
         alignItems: "center",
     },

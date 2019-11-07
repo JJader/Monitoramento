@@ -29,7 +29,7 @@ export default StyleSheet.create({
     },
     botao: {
         padding: 10,
-        backgroundColor: '#0279be', 
+        backgroundColor: '#20409a', 
         margin: 10, 
         minHeight: 50, 
         borderRadius: 15,
@@ -47,7 +47,7 @@ export default StyleSheet.create({
         marginTop: 15,
         fontSize: 20,
         fontWeight: 'bold',
-        backgroundColor: '#0279be',
+        backgroundColor: '#20409a',
         color: 'white',
       },
 })

@@ -11,7 +11,7 @@ const registraRotaDrawer = createStackNavigator({
       title: "Registrar rota",
       headerLeft: <Header navigationProps={navigation.toggleDrawer} />,
       headerStyle: {
-        backgroundColor: '#0279be',
+        backgroundColor: '#20409a',
       },
       headerTintColor: 'white',
       headerTitleStyle:{
