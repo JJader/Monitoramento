@@ -1,8 +1,16 @@
 import React from 'react';
 import { StyleSheet, Platform, Text, View } from 'react-native';
+import MapViewDirections from 'react-native-maps-directions';
 
-import MapView, { Marker, Polyline } from 'react-native-maps'
+const GOOGLE_MAPS_APIKEY = "AIzaSyDTNruUt3WxKm1vr7eFy93r5N37vUQTuuU";
+import MapView, { Marker, Polyline, } from 'react-native-maps'
 
+const origin = {latitude: -19.8137135, longitude: -43.182428};
+const destination = {latitude: -19.8087135, longitude: -43.177428};
+var med = [
+    { lat: -19.8134420, lng: -43.1821677 },
+    { lat: -19.8131165, lng: -43.1818059 },
+]
 
 export default class App extends React.Component {
     constructor() {
@@ -51,13 +59,13 @@ export default class App extends React.Component {
             geoOptions);
     }
 
-    
+
     addMarker(coordinates) {
         console.log(coordinates);
         this.setState({
-          intermediarios: [...this.state.intermediarios, 
+            intermediarios: [...this.state.intermediarios,
             { latlng: coordinates }
-          ]
+            ]
         })
     }
 
@@ -72,13 +80,13 @@ export default class App extends React.Component {
 
             { latitude: -19.8117135, longitude: -43.180428 },
             { latitude: -19.8087135, longitude: -43.177428 },
-            
+
         ]
         console.log(temp)
         this.setState({
             ready: true,
             region: {
-                latitude:  -19.8137135,
+                latitude: -19.8137135,
                 longitude: -43.182428,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
@@ -92,7 +100,7 @@ export default class App extends React.Component {
             region2: {
                 latitude: -19.8117135,
                 longitude: -43.180428,
-                
+
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
@@ -121,16 +129,21 @@ export default class App extends React.Component {
                 region={this.state.region}
                 onPress={(e) => this.addMarker(e.nativeEvent.coordinate)}>{
                     this.state.intermediarios.map((marker, i) => (
-                        <Marker key={i} coordinate={marker.latlng} 
-                        title={`${marker.latlng.latitude}, ${marker.latlng.longitude}`} />
+                        <Marker key={i} coordinate={marker.latlng}
+                            title={`${marker.latlng.latitude}, ${marker.latlng.longitude}`} />
                     ))
                 }
-                <Polyline
+                <MapViewDirections
+                    origin={origin}
+                    destination={destination}
+                    apikey={GOOGLE_MAPS_APIKEY}
+                />
+                {/* <Polyline
                     coordinates={this.state.polyline}
                     strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
                     strokeWidth={6}
 
-                />
+                /> */}
                 <Marker
                     coordinate={this.state.region}
                     title={"Ponto 1 "}
