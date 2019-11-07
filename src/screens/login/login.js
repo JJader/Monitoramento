@@ -77,5 +77,6 @@ const styles = StyleSheet.create({
     minHeight: 40,
     backgroundColor: 'white',
     borderRadius: 20,
+    paddingHorizontal: 20,
   }
 });
