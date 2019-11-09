@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   viewTurno: {
     alignItems: "center",
     justifyContent: 'center',
-    backgroundColor: '#0279be',
+    backgroundColor: stylesComponets.botao.backgroundColor,
     flexDirection: 'row',
     borderRadius: 15,
     marginHorizontal: '15%',
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   viewVeiculo: {
     alignItems: "center",
     justifyContent: 'center',
-    backgroundColor: '#0279be',
+    backgroundColor: stylesComponets.botao.backgroundColor,
     flexDirection: 'row',
     borderRadius: 15,
   },
@@ -146,9 +146,8 @@ const styles = StyleSheet.create({
 
   TextInput: {
     flex: 1,
-    borderColor: '#0279be',
+    borderColor: stylesComponets.botao.backgroundColor,
     borderWidth: 3,
-    marginRight: '40%',
     borderRadius: 10,
   },
   icon: {
