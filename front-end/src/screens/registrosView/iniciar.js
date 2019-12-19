@@ -39,11 +39,14 @@ export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            origin: { latitude: -19.8137135, longitude: -43.182428 },
+            index: 0,
+            route: [],
+            origin: { latitude: -19.9942, longitude: -44.01745 },
             destination: { latitude: -19.8099063, longitude: -43.1806958 },
             Data: '',
             ready: false,
             intermediarios: [],
+            busStops: [],
             region: {
                 latitude: null,
                 longitude: null,
@@ -75,6 +78,8 @@ export default class App extends React.Component {
 
     }
 
+
+
     getRouteDetails() {
         fetch('https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e&start=8.681495,49.41461&end=8.687872,49.420318')
             .then(resposta => resposta.json())
@@ -82,7 +87,33 @@ export default class App extends React.Component {
 
     }
 
+
+    async getRoute(){
+        try {
+            let url = 'http://192.168.43.249:3000/routes/2';
+            const response = await fetch(url);
+            this.setState({polyline: await response.json()});
+        }
+        catch (err) {
+            console.log('fetch failed', err);
+        }
+    }
+
+    async getBusStops(){
+        try {
+            let url = 'http://192.168.43.249:3000/busstops/';
+            const response = await fetch(url);
+            this.setState({busStops: await response.json()});
+        }
+        catch (err) {
+            console.log('fetch failed', err);
+        }
+    }
     componentDidMount() {
+
+        this.getRoute();
+        this.getBusStops();
+        console.log('ola')
 
         let geoOptions = {
             enableHighAccuracy: false,
@@ -93,6 +124,7 @@ export default class App extends React.Component {
         navigator.geolocation.getCurrentPosition(this.geoSuccess,
             this.geoFailure,
             geoOptions);
+        
     }
 
     geoSuccess = (position) => {
@@ -110,11 +142,12 @@ export default class App extends React.Component {
         this.setState({
             ready: true,
             region: {
-                latitude: -19.8137135,
-                longitude: -43.182428,
+                latitude: -19.9942, 
+                longitude: -44.01745,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
-            },
+            }
+            ,
             region1: {
                 latitude: -19.8127134,
                 longitude: -43.181428,
@@ -134,7 +167,7 @@ export default class App extends React.Component {
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
-            polyline: temp
+            // polyline: temp
         })
     }
     geoFailure = (err) => {
@@ -142,24 +175,53 @@ export default class App extends React.Component {
     }
 
     updateOrigin() {
-
-        const origin = med.shift()
+        // this.setState({index: index+1})
+        // let temp = this.state.origin
+        // const origin = this.state.polyline.shift()
         setTimeout(() => {
             // console.log("Entrou")
-            this.setState({ origin: origin })
-        }, 5000);
+            this.setState({index: this.state.index+1})
+            // this.setState({ origin: temp })
+        }, 1000);
     }
 
     mostraMapa() {
+        let newRegion = {}
+        if(this.state.index === 0){
+            newRegion = {
+                latitude: -19.9942, 
+                longitude: -44.01745,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+            }
+        }
+        else{
+            newRegion = {
+                latitude: this.state.polyline[this.state.index].latitude,
+                longitude: this.state.polyline[this.state.index].longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            }
+        }
+        if(this.state.index === 0){
+            return(
+                <MapView
+                    style={styles.map}
+                    region={newRegion}
+                    loadingEnabled={true}
+                    center={{latitude: -19.9942, longitude: -44.01745}}
+                />
+            )
+        }
         return (
             <MapView
                 style={styles.map}
-                region={this.state.region}
-                loadingEnabled={true}
-                center={this.state.origin}
+                // region={newRegion}
+                // loadingEnabled={true}
+                center={this.state.polyline[this.state.index]}
                 >
                 
-                {
+                {/* {
                     this.state.origin.latitude !== this.state.region.latitude && chegou0 === false
                         ?
                         <MapViewDirections
@@ -238,18 +300,38 @@ export default class App extends React.Component {
                             }}
                         />
                         : chegou3 = true
-                }
+                } */}
 
-
-
-
-                {/* <Polyline
+                {   this.state.polyline.length > 0 ?
+                    // console.log(this.state.polyline)
+                    <Polyline
                     coordinates={this.state.polyline}
                     strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
                     strokeWidth={6}
 
-                /> */}
-                <Marker
+                    />
+                    :
+                    console.log('oi')
+
+                }
+                {
+                    this.state.busStops.length > 0 ?
+
+                    this.state.busStops.map((element,index)=>{
+                        return(
+                        <Marker
+                            key={index}
+                            coordinate={element}
+                            title={`PONTO ${index}`}
+                            description={element.description}
+                        />)
+                    })
+                    :
+                    console.log('não há dados')
+
+                }
+                
+                {/* <Marker
                     coordinate={this.state.region}
                     title={"Ponto 1 "}
                     description={"Distancia: 0km  Tempo Restante: 0s"}
@@ -268,9 +350,9 @@ export default class App extends React.Component {
                     coordinate={this.state.region3}
                     title={"Ponto 4 "}
                     description={description4}
-                />
+                /> */}
                 <Marker
-                    coordinate={this.state.origin}
+                    coordinate={this.state.polyline[this.state.index]}
                     image = {require('../../assets/logo/busMap.png')}
                 />
             </MapView>
@@ -278,8 +360,8 @@ export default class App extends React.Component {
         )
     }
     render() {
-        if (med.length > 0) {
-            this.updateOrigin()
+        if (this.state.polyline.length > 0) {
+                this.updateOrigin()
         }
 
         return (
