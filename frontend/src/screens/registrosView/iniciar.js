@@ -90,18 +90,18 @@ export default class App extends React.Component {
 
     async getRoute(){
         try {
-            let url = 'http://192.168.43.249:3000/routes/2';
+            let url = 'http://192.168.1.122:3000/routes/2';
             const response = await fetch(url);
             this.setState({polyline: await response.json()});
         }
         catch (err) {
-            console.log('fetch failed', err);
+            console.log('erro fetch rota ', err);
         }
     }
 
     async getBusStops(){
         try {
-            let url = 'http://192.168.43.249:3000/busstops/';
+            let url = 'http://192.168.1.122:3000/busstops/';
             const response = await fetch(url);
             this.setState({busStops: await response.json()});
         }
