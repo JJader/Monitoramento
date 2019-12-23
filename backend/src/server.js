@@ -27,3 +27,5 @@ app.put('/users/:id', db.updateUser);
 app.delete('/users/:id', db.deleteUser);
 
 app.get('/routes',db.getRoutes);
+app.get('/routes/:id',db.getRoutesById);
+

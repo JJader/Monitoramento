@@ -14,11 +14,54 @@ const getRoutes = (request,response)=>{
     if(error){
       throw error;
     }
-    response.status(200).json(results.rows);
+    let routes = [];
+    routes = results.rows.map((element,index)=>{
+      let test = element.st_astext.split(/LINESTRING\(|\|\,|\)/);
+      test.shift();
+      test.pop();
+      test = test[0].split(/,|\s/);
+      let result = [];
+      for(let i =0;i<test.length;i=i+2){
+        let obj = {
+          lat: parseFloat(test[i+1]),
+          lng: parseFloat(test[i])
+        }
+        result.push(obj);
+      }
+      return result;
+    })
+    response.status(200).json(routes);
   })
 
 }
 
+const getRoutesById = (request,response)=>{
+  const id = parseInt(request.params.id);
+
+  pool.query(`SELECT ST_AsText(geom) FROM  routes WHERE id=$1;`,[id],(error,results)=>{
+    if(error){
+      throw error;
+    }
+    let routes = [];
+    routes = results.rows.map((element,index)=>{
+      let test = element.st_astext.split(/LINESTRING\(|\|\,|\)/);
+      test.shift();
+      test.pop();
+      test = test[0].split(/,|\s/);
+      let result = [];
+      for(let i =0;i<test.length;i=i+2){
+        let obj = {
+          lat: parseFloat(test[i+1]),
+          lng: parseFloat(test[i])
+        }
+        result.push(obj);
+      }
+      return result;
+    })
+    response.status(200).json(routes[0]);
+  })
+
+}
 
 const getBusStops = (request, response) => {
   pool.query(`SELECT ST_AsText(pos) FROM  bus_stops;`, (error, results) => {
@@ -114,5 +157,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  getRoutes
+  getRoutes,
+  getRoutesById
 }
