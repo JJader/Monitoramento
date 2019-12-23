@@ -50,4 +50,10 @@ export default StyleSheet.create({
         backgroundColor: '#20409a',
         color: 'white',
       },
+    viewInput: {
+        minHeight: 40,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingHorizontal: 20,
+    },
 })
