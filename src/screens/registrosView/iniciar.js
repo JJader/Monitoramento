@@ -112,27 +112,26 @@ export default class App extends React.Component {
             region: {
                 latitude: -19.8137135,
                 longitude: -43.182428,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.0009,
+                longitudeDelta: 0.000421,
             },
             region1: {
                 latitude: -19.8127134,
                 longitude: -43.181428,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.000922,
+                longitudeDelta: 0.000421,
             },
             region2: {
                 latitude: -19.8120708,
                 longitude: -43.1805265,
-
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.000922,
+                longitudeDelta: 0.000421,
             },
             region3: {
                 latitude: -19.8099063,
                 longitude: -43.1806958,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
+                latitudeDelta: 0.000922,
+                longitudeDelta: 0.000421,
             },
             polyline: temp
         })
@@ -239,9 +238,6 @@ export default class App extends React.Component {
                         />
                         : chegou3 = true
                 }
-
-
-
 
                 {/* <Polyline
                     coordinates={this.state.polyline}
