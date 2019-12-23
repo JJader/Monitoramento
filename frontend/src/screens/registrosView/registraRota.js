@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, Picker, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Picker, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import stylesText from '../../styles/text';
 import stylesComponets from '../../styles/componets';
 import stylesContainer from '../../styles/Modal';
 
 import { Ionicons } from '@expo/vector-icons';
 
+const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const DATA = {
   Turno: ['Manha', 'Tarde', 'Noite'],
@@ -22,16 +23,29 @@ class registraRota extends Component {
       turno: '',
       veiculo: '',
       rota: '',
-
-      notas: '',
     };
   }
 
+  VisualizarRota = () => {
+    if (this.state.rota == '' || this.state.veiculo == '' || this.state.turno == '') {
+      return(alert("Selecione uma rota válida"))
+    } else {
+         this.props.navigation.navigate(
+        'Iniciar',
+        {
+          turno: this.state.turno,
+          veiculo: this.state.veiculo,
+          rota: this.state.rota,
+        }
+      )
+    }
+  };
   render() {
     return (
       <View style={stylesContainer.background}>
         <View style={stylesContainer.conteiner}>
-          <View style={{ flex: 1 , marginHorizontal: 10}}>
+
+          <View style={{ flex: 1, marginHorizontal: 10 }}>
             <View style={styles.viewPicker}>
 
               <View style={styles.viewVeiculo}>
@@ -89,23 +103,13 @@ class registraRota extends Component {
               </View>
 
             </View>
-
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" enabled>
-              <Text style={stylesText.text}>Notas</Text>
-              <TextInput
-                style={styles.TextInput}
-                onChangeText={text => this.setState({ notas: text })}
-                value={this.state.notas}
-              />
-            </KeyboardAvoidingView >
           </View>
 
           <TouchableOpacity
-            onPress={
-              () => this.props.navigation.navigate('Iniciar')}
+            onPress={this.VisualizarRota}
             style={{ marginVertical: 10 }}>
             <View style={stylesComponets.botao}>
-              <Text style={stylesText.cabecalho}>Iniciar rota</Text>
+              <Text style={stylesText.cabecalho}>Visualizar rota</Text>
             </View>
           </TouchableOpacity>
 

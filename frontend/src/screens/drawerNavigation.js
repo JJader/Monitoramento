@@ -7,8 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Iniciar from './registrosDraw/iniciar'
 import RegistraRota from './registrosDraw/registraRota';
-import RegistraEmbarque from './registrosDraw/registraEmbarque';
-import Desembarque from './registrosDraw/desembarque';
 import Informacao from './informacoesDraw/InformacaoDrawer'
 import Login from './login/login';
 
@@ -34,42 +32,33 @@ const CustomDrawerContentComponent = props => (
   </ScrollView>
 );
 
-
-
 const MyDrawerNavigation =
   createDrawerNavigator(
     {
-      Login: {
+      Login:{
         screen: Login,
         navigationOptions: ({navigation}) => ({
           drawerLabel: 'Login',
           drawerIcon: <Ionicons name="ios-body" size={30} color="white" />,
         })
       },
-      RegistraR: {
+      RegistraR:{
         screen: RegistraRota,
         navigationOptions: ({navigation}) => ({
             drawerLabel: 'Registrar rota',
             drawerIcon: <Ionicons name="md-bus" size={30} color="white" />,
           })
       },
-      Iniciar: {
+      Iniciar:{
         screen: Iniciar,
         navigationOptions: ({navigation}) => ({
           drawerLabel: 'Iniciar',
           drawerIcon: <Ionicons name="md-speedometer" size={30} color="white" />,
         })
       },
-      RegistraE: {
-        screen: RegistraEmbarque,
-        navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Embarque',
-            drawerIcon: <Ionicons name="md-person-add" size={30} color="white" />,
-          })
-      },
     },
     {
-      initialRouteName: 'Login',
+      initialRouteName: 'RegistraR',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
