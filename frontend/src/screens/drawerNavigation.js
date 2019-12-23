@@ -42,19 +42,19 @@ const MyDrawerNavigation =
           drawerIcon: <Ionicons name="ios-body" size={30} color="white" />,
         })
       },
-      RegistraR:{
-        screen: RegistraRota,
-        navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Registrar rota',
-            drawerIcon: <Ionicons name="md-bus" size={30} color="white" />,
-          })
-      },
       Iniciar:{
         screen: Iniciar,
         navigationOptions: ({navigation}) => ({
           drawerLabel: 'Iniciar',
           drawerIcon: <Ionicons name="md-speedometer" size={30} color="white" />,
         })
+      },
+      RegistraR:{
+        screen: RegistraRota,
+        navigationOptions: ({navigation}) => ({
+            drawerLabel: 'Registrar rota',
+            drawerIcon: <Ionicons name="md-bus" size={30} color="white" />,
+          })
       },
     },
     {

@@ -359,12 +359,13 @@ export default class App extends React.Component {
         )
     }
     render() {
+        const turno = this.props.navigation.getParam('turno', "Jamisson");
         if (this.state.polyline.length > 0) {
                 this.updateOrigin()
         }
 
         return (
-            this.state.ready ? this.mostraMapa() : <Text>{this.state.error}</Text>
+            this.state.ready ? this.mostraMapa() : <Text> {this.state.error} </Text>
         );
     }
 }

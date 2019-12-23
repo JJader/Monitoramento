@@ -27,15 +27,17 @@ class registraRota extends Component {
   }
 
   VisualizarRota = () => {
+    const turno = this.state.turno;
+    const veiculo = this.state.veiculo;
+    const rota = this.state.rota;
+    
     if (this.state.rota == '' || this.state.veiculo == '' || this.state.turno == '') {
       return(alert("Selecione uma rota válida"))
     } else {
          this.props.navigation.navigate(
         'Iniciar',
         {
-          turno: this.state.turno,
-          veiculo: this.state.veiculo,
-          rota: this.state.rota,
+          turno: turno, veiculo: veiculo,rota: rota
         }
       )
     }
