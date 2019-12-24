@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import {Image, StyleSheet, Dimensions, View } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
-
+import {routes} from '../../fake/rotas';
+import {stops} from '../../fake/pontos.js';
 const { width, height } = Dimensions.get('window');
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = 0.0421;
+
+const baseUrl = 'http://192.168.0.63:3000/'
 
 const busIcon = require('../../assets/logo/busMap.png');
 
@@ -29,8 +32,8 @@ export default class SmoothAnimation extends Component {
             origin: { latitude: -19.9942, longitude: -44.01745 },
             destination: { latitude: -19.8099063, longitude: -43.1806958 },
             ready: false,
-            busStops: [],
-            polyline: [],
+            busStops: stops,
+            polyline: routes,
             error: null,
             coordinate: new MapView.AnimatedRegion({
                 latitude: -19.9942,
@@ -63,7 +66,7 @@ export default class SmoothAnimation extends Component {
 
     async getRoute() {
         try {
-            let url = 'http://192.168.1.122:3000/routes/2';
+            let url = baseUrl+'routes/2';
             const response = await fetch(url);
             this.setState({ polyline: await response.json() });
             console.log('rotas ok')
@@ -75,7 +78,7 @@ export default class SmoothAnimation extends Component {
 
     async getBusStops() {
         try {
-            let url = 'http://192.168.1.122:3000/busstops/';
+            let url = baseUrl+'busstops/';
             const response = await fetch(url);
             this.setState({ busStops: await response.json() });
             console.log('pontos ok');
@@ -85,8 +88,9 @@ export default class SmoothAnimation extends Component {
         }
     }
     componentDidMount = async () => {
-        await this.getBusStops();
-        await this.getRoute();
+        //PARA USAR DADOS FAKE COMENTE ABAIXO
+        // await this.getBusStops();
+        // await this.getRoute();
         console.log('ola')
         this.setState({ ready: true });
 
