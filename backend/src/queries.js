@@ -23,8 +23,8 @@ const getRoutes = (request,response)=>{
       let result = [];
       for(let i =0;i<test.length;i=i+2){
         let obj = {
-          lat: parseFloat(test[i+1]),
-          lng: parseFloat(test[i])
+          latitude: parseFloat(test[i+1]),
+          longitude: parseFloat(test[i])
         }
         result.push(obj);
       }
@@ -51,8 +51,8 @@ const getRoutesById = (request,response)=>{
       let result = [];
       for(let i =0;i<test.length;i=i+2){
         let obj = {
-          lat: parseFloat(test[i+1]),
-          lng: parseFloat(test[i])
+          latitude: parseFloat(test[i+1]),
+          longitude: parseFloat(test[i])
         }
         result.push(obj);
       }
@@ -72,15 +72,9 @@ const getBusStops = (request, response) => {
     let temp = results.rows.map(element => {
       let str = element.st_astext.split(/POINT\(|\)/);
       let temp = str[1].split(' ');
-
-      let latlng = {
-        lat: parseFloat(temp[1]),
-        lng: parseFloat(temp[0])
-      };
-
-      console.log(latlng);
       return {
-        pos: latlng
+        latitude: parseFloat(temp[1]),
+        longitude: parseFloat(temp[0])
       }
     })
     response.status(200).json(temp)
@@ -99,15 +93,10 @@ const getBusStopById = (request, response) => {
       let str = element.st_astext.split(/POINT\(|\)/);
       let temp = str[1].split(' ');
 
-      let latlng = {
-        lat: parseFloat(temp[1]),
-        lng: parseFloat(temp[0])
+      return{
+        latitude: parseFloat(temp[1]),
+        longitude: parseFloat(temp[0])
       };
-
-      console.log(latlng);
-      return {
-        pos: latlng
-      }
     })
     response.status(200).json(temp);
   })
