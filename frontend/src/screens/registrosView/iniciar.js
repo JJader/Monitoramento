@@ -3,7 +3,7 @@ import { StyleSheet, Platform, Text, View } from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDTNruUt3WxKm1vr7eFy93r5N37vUQTuuU";
-import MapView, { Marker, Polyline, } from 'react-native-maps'
+import MapView, {AnimatedRegion, Animated, Marker, Polyline, } from 'react-native-maps'
 
 // const destination = {latitude: -19.8087135, longitude: -43.177428};   antiga
 
@@ -13,10 +13,10 @@ var chegou2 = false
 var chegou3 = false
 
 
-var description1= '';
-var description2= '';
-var description3= '';
-var description4= '';
+var description1 = '';
+var description2 = '';
+var description3 = '';
+var description4 = '';
 
 var med = [
     { latitude: -19.8137135, longitude: -43.182428 }, // primeiro ponto
@@ -88,43 +88,46 @@ export default class App extends React.Component {
     }
 
 
-    async getRoute(){
+    async getRoute() {
         try {
             let url = 'http://192.168.1.122:3000/routes/2';
             const response = await fetch(url);
-            this.setState({polyline: await response.json()});
+            this.setState({ polyline: await response.json() });
+            console.log('rotas ok')
         }
         catch (err) {
             console.log('erro fetch rota ', err);
         }
     }
 
-    async getBusStops(){
+    async getBusStops() {
         try {
             let url = 'http://192.168.1.122:3000/busstops/';
             const response = await fetch(url);
-            this.setState({busStops: await response.json()});
+            this.setState({ busStops: await response.json() });
+            console.log('pontos ok');
         }
         catch (err) {
             console.log('fetch failed', err);
         }
     }
-    componentDidMount() {
+    async componentDidMount() {
 
-        this.getRoute();
-        this.getBusStops();
+        await this.getBusStops();
+        await this.getRoute();
         console.log('ola')
+        this.setState({ ready: true });
 
         let geoOptions = {
             enableHighAccuracy: false,
             timeOut: 20000, //20 second  
             //  maximumAge: 1000 //1 second  
         };
-        this.setState({ ready: false, error: null });
-        navigator.geolocation.getCurrentPosition(this.geoSuccess,
-            this.geoFailure,
-            geoOptions);
-        
+        // this.setState({ ready: false, error: null });
+        // navigator.geolocation.getCurrentPosition(this.geoSuccess,
+        //     this.geoFailure,
+        //     geoOptions);
+
     }
 
     geoSuccess = (position) => {
@@ -142,7 +145,7 @@ export default class App extends React.Component {
         this.setState({
             ready: true,
             region: {
-                latitude: -19.9942, 
+                latitude: -19.9942,
                 longitude: -44.01745,
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
@@ -174,52 +177,38 @@ export default class App extends React.Component {
     }
 
     updateOrigin() {
-        // this.setState({index: index+1})
+        // this.setState({ index: this.state.index + 1 })
         // let temp = this.state.origin
         // const origin = this.state.polyline.shift()
         setTimeout(() => {
-            // console.log("Entrou")
-            this.setState({index: this.state.index+1})
+            console.log("Entrou")
+            this.setState({ index: this.state.index + 1 })
             // this.setState({ origin: temp })
         }, 1000);
     }
 
     mostraMapa() {
-        let newRegion = {}
-        if(this.state.index === 0){
-            newRegion = {
-                latitude: -19.9942, 
-                longitude: -44.01745,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421
-            }
+        // console.log(this.state.polyline);
+        // console.log(this.state.busStops);
+        this.updateOrigin();
+        let newRegion = 
+        // new AnimatedRegion(
+            {
+            latitude: this.state.polyline[this.state.index].latitude,
+            longitude: this.state.polyline[this.state.index].longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
         }
-        else{
-            newRegion = {
-                latitude: this.state.polyline[this.state.index].latitude,
-                longitude: this.state.polyline[this.state.index].longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            }
-        }
-        if(this.state.index === 0){
-            return(
-                <MapView
-                    style={styles.map}
-                    region={newRegion}
-                    loadingEnabled={true}
-                    center={{latitude: -19.9942, longitude: -44.01745}}
-                />
-            )
-        }
+        // );
+        
         return (
             <MapView
                 style={styles.map}
-                // region={newRegion}
-                // loadingEnabled={true}
+                region={newRegion}
+                loadingEnabled={true}
                 center={this.state.polyline[this.state.index]}
-                >
-                
+            >
+
                 {/* {
                     this.state.origin.latitude !== this.state.region.latitude && chegou0 === false
                         ?
@@ -301,12 +290,12 @@ export default class App extends React.Component {
                         : chegou3 = true
                 } */}
 
-                {   this.state.polyline.length > 0 ?
+                {this.state.polyline.length > 0 ?
                     // console.log(this.state.polyline)
                     <Polyline
-                    coordinates={this.state.polyline}
-                    strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
-                    strokeWidth={6}
+                        coordinates={this.state.polyline}
+                        strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
+                        strokeWidth={6}
 
                     />
                     :
@@ -316,20 +305,20 @@ export default class App extends React.Component {
                 {
                     this.state.busStops.length > 0 ?
 
-                    this.state.busStops.map((element,index)=>{
-                        return(
-                        <Marker
-                            key={index}
-                            coordinate={element}
-                            title={`PONTO ${index}`}
-                            description={element.description}
-                        />)
-                    })
-                    :
-                    console.log('não há dados')
+                        this.state.busStops.map((element, index) => {
+                            return (
+                                <Marker
+                                    key={index}
+                                    coordinate={element}
+                                    title={`PONTO ${index}`}
+                                    description={element.description}
+                                />)
+                        })
+                        :
+                        console.log('não há dados')
 
                 }
-                
+
                 {/* <Marker
                     coordinate={this.state.region}
                     title={"Ponto 1 "}
@@ -352,16 +341,18 @@ export default class App extends React.Component {
                 /> */}
                 <Marker
                     coordinate={this.state.polyline[this.state.index]}
-                    image = {require('../../assets/logo/busMap.png')}
+                    image={require('../../assets/logo/busMap.png')}
                 />
             </MapView>
 
         )
     }
     render() {
-        if (this.state.polyline.length > 0) {
-                this.updateOrigin()
-        }
+        // if (this.state.polyline.length > 0) {
+        //     // console.log("render");
+        //     console.log(this.state.polyline.length);
+        //     this.updateOrigin();
+        // }
 
         return (
             this.state.ready ? this.mostraMapa() : <Text>{this.state.error}</Text>
