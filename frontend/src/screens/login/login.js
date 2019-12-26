@@ -70,7 +70,7 @@ class login extends Component {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('RegistraR')}>
+          <TouchableOpacity onPress={() => alert("Pagina de modificar senha")}>
             <View style={stylesComponets.botao}>
               <Text style={styles.esqueciText}>
                 Esqueci minha senha

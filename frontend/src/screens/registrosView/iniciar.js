@@ -154,8 +154,6 @@ export default class SmoothAnimation extends Component {
     }
 }
 
-
-
 var styles = StyleSheet.create({
     container: {
         // flex: 1,

@@ -54,6 +54,13 @@ export default StyleSheet.create({
         minHeight: 40,
         backgroundColor: 'white',
         borderRadius: 20,
+        borderColor: '#20409a',
         paddingHorizontal: 20,
+    },
+    viewPicker: {
+        alignItems: "center",
+        justifyContent: 'center',
+        flexDirection: 'row',
+        borderRadius: 15,
     },
 })

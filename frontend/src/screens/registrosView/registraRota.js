@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Picker, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Picker, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 import stylesText from '../../styles/text';
 import stylesComponets from '../../styles/componets';
 import stylesContainer from '../../styles/Modal';
+import ItemModal from '../../components/modal/itemModal'
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -10,8 +11,7 @@ const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const DATA = {
   Turno: ['Manha', 'Tarde', 'Noite'],
-  Rota: ['104', '152', '154', '155', 'Rota'],
-  Veiculo: ['A', 'B', 'C', 'D', 'E'],
+  Rota: ['104', '152', '154', '155'],
 }
 
 
@@ -21,27 +21,43 @@ class registraRota extends Component {
     this.state = {
       DATA: DATA,
       turno: '',
-      veiculo: '',
       rota: '',
+      rua: '',
+      numero: '',
+      bairro: '',
     };
   }
 
   VisualizarRota = () => {
-    const turno = this.state.turno;
-    const veiculo = this.state.veiculo;
-    const rota = this.state.rota;
-    
-    if (this.state.rota == '' || this.state.veiculo == '' || this.state.turno == '') {
-      return(alert("Selecione uma rota válida"))
+    alert(this.state.numero)
+    const auxTurno = this.state.turno;
+    const auxveiculo = this.state.veiculo;
+    const auxRota = this.state.rota;
+
+    if (auxRota == '' || auxveiculo == '' || auxTurno == '') {
+      return (alert("Selecione uma rota válida"))
     } else {
-         this.props.navigation.navigate(
+      this.props.navigation.navigate(
         'Iniciar',
         {
-          turno: turno, veiculo: veiculo,rota: rota
+          turno: auxTurno, veiculo: auxveiculo, rota: auxRota,
         }
       )
     }
   };
+
+  alterarRua(rua) {
+    this.setState({ rua })
+  }
+
+  alterarBairro(bairro) {
+    this.setState({ bairro })
+  }
+
+  alterarNumero(numero) {
+    this.setState({ numero })
+  }
+
   render() {
     return (
       <View style={stylesContainer.background}>
@@ -87,21 +103,11 @@ class registraRota extends Component {
               </View>
 
               <View style={styles.viewVeiculo}>
-                <Ionicons
-                  name="ios-bus"
-                  size={35}
-                  style={styles.icon} />
-                <Picker
-                  selectedValue={this.state.veiculo}
-                  style={styles.pickerStyle}
-                  onValueChange={(itemValue, itemIndex) =>
-                    this.setState({ veiculo: itemValue })
-                  }>
-                  <Picker.Item label="VEÍCULO: " value="" />
-                  {this.state.DATA.Veiculo.map((item, index) => {
-                    return (<Picker.Item label={"   " + item} value={item} key={index} />)
-                  })}
-                </Picker>
+                <ItemModal
+                  alterarRua={(rua) =>  this.alterarRua(rua)}
+                  alterarBairro={(bairro) => this.alterarBairro(bairro)}
+                  alterarNumero={(numero) => this.alterarNumero(numero)}
+                />
               </View>
 
             </View>
@@ -148,13 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: 'white',
     justifyContent: 'center',
-  },
-
-  TextInput: {
-    flex: 1,
-    borderColor: stylesComponets.botao.backgroundColor,
-    borderWidth: 3,
-    borderRadius: 10,
   },
   icon: {
     marginHorizontal: 10,

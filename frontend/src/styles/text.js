@@ -16,8 +16,10 @@ export default StyleSheet.create({
     },
     text: {
         marginLeft: 10,
-        alignItems: 'stretch', 
+        alignItems: 'stretch',
+        justifyContent: 'center', 
         fontSize: 18,
+        color: 'white',
     },
     view: {
         minHeight: 50,
@@ -35,6 +37,8 @@ export default StyleSheet.create({
         backgroundColor: '#20409a',
         fontWeight: 'bold',
         alignItems: "center",
+        justifyContent: 'center',
+        alignContent: 'center'
     },
 
 
