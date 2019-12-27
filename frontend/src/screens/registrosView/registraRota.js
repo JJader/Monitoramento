@@ -5,6 +5,7 @@ import stylesComponets from '../../styles/componets';
 import stylesContainer from '../../styles/Modal';
 import ItemModal from '../../components/modal/itemModal'
 
+
 import { Ionicons } from '@expo/vector-icons';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -29,20 +30,16 @@ class registraRota extends Component {
   }
 
   VisualizarRota = () => {
-    alert(this.state.numero)
     const auxTurno = this.state.turno;
-    const auxveiculo = this.state.veiculo;
     const auxRota = this.state.rota;
 
-    if (auxRota == '' || auxveiculo == '' || auxTurno == '') {
+    if (auxRota == '' || auxTurno == '') {
       return (alert("Selecione uma rota válida"))
     } else {
-      this.props.navigation.navigate(
-        'Iniciar',
-        {
-          turno: auxTurno, veiculo: auxveiculo, rota: auxRota,
-        }
-      )
+      this.props.navigation.navigate('Iniciar', {
+        turno: auxTurno,
+        rota: auxRota,
+      });
     }
   };
 
@@ -104,7 +101,7 @@ class registraRota extends Component {
 
               <View style={styles.viewVeiculo}>
                 <ItemModal
-                  alterarRua={(rua) =>  this.alterarRua(rua)}
+                  alterarRua={(rua) => this.alterarRua(rua)}
                   alterarBairro={(bairro) => this.alterarBairro(bairro)}
                   alterarNumero={(numero) => this.alterarNumero(numero)}
                 />
@@ -115,7 +112,8 @@ class registraRota extends Component {
 
           <TouchableOpacity
             onPress={this.VisualizarRota}
-            style={{ marginVertical: 10 }}>
+            style={{ marginVertical: 10 }}
+          >
             <View style={stylesComponets.botao}>
               <Text style={stylesText.cabecalho}>Visualizar rota</Text>
             </View>

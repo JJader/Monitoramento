@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Image, StyleSheet, Dimensions, View } from 'react-native';
+import { Image, StyleSheet, Dimensions, View } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 
 const { width, height } = Dimensions.get('window');
@@ -17,7 +17,7 @@ const initCoordinates = {
     longitudeDelta: 0.0421,
 };
 
-export default class SmoothAnimation extends Component {
+export default class SmoothAnimation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -37,14 +37,14 @@ export default class SmoothAnimation extends Component {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
             }),
+            turno: JSON.stringify(this.props.navigation.getParam('turno', 'null')),
+            rota: JSON.stringify(this.props.navigation.getParam('rota', 'null'))
         };
         this.index = 0;
-
     }
 
     // Update Origin
     handleAnimation = () => {
-
         const data = this.state.polyline[this.index];
         console.log(data);
         const markerCoord = data;
@@ -62,7 +62,7 @@ export default class SmoothAnimation extends Component {
 
     async getRoute() {
         try {
-            let url = baseUrl+'routes/2';
+            let url = baseUrl + 'routes/2';
             const response = await fetch(url);
             this.setState({ polyline: await response.json() });
             console.log('rotas ok')
@@ -74,7 +74,7 @@ export default class SmoothAnimation extends Component {
 
     async getBusStops() {
         try {
-            let url = baseUrl+'busstops/';
+            let url = baseUrl + 'busstops/';
             const response = await fetch(url);
             this.setState({ busStops: await response.json() });
             console.log('pontos ok');
@@ -99,17 +99,20 @@ export default class SmoothAnimation extends Component {
     }
 
     render() {
-
+        alert(this.state.turno)
         return (
+
             <View style={{ flex: 1 }}>
+
                 <MapView
                     style={styles.container}
                     initialRegion={initCoordinates}
                     ref={ref => { this.map = ref; }}
                 >
-                    {
-                        this.state.busStops.length > 0 ?
 
+                    {
+
+                        this.state.busStops.length > 0 ?
                             this.state.busStops.map((element, index) => {
                                 return (
                                     <Marker

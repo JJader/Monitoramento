@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Dimensions, Image, ScrollView } from 'react-native';
+import { View, Text, Button, Dimensions, Image, ScrollView } from 'react-native';
 import { createAppContainer } from 'react-navigation'
 import { createDrawerNavigator, DrawerNavigatorItems } from 'react-navigation-drawer'
 
@@ -7,7 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Iniciar from './registrosDraw/iniciar'
 import RegistraRota from './registrosDraw/registraRota';
-import Informacao from './informacoesDraw/InformacaoDrawer'
 import Login from './login/login';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
