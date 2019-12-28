@@ -69,6 +69,13 @@ class itemModal extends Component {
                         <View style={{ justifyContent: 'space-between', flex: 1 }}>
 
                             <View style={stylesText.viewCabecalho}>
+                                <TouchableOpacity style={stylesComponent.botao}
+                                    onPress={() => this.setState({ isVisible: false })}>
+                                    <Ionicons
+                                        name="ios-arrow-round-back"
+                                        size={35}
+                                        style={{ color: 'white' }} />
+                                </TouchableOpacity>
                                 <Text style={stylesText.cabecalho}>Descubra a sua rota ambev</Text>
                             </View>
 

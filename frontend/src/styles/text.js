@@ -36,9 +36,10 @@ export default StyleSheet.create({
         flex: 1,
         backgroundColor: '#20409a',
         fontWeight: 'bold',
+        flexDirection: 'row',
         alignItems: "center",
-        justifyContent: 'center',
-        alignContent: 'center'
+        justifyContent: 'flex-start',
+        alignContent: 'stretch'
     },
 
 
