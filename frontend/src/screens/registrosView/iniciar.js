@@ -37,11 +37,26 @@ export default class SmoothAnimation extends React.Component {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
             }),
-            turno: JSON.stringify(this.props.navigation.getParam('turno', 'null')),
-            rota: JSON.stringify(this.props.navigation.getParam('rota', 'null'))
+            dadosRota: this.props.navigation.getParam('dadosRota', 'null'),
         };
         this.index = 0;
     }
+
+    componentWillReceiveProps(newProps) { // esse componente é construido sempre que os props são modificados
+       
+        let oldDados = this.state.dadosRota
+        const { dadosRota } = newProps.navigation.state.params
+    
+        if (dadosRota[0].turno != oldDados[0].turno ||
+          dadosRota[0].rota != oldDados[0].rota ||
+          dadosRota[0].rua != oldDados[0].rua ||
+          dadosRota[0].bairro != oldDados[0].bairro ||
+          dadosRota[0].numero != oldDados[0].numero
+        ) {
+          this.setState({ dadosRota: dadosRota })
+        }
+        alert(JSON.stringify(this.state.dadosRota))
+      }
 
     // Update Origin
     handleAnimation = () => {
@@ -99,7 +114,7 @@ export default class SmoothAnimation extends React.Component {
     }
 
     render() {
-        alert(this.state.turno)
+        alert(JSON.stringify(this.state.dadosRota))
         return (
 
             <View style={{ flex: 1 }}>

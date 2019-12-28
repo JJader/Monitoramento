@@ -34,11 +34,16 @@ class registraRota extends Component {
     const auxRota = this.state.rota;
 
     if (auxRota == '' || auxTurno == '') {
-      return (alert("Selecione uma rota válida"))
+      alert("Selecione uma rota válida")
     } else {
       this.props.navigation.navigate('Iniciar', {
-        turno: auxTurno,
-        rota: auxRota,
+        dadosRota : [{
+            turno: auxTurno,
+            rota: auxRota,
+            rua: this.state.rua,
+            numero: this.state.numero,
+            bairro: this.state.bairro,  
+          }]
       });
     }
   };
