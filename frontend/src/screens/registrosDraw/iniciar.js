@@ -29,7 +29,7 @@ const IniciarDrawer = createStackNavigator({
         fontWeight: 'bold'
       }
     })
-  }
+  },
 })
 
 class DetailsScreen extends React.Component {
@@ -45,11 +45,14 @@ class DetailsScreen extends React.Component {
       */
     }
   }
-  atualizarProps = () => {
-    this.dadosRota = this.state.dadosRota
+
+  atualizarProps = (dadosParam) => {
+      this.dadosRota = dadosParam
+    //alert(JSON.stringify(this.state.dadosRota))
   }
+
   componentWillReceiveProps(newProps) { // esse componente é construido sempre que os props são modificados
-    alert(JSON.stringify(newProps))
+    //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
     let oldDados = this.state.dadosRota
     const { dadosRota } = newProps.navigation.state.params
 
@@ -60,12 +63,17 @@ class DetailsScreen extends React.Component {
       dadosRota[0].numero != oldDados[0].numero
     ) {
       this.setState({ dadosRota: dadosRota })
-      this.atualizarProps
+      this.atualizarProps(dadosRota)
+      this.props.navigation.navigate('Home', {
+        dadosRota : dadosRota
+      });
     }
+    
   }
 
   componentDidMount(){
-    this.atualizarProps
+    //alert(JSON.stringify(this.state.dadosRota))
+    this.atualizarProps(this.state.dadosRota)
   }
 
   static router = IniciarDrawer.router;

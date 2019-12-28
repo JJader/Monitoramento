@@ -43,7 +43,7 @@ export default class SmoothAnimation extends React.Component {
     }
 
     componentWillReceiveProps(newProps) { // esse componente é construido sempre que os props são modificados
-       
+        //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
         let oldDados = this.state.dadosRota
         const { dadosRota } = newProps.navigation.state.params
     
@@ -55,7 +55,7 @@ export default class SmoothAnimation extends React.Component {
         ) {
           this.setState({ dadosRota: dadosRota })
         }
-        alert(JSON.stringify(this.state.dadosRota))
+        //alert("Iniciar view")
       }
 
     // Update Origin
