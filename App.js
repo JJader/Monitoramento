@@ -3,6 +3,8 @@ import { View, Text } from 'react-native';
 
 import Drawer from './src/screens/drawerNavigation'
 
+globalThis.URL_API = 'http://192.168.1.160:5000'
+
 class App extends Component {
   constructor(props) {
     super(props);

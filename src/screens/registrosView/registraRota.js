@@ -1,37 +1,134 @@
 import React, { Component } from 'react';
-import { View, Text, Picker, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, 
+         Text, 
+         Picker, 
+         StyleSheet, 
+         TouchableOpacity, 
+         TextInput, 
+         KeyboardAvoidingView,
+         ScrollView,
+         RefreshControl } from 'react-native';
 import stylesText from '../../styles/text';
 import stylesComponets from '../../styles/componets';
 import stylesContainer from '../../styles/Modal';
 
 import { Ionicons } from '@expo/vector-icons';
 
-
-const DATA = {
-  Turno: ['Manha', 'Tarde', 'Noite'],
-  Rota: ['104', '152', '154', '155', 'Rota'],
-  Veiculo: ['A', 'B', 'C', 'D', 'E'],
-}
-
-
 class registraRota extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      DATA: DATA,
+
+      id: '1',
       turno: '',
       veiculo: '',
       rota: '',
+      nota: '',
 
-      notas: '',
+      rotasJson: [{id: 0, value:'Null'}],
+      turnosJson: [{id: 0, value:'Null'}],
+      veiculosJson: [{id: 0, value:'Null'}],
+
+      refreshing: false,
     };
   }
+  
+  async rotaServe(){
+    let link = URL_API + '/rotas.json' 
+    try {
+      const data = await fetch(link);
+      const dataJson = await data.json();
+      this.setState({ rotasJson: dataJson.rotas });
+      console.log("Rotas okay");
+    }
+    catch (error) {
+      alert("Ops !! alguma coisa errada na rotaServer")
+      return console.log(error);
+    } //to catch the errors if any
+    }
+
+    async turnoServe(){
+      let link = URL_API + '/turnos.json' 
+      try {
+        const data = await fetch(link);
+        const dataJson = await data.json();
+        this.setState({ turnosJson: dataJson.turnos });
+        console.log("Turno okay");
+      }
+      catch (error) {
+        alert("Ops !! alguma coisa errada no turnoServer")
+        return console.log(error);
+      } //to catch the errors if any
+      }
+
+      async veiculoServe(){
+        let link = URL_API + '/veiculos.json' 
+        try {
+          const data = await fetch(link);
+          const dataJson = await data.json();
+          this.setState({ veiculosJson: dataJson.veiculos });
+          console.log("Veiculo okay");
+        }
+        catch (error) {
+          alert("Ops !! alguma coisa errada veiculoServer")
+          return console.log(error);
+        } //to catch the errors if any
+        }
+
+      acionandoServe(){
+        this.turnoServe()
+        this.rotaServe()
+        this.veiculoServe()
+        this.setState({refreshing: false})
+      }
+
+      wait(timeout) {
+        return new Promise(resolve => {
+          setTimeout(resolve, timeout);
+        });
+      }
+
+      onRefresh(){
+        this.setState({refreshing: true})
+        this.wait(2000).then(() => this.acionandoServe())
+      }
+
+      async submeter(){
+        let link = URL_API + '/registrar/rota' 
+        const rotas = { 
+            id : this.state.id,
+            turno: this.state.turno,
+            rota: this.state.rota,
+            veiculo: this.state.veiculo,
+            nota: this.state.nota, 
+        };
+
+        try{
+          const response = await fetch(link, {
+            method: 'POST', // or 'PUT'
+            headers:{
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(rotas),
+          });
+          if (response.ok){
+            alert("Rota registrada");
+          }
+        }
+        catch (error) {
+          alert("Ops !! alguma coisa errada no submeter_Rota")
+          return console.log(error);
+        }
+      }
 
   render() {
     return (
+      
       <View style={stylesContainer.background}>
-        <View style={stylesContainer.conteiner}>
-          <View style={{ flex: 1 , marginHorizontal: 10}}>
+        <ScrollView contentContainerStyle={stylesContainer.conteiner} 
+          refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.onRefresh()}/>}>
+
+          <View style={{ flex: 1 , marginHorizontal: 10, justifyContent: 'space-between'}}>
             <View style={styles.viewPicker}>
 
               <View style={styles.viewVeiculo}>
@@ -46,8 +143,8 @@ class registraRota extends Component {
                     this.setState({ turno: itemValue })
                   }>
                   <Picker.Item label="TURNO: " value="" />
-                  {this.state.DATA.Turno.map((item, index) => {
-                    return (<Picker.Item label={"   " + item} value={item} key={index} />)
+                  {this.state.turnosJson.map((item,index) => {
+                    return (<Picker.Item label={"   " + item.value} value={item.value} key={item.id} />)
                   })}
                 </Picker>
               </View>
@@ -64,8 +161,8 @@ class registraRota extends Component {
                     this.setState({ rota: itemValue })
                   }>
                   <Picker.Item label="ROTA: " value="" />
-                  {this.state.DATA.Rota.map((item, index) => {
-                    return (<Picker.Item label={"   " + item} value={item} key={index} />)
+                  {this.state.rotasJson.map((item,index) => {
+                    return (<Picker.Item label={"   " + item.value} value={item.value} key={item.id} />)
                   })}
                 </Picker>
               </View>
@@ -82,8 +179,8 @@ class registraRota extends Component {
                     this.setState({ veiculo: itemValue })
                   }>
                   <Picker.Item label="VEÍCULO: " value="" />
-                  {this.state.DATA.Veiculo.map((item, index) => {
-                    return (<Picker.Item label={"   " + item} value={item} key={index} />)
+                  {this.state.veiculosJson.map((item,index) => {
+                    return (<Picker.Item label={"   " + item.value} value={item.value} key={item.id} />)
                   })}
                 </Picker>
               </View>
@@ -94,22 +191,22 @@ class registraRota extends Component {
               <Text style={stylesText.text}>Notas</Text>
               <TextInput
                 style={styles.TextInput}
-                onChangeText={text => this.setState({ notas: text })}
-                value={this.state.notas}
+                onChangeText={text => this.setState({ nota: text })}
+                value={this.state.nota}
               />
             </KeyboardAvoidingView >
           </View>
 
           <TouchableOpacity
             onPress={
-              () => this.props.navigation.navigate('Iniciar')}
+              () => this.submeter()}
             style={{ marginVertical: 10 }}>
             <View style={stylesComponets.botao}>
               <Text style={stylesText.cabecalho}>Iniciar rota</Text>
             </View>
           </TouchableOpacity>
 
-        </View>
+        </ScrollView>
       </View>
     );
   }
@@ -119,24 +216,22 @@ export default registraRota;
 
 const styles = StyleSheet.create({
   viewPicker: {
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
     alignItems: "stretch",
-    flex: 2
+    alignContent:"stretch",
+    flex: 1,
+    
   },
-  viewTurno: {
-    alignItems: "center",
-    justifyContent: 'center',
-    backgroundColor: '#0279be',
-    flexDirection: 'row',
-    borderRadius: 15,
-    marginHorizontal: '15%',
-  },
+
   viewVeiculo: {
-    alignItems: "center",
-    justifyContent: 'center',
+    alignItems: "stretch",
+    justifyContent: 'space-between',
+    alignContent: 'stretch',
     backgroundColor: '#0279be',
     flexDirection: 'row',
     borderRadius: 15,
+    marginVertical: "5%",
+    flex: 1, 
   },
   pickerStyle: {
     flex: 1,
@@ -145,6 +240,7 @@ const styles = StyleSheet.create({
   },
 
   TextInput: {
+    minHeight: 100,
     flex: 1,
     borderColor: '#0279be',
     borderWidth: 3,

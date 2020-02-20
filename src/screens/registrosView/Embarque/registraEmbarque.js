@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import ModalPonto from '../../components/modal/modalPonto';
-import stylesContainer from '../../styles/Modal';
+import ModalPonto from './modalPonto';
+import stylesContainer from '../../../styles/Modal';
 
 const DATA = [
   {
@@ -13,7 +13,7 @@ const DATA = [
         idade: '20',
         escola: 'UEMG',
         turno: 'tarde',
-        presenca: false,
+        presenca: true,
       },
       {
         id: 2,
@@ -235,6 +235,25 @@ class registraEmbarque extends Component {
     this.setState({refresh: !this.state.refresh})
   }
 
+  RetornaAluno(nome, idade){
+    // Back end busca 
+    //returno o aluno
+    return ({
+      id: 24,
+      nome: 'João abraam jose',
+      idade: '13',
+      escola: 'UFOP',
+      turno: 'Manha',
+      presenca: false,
+    })
+  }
+
+  Restaurar(ponto){
+    let data = this.state.DATA[ponto] 
+    alert(JSON.stringify(data))
+    return (data)
+  }
+
   render() {
     return (
       <View style={stylesContainer.background}>
@@ -251,7 +270,9 @@ class registraEmbarque extends Component {
                     ponto={index}
                     PresencaAluno={(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}
                     FinalizarEmbarque={(ponto,AlunosPonto) => this.FinalizarEmbarque(ponto,AlunosPonto)}
+                    RetornaAluno = {(nome, idade) => this.RetornaAluno(nome,idade)}
                     Refresh = {() => this.RefreshFlat()}
+                    Cancelar = {(ponto) => this.Restaurar(ponto)}
                   />)
               }
             } />

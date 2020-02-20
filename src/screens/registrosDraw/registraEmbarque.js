@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack'
 
-import registraEmbarque from '../registrosView/registraEmbarque'
+import registraEmbarque from '../registrosView/Embarque/registraEmbarque'
 import Header from '../../components/navigationMenu'
 
 const registraEmbarqueDrawer = createStackNavigator({

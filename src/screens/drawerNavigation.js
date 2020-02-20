@@ -81,7 +81,7 @@ const MyDrawerNavigation =
       },
     },
     {
-      initialRouteName: 'Iniciar',
+      initialRouteName: 'RegistraE',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
