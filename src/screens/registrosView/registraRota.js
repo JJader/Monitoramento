@@ -14,7 +14,7 @@ import stylesContainer from '../../styles/Modal';
 
 import { Ionicons } from '@expo/vector-icons';
 
-class registraRota extends Component {
+class RegistraRota extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -212,7 +212,7 @@ class registraRota extends Component {
   }
 }
 
-export default registraRota;
+export default RegistraRota;
 
 const styles = StyleSheet.create({
   viewPicker: {
