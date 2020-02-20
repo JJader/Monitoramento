@@ -18,7 +18,10 @@ class botaoPonto extends Component {
     FinalizarEmbarque(){
         this.props.FinalizarEmbarque()
     }
-
+    AdicionarAluno(nome, idade){
+        this.props.AdicionarAluno(nome,idade)
+    }
+                                            
     CancelarSemSalvar(){
         Alert.alert(
             "Cancelar embarque",
@@ -26,7 +29,7 @@ class botaoPonto extends Component {
             [
               {
                 text: "Ok",
-                onPress: () => this.ModalSet(false),
+                onPress: () => {this.ModalSet(false), this.props.Cancelar()},
                 style: "cancel"
               },
               { text: "cancelar", onPress: () => console.log("OK Pressed") }
@@ -42,11 +45,11 @@ class botaoPonto extends Component {
                 <View style = {{flexDirection: 'row'}}>
                     <TouchableOpacity onPress={() => this.FinalizarEmbarque()} style = {{flex: 1}}>
                         <View style={stylesComponets.botao}>
-                            <Text style={stylesText.cabecalho}>Embarcar</Text>
+                            <Text style={stylesText.cabecalho}>Finalizar Embarque</Text>
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => this.ModalSet(false)} style = {{flex: 1}}>
+                    <TouchableOpacity onPress={() => this.AdicionarAluno("nome","idade")} style = {{flex: 1}}>
                         <View style={stylesComponets.botao}>
                             <Text style={stylesText.cabecalho}>Adicionar aluno</Text>
                         </View>
