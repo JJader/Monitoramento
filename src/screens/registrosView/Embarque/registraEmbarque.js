@@ -1,241 +1,75 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, ScrollView, RefreshControl } from 'react-native';
 import ModalPonto from './modalPonto';
 import stylesContainer from '../../../styles/Modal';
 
-const DATA = [
-  {
-    title: 'Ponto 1',
-    data: [
-      {
-        id: 1,
-        nome: 'Jamisson Jader Moraes Pereira Junior',
-        idade: '20',
-        escola: 'UEMG',
-        turno: 'tarde',
-        presenca: true,
-      },
-      {
-        id: 2,
-        nome: 'Rafael carvalho de Souza Pereira Junior da Silva',
-        idade: '17',
-        escola: 'Doctos',
-        turno: 'Noite',
-        presenca: false,
-      },
-      {
-        id: 3,
-        nome: 'Victor Silva de Souza Andrade melo de lima',
-        idade: '15',
-        escola: 'UFOP',
-        turno: 'Noite',
-        presenca: false,
-      },
-    ],
-  },
-  {
-    title: 'Ponto 2',
-    data: [
-      {
-        id: 4,
-        nome: 'Vanessa',
-        idade: '15',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 6,
-        nome: 'Carla',
-        idade: '18',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 7,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 8,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 9,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-    ],
-  },
-  {
-    title: 'Ponto 3',
-    data: [
-      {
-        id: 10,
-        nome: 'Cintia loviada',
-        idade: '15',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 11,
-        nome: 'Monica veloso',
-        idade: '18',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 12,
-        nome: 'Pricila carminha',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 13,
-        nome: 'Estefani lorena',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 14,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-    ],
-  },
-  {
-    title: 'Ponto 4',
-    data: [
-      {
-        id: 15,
-        nome: 'Jorge duntra',
-        idade: '15',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 16,
-        nome: 'Carla',
-        idade: '18',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 17,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 18,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 19,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-    ],
-  },
-  {
-    title: 'Ponto 5',
-    data: [
-      {
-        id: 20,
-        nome: 'Mirielle',
-        idade: '15',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 21,
-        nome: 'Carla',
-        idade: '18',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 22,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 23,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-      {
-        id: 24,
-        nome: 'Sida',
-        idade: '13',
-        escola: 'UFOP',
-        turno: 'Manha',
-        presenca: false,
-      },
-    ],
-  },
-];
-
-class registraEmbarque extends Component {
+class RegistraEmbarque extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      DATA: DATA,
-      refresh: false,
+
+      refreshServer: false,
+      refreshFlat : false,
+
+      pontosJson: [
+          {
+            value: 'default',
+            id: 0 ,
+            data: [
+              {
+                id: 0,
+                nome: 'Null',
+                idade: 'Null',
+                escola: 'NUll',
+                turno: 'NUll',
+                presenca: 0,
+              }
+            ]
+          },
+      ]
     };
   }
 
-  FinalizarEmbarque(ponto,AlunosPonto) {
+  async pontoServe(){
+    let link = URL_API + '/pontos.json' 
+    try {
+      const data = await fetch(link);
+      const dataJson = await data.json();
+      this.setState({ pontosJson: dataJson.pontos });
+      console.log("Aluno okay");
+      this.setState({refreshServer: false})
+    }
+    catch (error) {
+      alert("Ops !! alguma coisa errada no alunoServe")
+      this.setState({refreshServer: false})
+      return console.log(error);
+    } //to catch the errors if any
+    }
+
+  finalizarEmbarque(ponto,AlunosPonto) {
     let DATA = this.state.DATA
     DATA[ponto] = AlunosPonto
     this.setState({ DATA })
-    this.RefreshFlat()
+    this.onRefreshFlat()
   }
 
-  RefreshFlat(){
-    this.setState({refresh: !this.state.refresh})
+  wait(timeout) {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
   }
 
-  RetornaAluno(nome, idade){
+  onRefreshServer(){
+    this.setState({refreshServer: true})
+    this.wait(2000).then(() => this.pontoServe())
+    
+  }
+
+  onRefreshFlat(){
+    this.setState({refreshFlat : !this.state.refreshFlat})
+  }
+
+  retornaAluno(nome, idade){
     // Back end busca 
     //returno o aluno
     return ({
@@ -248,8 +82,8 @@ class registraEmbarque extends Component {
     })
   }
 
-  Restaurar(ponto){
-    let data = this.state.DATA[ponto] 
+  restaurar(ponto){
+    let data = this.state.pontosJson[ponto] 
     alert(JSON.stringify(data))
     return (data)
   }
@@ -257,30 +91,32 @@ class registraEmbarque extends Component {
   render() {
     return (
       <View style={stylesContainer.background}>
-        <View style={stylesContainer.conteiner}>
+        <ScrollView contentContainerStyle={stylesContainer.conteiner}
+          refreshControl={<RefreshControl refreshing={this.state.refreshServer} onRefresh={() => this.onRefreshServer()}/>}>
           <FlatList
-            keyExtractor={item => item.title}
-            data={this.state.DATA}
-            extraData = {this.state.refresh}
+            
+            keyExtractor={item => String(item.id)}
+            data={this.state.pontosJson}
+            extraData = {this.state.refreshFlat}
             renderItem={
               ({ item, index }) => {
                 return (
                   <ModalPonto
                     data={item}
                     ponto={index}
-                    PresencaAluno={(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}
-                    FinalizarEmbarque={(ponto,AlunosPonto) => this.FinalizarEmbarque(ponto,AlunosPonto)}
-                    RetornaAluno = {(nome, idade) => this.RetornaAluno(nome,idade)}
-                    Refresh = {() => this.RefreshFlat()}
-                    Cancelar = {(ponto) => this.Restaurar(ponto)}
+                    //PresencaAluno={(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}
+                    FinalizarEmbarque={(ponto,AlunosPonto) => this.finalizarEmbarque(ponto,AlunosPonto)}
+                    RetornaAluno = {(nome, idade) => this.retornaAluno(nome,idade)}
+                    Refresh = {() => this.onRefreshFlat()}
+                    Cancelar = {(ponto) => this.restaurar(ponto)}
                   />)
               }
             } />
             
-        </View>
+        </ScrollView>
       </View>
     );
   }
 }
 
-export default registraEmbarque;
+export default RegistraEmbarque;

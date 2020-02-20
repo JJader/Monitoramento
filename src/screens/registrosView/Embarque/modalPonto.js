@@ -83,7 +83,7 @@ class modalAlunos extends Component {
                 <TouchableOpacity onPress={() => this.ModalSet(true)}>
                     <View style={[stylesComponets.ponto, {backgroundColor : this.state.backgColor}]}>
                         <Text style={stylesText.cabecalho}>
-                            {this.state.data.title}
+                            {this.state.data.value}
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -108,7 +108,7 @@ class modalAlunos extends Component {
                             </View>
                             <FlatList
                                 keyExtractor={item => String(item.id)}
-                                data={this.state.data.data}
+                                data={this.state.data.alunos}
                                 extraData = {this.state.refresh}
                                 renderItem={
                                     ({ item, index }) => {
