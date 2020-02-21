@@ -3,6 +3,8 @@ import { View, Text, FlatList, ScrollView, RefreshControl } from 'react-native';
 import ModalPonto from './modalPonto';
 import stylesContainer from '../../../styles/Modal';
 
+import _ from "lodash";
+
 class RegistraEmbarque extends Component {
   constructor(props) {
     super(props);
@@ -15,7 +17,7 @@ class RegistraEmbarque extends Component {
           {
             value: 'default',
             id: 0 ,
-            data: [
+            alunos: [
               {
                 id: 0,
                 nome: 'Null',
@@ -30,6 +32,25 @@ class RegistraEmbarque extends Component {
     };
   }
 
+  //Refresh
+  onRefreshServer(){
+    this.setState({refreshServer: true})
+    this.onRefreshFlat()
+    this.wait(2000).then(() => this.pontoServe())
+    
+  }
+
+  onRefreshFlat(){
+    this.setState({refreshFlat : !this.state.refreshFlat})
+  }
+
+  wait(timeout) {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+  }
+
+  //Servidor
   async pontoServe(){
     let link = URL_API + '/pontos.json' 
     try {
@@ -44,31 +65,9 @@ class RegistraEmbarque extends Component {
       this.setState({refreshServer: false})
       return console.log(error);
     } //to catch the errors if any
-    }
-
-  finalizarEmbarque(ponto,AlunosPonto) {
-    let DATA = this.state.DATA
-    DATA[ponto] = AlunosPonto
-    this.setState({ DATA })
-    this.onRefreshFlat()
   }
-
-  wait(timeout) {
-    return new Promise(resolve => {
-      setTimeout(resolve, timeout);
-    });
-  }
-
-  onRefreshServer(){
-    this.setState({refreshServer: true})
-    this.wait(2000).then(() => this.pontoServe())
-    
-  }
-
-  onRefreshFlat(){
-    this.setState({refreshFlat : !this.state.refreshFlat})
-  }
-
+  
+  //funções especiais
   retornaAluno(nome, idade){
     // Back end busca 
     //returno o aluno
@@ -82,10 +81,12 @@ class RegistraEmbarque extends Component {
     })
   }
 
-  restaurar(ponto){
-    let data = this.state.pontosJson[ponto] 
-    alert(JSON.stringify(data))
-    return (data)
+  finalizarEmbarque(ponto,AlunosPonto) {    
+    let pontosJson = _.cloneDeep(this.state.pontosJson)
+    pontosJson[ponto].alunos = _.cloneDeep(AlunosPonto)
+    this.setState({pontosJson})
+
+    this.onRefreshFlat()
   }
 
   render() {
@@ -102,13 +103,12 @@ class RegistraEmbarque extends Component {
               ({ item, index }) => {
                 return (
                   <ModalPonto
-                    data={item}
+                    data={item.alunos}
                     ponto={index}
-                    //PresencaAluno={(ponto, aluno, presenca) => this.PresencaAluno(ponto, aluno, presenca)}
-                    FinalizarEmbarque={(ponto,AlunosPonto) => this.finalizarEmbarque(ponto,AlunosPonto)}
-                    RetornaAluno = {(nome, idade) => this.retornaAluno(nome,idade)}
-                    Refresh = {() => this.onRefreshFlat()}
-                    Cancelar = {(ponto) => this.restaurar(ponto)}
+                    titulo = {item.value}
+                    finalizarEmbarque={(ponto,AlunosPonto) => this.finalizarEmbarque(ponto,AlunosPonto)}
+                    retornaAluno = {(nome, idade) => this.retornaAluno(nome,idade)}
+                    refresh = {() => this.onRefreshFlat()}
                   />)
               }
             } />
