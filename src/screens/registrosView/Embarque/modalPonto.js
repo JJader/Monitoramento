@@ -19,7 +19,9 @@ class ModalAlunos extends Component {
             backgColor: '#0279be',
             refresh: false,
 
-            listaPresenca : []
+            listaPresenca : [],
+
+            alunos_add : 0,
         };
     }
 
@@ -35,6 +37,14 @@ class ModalAlunos extends Component {
 
     cancelar(){
         this.setState({listaPresenca : []})
+        let i = this.state.alunos_add
+        let alunos = _.clone(this.state.alunos)
+
+        for (i; i > 0 ; i--){
+            alunos.pop()
+        }
+        this.setState({alunos})
+        this.setState({alunos_add : 0})
       }
 
     
@@ -82,7 +92,9 @@ class ModalAlunos extends Component {
         
         this.setState({backgColor: '#32CD32'})
         this.setState({isVisible: !this.state.isVisible})
-        this.cancelar()
+
+        this.setState({listaPresenca : []})
+        this.setState({alunos_add : 0})
 
         this.props.finalizarEmbarque(this.state.ponto, this.state.alunos)
     }
@@ -91,21 +103,19 @@ class ModalAlunos extends Component {
     adicionarAluno(nome, idade){
         let aluno = this.props.retornaAluno(nome,idade)
         let lista = _.clone(this.state.alunos)
-        let existe = false
+        let alunos_add = this.state.alunos_add + 1
         
         lista.map((item) => {
             if(item.id == aluno.id){ 
-                existe = true
                 alert("Não é possível adicionar esse aluno")
                 return
             } 
         })
         
-        if(!existe){
-            lista.push(aluno)
-            this.setState({ alunos: lista })
-            this.onRefreshFlat()
-        }   
+        lista.push(aluno)
+        this.setState({ alunos: lista })
+        this.setState({alunos_add})
+        this.onRefreshFlat()
     }
 
     render() {
