@@ -7,83 +7,114 @@ import stylesText from '../../../styles/text';
 import stylesComponets from '../../../styles/componets';
 import BotaoPonto from '../../../components/modal/botaoPonto';
 
+import _ from "lodash";
 
-class modalAlunos extends Component {
+class ModalAlunos extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isVisible: false,
-            data: this.props.data,
+            alunos: _.cloneDeep(this.props.data),
             ponto: this.props.ponto,
             backgColor: '#0279be',
             refresh: false,
+
+            listaPresenca : []
         };
     }
 
-    ModalSet(estado) {
+    //Refresh
+    modalSet(estado) {
         this.setState({ isVisible: estado })
-        
+        this.onRefreshFlat() 
     }
 
-    PresencaAluno(aluno, presenca) {
-        let data = this.state.data
-        data.data[aluno].presenca = presenca
-        this.setState({ data })
+    onRefreshFlat(){
+        this.setState({refresh: !this.state.refresh})
+      }
+
+    cancelar(){
+        this.setState({listaPresenca : []})
+      }
+
+    
+    // Embarque
+    presencaAluno(aluno, presenca) {
+        let alunos = _.clone(this.state.alunos)
+        alunos[aluno].presenca = presenca
+        this.setState({ alunos })
     }
 
-    PresencaTodosAluno(aluno, presenca){
-        if (this.state.data.data.length != 0){
-            for (aluno = 0 ; aluno < this.state.data.data.length; aluno++ ){
-                this.PresencaAluno(aluno,presenca)
+    setListaPresenca(aluno, presenca){
+        let listaPresenca = _.clone(this.state.listaPresenca)
+        let elem = {
+            aluno : aluno,
+            presenca: presenca
+        }
+        listaPresenca.push(elem)
+        this.setState({listaPresenca})
+    }
+
+    presencaTodosAluno(aluno, presenca){
+        this.cancelar()
+
+        if (this.state.alunos.length != 0){
+            for (aluno = 0 ; aluno < this.state.alunos.length; aluno++ ){
+                this.setListaPresenca(aluno,presenca)
             }
-            this.setState({refresh: !this.state.refresh})    
+            this.onRefreshFlat()    
         }
     }
-    
-    AdicionarAluno(nome, idade){
-        let aluno = this.props.RetornaAluno(nome,idade)
-        let data = this.state.data
-        let lista = data.data
+
+    finalizarEmbarque(){
+        let listaPresenca = _.cloneDeep(this.state.listaPresenca)
+        let aluno, presenca
+        let elem
+            
+        while (listaPresenca.length != 0){
+            elem = listaPresenca.pop()
+            aluno = elem.aluno
+            presenca = elem.presenca
+            
+            this.presencaAluno(aluno,presenca)
+        }
+        this.onRefreshFlat()  
+        
+        this.setState({backgColor: '#32CD32'})
+        this.setState({isVisible: !this.state.isVisible})
+        this.cancelar()
+
+        this.props.finalizarEmbarque(this.state.ponto, this.state.alunos)
+    }
+
+    //Operações especiais
+    adicionarAluno(nome, idade){
+        let aluno = this.props.retornaAluno(nome,idade)
+        let lista = _.clone(this.state.alunos)
         let existe = false
         
         lista.map((item) => {
-            item.id == aluno.id ? existe = true : null
+            if(item.id == aluno.id){ 
+                existe = true
+                alert("Não é possível adicionar esse aluno")
+                return
+            } 
         })
         
         if(!existe){
             lista.push(aluno)
-            data.data = lista
-            this.setState({ data })
-            this.setState({refresh: !this.state.refresh})
-        }else {
-            alert("Não é possível adicionar esse aluno")
-        }    
-    }
-
-    FinalizarEmbarque(){
-        this.setState({backgColor: '#32CD32'})
-        this.setState({isVisible: !this.state.isVisible})
-        this.setState({refresh: !this.state.refresh})
-        this.props.FinalizarEmbarque(this.state.ponto, this.state.data)
-        
-    }
-    
-    Cancelar(){
-        let newdata = this.props.Cancelar(this.state.ponto)
-        let data = this.state.data
-        data.data = newdata.data
-        this.setState({data})
-        this.setState({refresh: !this.state.refresh})
-        //this.props.Refresh()
+            this.setState({ alunos: lista })
+            this.onRefreshFlat()
+        }   
     }
 
     render() {
         return (
             <View style={styles.conteiner}>
-                <TouchableOpacity onPress={() => this.ModalSet(true)}>
+                <TouchableOpacity onPress={() => this.modalSet(true)}>
                     <View style={[stylesComponets.ponto, {backgroundColor : this.state.backgColor}]}>
                         <Text style={stylesText.cabecalho}>
-                            {this.state.data.value}
+                            {this.props.titulo}
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -92,7 +123,7 @@ class modalAlunos extends Component {
                         animationType="slide"
                         transparent={false}
                         visible={this.state.isVisible}
-                        onRequestClose={() => this.ModalSet(false)}>
+                        onRequestClose={() => this.modalSet(false)}>
 
                         <ScrollView style={{ backgroundColor: 'white' }}>
                             <View style={stylesText.viewCabecalho}>
@@ -100,7 +131,7 @@ class modalAlunos extends Component {
                             </View>
                             <View style = {{marginBottom: 10}}>
                                 <PresencaAluno
-                                    PresencaAluno={(aluno, presenca) => this.PresencaTodosAluno(aluno, presenca)}
+                                    setListaPresenca={(aluno, presenca) => this.presencaTodosAluno(aluno, presenca)}
                                     nome = "Todos Alunos"
                                     aluno = {-1}
                                     presenca = {false}
@@ -108,14 +139,14 @@ class modalAlunos extends Component {
                             </View>
                             <FlatList
                                 keyExtractor={item => String(item.id)}
-                                data={this.state.data.alunos}
+                                data={this.state.alunos}
                                 extraData = {this.state.refresh}
                                 renderItem={
                                     ({ item, index }) => {
                                         return (
-                                            item.presenca ? null :
+                                            //item.presenca ? null :
                                             <PresencaAluno
-                                                PresencaAluno={(aluno, presenca) => this.PresencaAluno(aluno, presenca)}
+                                                setListaPresenca={(aluno, presenca) => this.setListaPresenca(aluno, presenca)}
                                                 nome={item.nome}
                                                 escola={item.escola}
                                                 aluno={index}
@@ -125,10 +156,10 @@ class modalAlunos extends Component {
                                     }
                                 }/>
                                 <BotaoPonto
-                                    FinalizarEmbarque={() => this.FinalizarEmbarque()}
-                                    ModalSet = {(estado) => this.ModalSet(estado)}
-                                    Cancelar = {() => this.Cancelar()}
-                                    AdicionarAluno = {(nome, idade) => this.AdicionarAluno(nome,idade)}
+                                    finalizarEmbarque={() => this.finalizarEmbarque()}
+                                    modalSet = {(estado) => this.modalSet(estado)}
+                                    adicionarAluno = {(nome, idade) => this.adicionarAluno(nome,idade)}
+                                    cancelar = {() => this.cancelar()}
                                 />
                         </ScrollView>
                     </Modal>
@@ -138,4 +169,4 @@ class modalAlunos extends Component {
     }
 }
 
-export default modalAlunos;
+export default ModalAlunos;

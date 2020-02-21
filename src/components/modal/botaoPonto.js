@@ -4,32 +4,32 @@ import styles from '../../styles/Modal'
 import stylesText from '../../styles/text';
 import stylesComponets from '../../styles/componets';
 
-class botaoPonto extends Component {
+class BotaoPonto extends Component {
     constructor(props) {
         super(props);
         this.state = {
         };
     }
 
-    ModalSet(estado){
-        this.props.ModalSet(estado)
+    modalSet(estado){
+        this.props.modalSet(estado)
     }
 
-    FinalizarEmbarque(){
-        this.props.FinalizarEmbarque()
+    finalizarEmbarque(){
+        this.props.finalizarEmbarque()
     }
-    AdicionarAluno(nome, idade){
-        this.props.AdicionarAluno(nome,idade)
+    adicionarAluno(nome, idade){
+        this.props.adicionarAluno(nome,idade)
     }
                                             
-    CancelarSemSalvar(){
+    cancelarSemSalvar(){
         Alert.alert(
             "Cancelar embarque",
             "Você não salvou o embarque",
             [
               {
                 text: "Ok",
-                onPress: () => {this.ModalSet(false), this.props.Cancelar()},
+                onPress: () => {this.modalSet(false), this.props.cancelar()},
                 style: "cancel"
               },
               { text: "cancelar", onPress: () => console.log("OK Pressed") }
@@ -43,20 +43,20 @@ class botaoPonto extends Component {
         return (
             <View style = {{marginTop: 20}}>
                 <View style = {{flexDirection: 'row'}}>
-                    <TouchableOpacity onPress={() => this.FinalizarEmbarque()} style = {{flex: 1}}>
+                    <TouchableOpacity onPress={() => this.finalizarEmbarque()} style = {{flex: 1}}>
                         <View style={stylesComponets.botao}>
                             <Text style={stylesText.cabecalho}>Finalizar Embarque</Text>
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => this.AdicionarAluno("nome","idade")} style = {{flex: 1}}>
+                    <TouchableOpacity onPress={() => this.adicionarAluno("nome","idade")} style = {{flex: 1}}>
                         <View style={stylesComponets.botao}>
                             <Text style={stylesText.cabecalho}>Adicionar aluno</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => this.CancelarSemSalvar()}>
+                <TouchableOpacity onPress={() => this.cancelarSemSalvar()}>
                     <View style={stylesComponets.botao}>
                         <Text style={stylesText.cabecalho}>Cancelar</Text>
                     </View>
@@ -66,4 +66,4 @@ class botaoPonto extends Component {
     }
 }
 
-export default botaoPonto;
+export default BotaoPonto;
