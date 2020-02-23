@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, ScrollView, SectionList } from 'react-native';
 
-import stylesContainer from '../../styles/Modal'
-import stylesComponets from '../../styles/componets';
-import stylesText from '../../styles/text';
+import stylesContainer from '../../../styles/Modal'
+import stylesComponets from '../../../styles/componets';
+import stylesText from '../../../styles/text';
 
-import BotaoDesembarque from '../../components/botaoDesebarque';
+import BotaoDesembarque from './botaoDesebarque';
 
 
 const DATA = [

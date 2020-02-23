@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack'
 
-import Desembarque from '../registrosView/desembarque'
+import Desembarque from '../registrosView/desembarque/desembarque'
 import Header from '../../components/navigationMenu'
 
 
