@@ -62,22 +62,28 @@ class ModalAlunos extends Component {
             presenca: presenca
         }
         listaPresenca.push(elem)
+        console.log(this.state.listaPresenca.length);
         this.setState({listaPresenca})
     }
 
     presencaTodosAluno(aluno, presenca){
-        this.cancelar()
-
+        // não funciona, funciona so com o último
+        this.setState({listaPresenca : []})
+        let i
         if (this.state.alunos.length != 0){
-            for (aluno = 0 ; aluno < this.state.alunos.length; aluno++ ){
-                this.setListaPresenca(aluno,presenca)
-            }
-            this.onRefreshFlat()    
+                        
+            this.setListaPresenca(0,presenca)
+            this.setListaPresenca(1,presenca)
+            this.setListaPresenca(2,presenca)
+                
+                        
         }
     }
 
     finalizarEmbarque(){
-        let listaPresenca = _.cloneDeep(this.state.listaPresenca)
+        let listaPresenca = this.state.listaPresenca.slice()
+        
+        
         let aluno, presenca
         let elem
             
@@ -85,6 +91,7 @@ class ModalAlunos extends Component {
             elem = listaPresenca.pop()
             aluno = elem.aluno
             presenca = elem.presenca
+            console.log(elem);
             
             this.presencaAluno(aluno,presenca)
         }
@@ -153,6 +160,7 @@ class ModalAlunos extends Component {
                                 extraData = {this.state.refresh}
                                 renderItem={
                                     ({ item, index }) => {
+                                        
                                         return (
                                             //item.presenca ? null :
                                             <PresencaAluno

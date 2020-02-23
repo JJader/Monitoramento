@@ -81,12 +81,43 @@ class RegistraEmbarque extends Component {
     })
   }
 
-  finalizarEmbarque(ponto,AlunosPonto) {    
+  async finalizarEmbarque(ponto,AlunosPonto) {    
     let pontosJson = _.cloneDeep(this.state.pontosJson)
     pontosJson[ponto].alunos = _.cloneDeep(AlunosPonto)
     this.setState({pontosJson})
 
+    await this.enviarServer(ponto)
+    await this.enviarServer(ponto)
+    
     this.onRefreshFlat()
+  }
+
+  async enviarServer(ponto){
+    let link = URL_API + '/pontos.json' 
+
+        const dados = { 
+          alunos : this.state.pontosJson[ponto].alunos
+        };
+
+        try{
+          const response = await fetch(link, {
+            method: 'POST', // or 'PUT'
+            headers:{
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dados),
+          });
+          let responseJson = await response.json();
+          
+          if (response.ok){
+            alert("alunos embarcados com sucesso")
+          }
+        }
+        catch (error) {
+          alert("Ops !! alguma coisa errada no submeter_Rota")
+          console.log(error);
+          return false
+        }
   }
 
   render() {

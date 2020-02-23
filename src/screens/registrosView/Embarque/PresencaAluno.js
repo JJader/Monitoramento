@@ -10,14 +10,15 @@ export default class PresencaAluno extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            presenca: _.cloneDeep(this.props.presenca),
+            presenca: Boolean (this.props.presenca),
             nome: this.props.nome.split(' '),
             aluno_index : this.props.aluno
         };
     };
 
     alteraPresenca(presenca) {
-        this.props.setListaPresenca(this.state.aluno_index, presenca)
+        var i = presenca ? 1 : 0 
+        this.props.setListaPresenca(this.state.aluno_index, i)
         this.setState({ presenca })
     }
 
