@@ -11,8 +11,8 @@ class welcome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        isVisible : true,
-        name : 'Jamisson Jader Moraes Pereira Junior',
+        isVisible : false,
+        name : '',
         id : '',
     };
   }
