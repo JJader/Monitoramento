@@ -11,6 +11,8 @@ class BotaoDesembarque extends Component {
     super(props);
     this.state = {
       nome: this.props.nome,
+      index : this.props.index,
+      status: false,
       backgColor: stylesComponets.botao.backgroundColor,
     };
   }
@@ -23,6 +25,20 @@ class BotaoDesembarque extends Component {
     )     
   }
 
+  serverDesembarcar(){
+    let index = this.state.index
+    this.setState({status: true})
+    this.setState({backgColor: '#32CD32'})
+    this.props.mudarChegada(index, true)
+  }
+
+  naoDesembarca(){
+    let index = this.state.index
+    this.setState({status: false})
+    this.setState({backgColor: stylesComponets.botao.backgroundColor})
+    this.props.mudarChegada(index, false)
+  }
+
   ClickDesemparcar(){
     Alert.alert(
       "Desembarcar",
@@ -30,19 +46,17 @@ class BotaoDesembarque extends Component {
       [
         {
           text: "sim",
-          onPress: () => this.setState({backgColor: '#32CD32'}),
+          onPress: () => this.serverDesembarcar(),
           
         },
         { text: "não",
-          onPress: () => this.setState({backgColor: stylesComponets.botao.backgroundColor}),
+          onPress: () => this.naoDesembarca(),
           style: "cancel"
         }
       ],
       { cancelable: false }
     );
-    
   }
-
 
   render() {
     return (
