@@ -81,7 +81,7 @@ const MyDrawerNavigation =
       },
     },
     {
-      initialRouteName: 'Desembarque',
+      initialRouteName: 'Iniciar',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

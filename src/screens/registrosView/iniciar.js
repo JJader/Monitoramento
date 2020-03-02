@@ -1,40 +1,30 @@
 import React from 'react';
-import { StyleSheet, Platform, Text, View } from 'react-native';
+import { StyleSheet, Platform, Text, View, Image } from 'react-native';
 
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, Polyline, MarkerAnimated } from 'react-native-maps'
+
+const busIcon = require('../../assets/logo/busMap.png');
+
+import _ from "lodash";
 
 
 export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
+
+            polyline: [],
+            busStops: [],
             ready: false,
-            region: {
-                latitude: null,
-                longitude: null,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            },
-            region1: {
-                latitude: null,
-                longitude: null,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            },
-            region2: {
-                latitude: null,
-                longitude: null,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            },
-            region3: {
-                latitude: null,
-                longitude: null,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-            },
+
+            region: {},
             error: null,
-            x : (0,1),
+            x: (0, 1),
+
+            //id_motorista: this.props.navigation.getParam('id', 'null'),
+            id_motorista: 1,
+            polylineRef:{},
+            coords: {},
         }
     }
     componentDidMount() {
@@ -47,7 +37,9 @@ export default class App extends React.Component {
         navigator.geolocation.getCurrentPosition(this.geoSuccess,
             this.geoFailure,
             geoOptions);
+        this.polyServe()
     }
+
     geoSuccess = (position) => {
         console.log(position.coords.latitude);
 
@@ -59,58 +51,70 @@ export default class App extends React.Component {
                 latitudeDelta: 0.00922,
                 longitudeDelta: 0.00421,
             },
-            region1: {
-                latitude: position.coords.latitude + 0.001,
-                longitude: position.coords.longitude + 0.001,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            },
-            region2: {
-                latitude: position.coords.latitude + 0.005,
-                longitude: position.coords.longitude + 0.005,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            },
-            region3: {
-                latitude: position.coords.latitude + 0.002,
-                longitude: position.coords.longitude + 0.002,
-                latitudeDelta: 0.00922,
-                longitudeDelta: 0.00421,
-            },
         })
     }
     geoFailure = (err) => {
         this.setState({ error: err.message });
     }
 
+    async polyServe() {
+        let link = URL_API + '/polyline/' + this.state.id_motorista
+        try {
+            const data = await fetch(link);
+            const dataJson = await data.json();
+
+            let coords = dataJson.map((point, index) => {
+                return {
+                    latitude: point[0],
+                    longitude: point[1]
+                }
+            })
+            this.setState({ polyline: coords });
+            this.setState({ coords });
+            console.log("Mapa okay");
+            console.log(this.state.polyline);
+
+            return coords
+        }
+        catch (error) {
+            alert("Ops !! alguma coisa errada no alunoServe")
+            return console.log(error);
+        } //to catch the errors if any
+    }
+
+    polyUpdate() {
+        let polyline = _.cloneDeep(this.state.polyline)
+        polyline.shift()
+        this.state.polylineRef.setNativeProps({coordinates: Polyline})
+        this.setState({polyline})
+    }
+
+    
     mostraMapa() {
         return (
             <MapView
                 style={styles.map}
                 region={this.state.region}>
 
-                <Marker
+                {this.state.polyline.lengthe == 0 ? null :
+                    <Polyline
+                        key={'0'}
+                        ref={(ref => {this.state.polylineRef = ref})}
+                        geodesic={true}
+                        coordinates={this.state.polyline}
+                        strokeColor="#72bcd4" // fallback for when `strokeColors` is not supported by the map-provider
+                        strokeWidth={6} />
+                }
+                <MarkerAnimated
+                    onPress={() => this.polyUpdate() }
                     coordinate={this.state.region}
-                    title={"Ponto 1 "}
-                    description={"Primeiro ponto dos alunos"}
-                />
-                <Marker
-                    coordinate={this.state.region1}
-                    title={"Ponto 2 "}
-                    description={"Segundo ponto dos alunos"}
-                />
-                <Marker
-                    coordinate={this.state.region2}
-                    title={"Ponto 3 "}
-                    description={"Terceiro ponto dos alunos"}
-                />
-                <Marker
-                    coordinate={this.state.region3}
-                    title={"Ponto 4 "}
-                    description={"Quarto ponto dos alunos"}
-                />
+                    title={"Id: " + this.state.id_motorista} >
+                    <Image
+                        style={styles.icon}
+                        source={busIcon}
+                    />
+                </MarkerAnimated>
             </MapView>
-
         )
     }
     render() {
@@ -136,5 +140,11 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0
+    },
+    icon: {
+        width: 50,
+        height: 50,
+        resizeMode: 'contain',
+        zIndex: 3
     }
 });  
