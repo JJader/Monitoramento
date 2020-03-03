@@ -23,14 +23,15 @@ class welcome extends Component {
     });
   }
 
-  finalizar(id){
+  finalizar(){
+    let id = this.state.id
     this.setState({isVisible: false})
-    this.props.navegar(this.state.id)
+    
+    this.props.navegar(id)
   }
 
   async onWelcome(){
     let usuario = await this.props.loginServe()
-    console.log(usuario.nome);
 
     if (usuario.nome){
         this.setState({isVisible: true})

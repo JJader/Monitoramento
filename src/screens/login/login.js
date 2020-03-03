@@ -38,12 +38,11 @@ class login extends Component {
 
   finalizarLogin(response){
     let dados = _.cloneDeep(response)
-    console.log(dados.nome);
     return dados
   }
 
-  navegar(id){
-    this.props.navigation.navigate('RegistraR', id = id) 
+  navegar(idParam){
+    this.props.navigation.navigate('RegistraR', {id : idParam}) 
   }
 
   async loginServe(){
@@ -129,7 +128,7 @@ class login extends Component {
 
           <Welcome
           loginServe = {() => this.loginServe()}
-          navegar = {()=> this.navegar()}
+          navegar = {(id)=> this.navegar(id)}
           />
 
         </View>
