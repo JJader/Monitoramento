@@ -14,7 +14,7 @@ import stylesContainer from '../../styles/Modal';
 
 import { Ionicons } from '@expo/vector-icons';
 
-//import {id} from '../registrosDraw/registraRota'
+import Header from '../../components/navigationMenu'
 
 class RegistraRota extends Component {
   constructor(props) {
@@ -144,6 +144,7 @@ class RegistraRota extends Component {
     return (
       
       <View style={stylesContainer.background}>
+        <Header title = "Registrar rota" navigationProps={this.props.navigation.toggleDrawer}/>
         <ScrollView contentContainerStyle={stylesContainer.conteiner} 
           refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.onRefresh()}/>}>
 

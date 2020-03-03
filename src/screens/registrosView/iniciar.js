@@ -7,6 +7,9 @@ const busIcon = require('../../assets/logo/busMap.png');
 
 import _ from "lodash";
 
+import stylesContainer from '../../styles/Modal';
+
+import Header from '../../components/navigationMenu'
 
 export default class App extends React.Component {
     constructor() {
@@ -92,8 +95,10 @@ export default class App extends React.Component {
     
     mostraMapa() {
         return (
+            <View style={stylesContainer.background}>
+            <Header title = "Mapa" navigationProps={this.props.navigation.toggleDrawer}/>
             <MapView
-                style={styles.map}
+                style={stylesContainer.conteiner}
                 region={this.state.region}>
 
                 {this.state.polyline.lengthe == 0 ? null :
@@ -115,6 +120,7 @@ export default class App extends React.Component {
                     />
                 </MarkerAnimated>
             </MapView>
+            </View>
         )
     }
     render() {

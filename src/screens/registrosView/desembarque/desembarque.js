@@ -7,6 +7,8 @@ import stylesText from '../../../styles/text';
 
 import BotaoDesembarque from './botaoDesebarque';
 
+import Header from '../../../components/navigationMenu'
+
 import _ from "lodash";
 
 class desembarque extends Component {
@@ -110,6 +112,7 @@ class desembarque extends Component {
   render() {
     return (
       <View style={stylesContainer.background}>
+        <Header title = "Desembarcar" navigationProps={this.props.navigation.toggleDrawer}/>
         <ScrollView contentContainerStyle={stylesContainer.conteiner}
           refreshControl={<RefreshControl refreshing={this.state.refreshServer} onRefresh={() => this.onRefreshServer()}/>}>
           <FlatList  

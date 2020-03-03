@@ -5,10 +5,10 @@ import { createDrawerNavigator, DrawerNavigatorItems } from 'react-navigation-dr
 
 import { Ionicons } from '@expo/vector-icons';
 
-import Iniciar from './registrosDraw/iniciar'
-import RegistraRota from './registrosDraw/registraRota';
-import RegistraEmbarque from './registrosDraw/registraEmbarque';
-import Desembarque from './registrosDraw/desembarque';
+import Iniciar from './registrosView/iniciar'
+import RegistraRota from './registrosView/registraRota';
+import RegistraEmbarque from './registrosView/Embarque/registraEmbarque';
+import Desembarque from './registrosView/desembarque/desembarque';
 import Informacao from './informacoesDraw/InformacaoDrawer'
 import Login from './login/login';
 
@@ -70,6 +70,7 @@ const MyDrawerNavigation =
             drawerIcon: <Ionicons name="md-pin" size={30} color="white" />,
           })
       },
+      /*
       Informacao: {
         screen: Informacao,
         navigationOptions: ({navigation}) => ({
@@ -77,6 +78,7 @@ const MyDrawerNavigation =
             drawerIcon: <Ionicons name="md-finger-print" size={30} color="white" />,
           })
       },
+      */
     },
     {
       initialRouteName: 'Login',

@@ -5,6 +5,8 @@ import stylesContainer from '../../../styles/Modal';
 
 import _ from "lodash";
 
+import Header from '../../../components/navigationMenu'
+
 class RegistraEmbarque extends Component {
   constructor(props) {
     super(props);
@@ -123,6 +125,7 @@ class RegistraEmbarque extends Component {
   render() {
     return (
       <View style={stylesContainer.background}>
+        <Header title = "Registrar embarque" navigationProps={this.props.navigation.toggleDrawer}/>
         <ScrollView contentContainerStyle={stylesContainer.conteiner}
           refreshControl={<RefreshControl refreshing={this.state.refreshServer} onRefresh={() => this.onRefreshServer()}/>}>
           <FlatList
