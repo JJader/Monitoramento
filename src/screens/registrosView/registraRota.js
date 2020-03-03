@@ -14,17 +14,19 @@ import stylesContainer from '../../styles/Modal';
 
 import { Ionicons } from '@expo/vector-icons';
 
+//import {id} from '../registrosDraw/registraRota'
+
 class RegistraRota extends Component {
   constructor(props) {
     super(props);
     this.state = {
 
-      id: '1',
+      id: this.props.navigation.state.params.id,
       turno: '',
       veiculo: '',
       rota: '',
       nota: '',
-
+      
       rotasJson: [{id: 0, value:'Null'}],
       turnosJson: [{id: 0, value:'Null'}],
       veiculosJson: [{id: 0, value:'Null'}],
@@ -33,6 +35,19 @@ class RegistraRota extends Component {
     };
   }
   
+  componentWillUpdate(newProps) { // esse componente é construido sempre que os props são modificados
+    //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
+    let oldId = this.state.id
+    const { id } = newProps.navigation.state.params
+
+    if (oldId != id) {
+      this.setState({ id })
+    }
+    console.log("id");
+    
+    alert("Iniciar view")
+  }
+
   async rotaServe(){
     let link = URL_API + '/rotas.json' 
     try {
@@ -120,7 +135,11 @@ class RegistraRota extends Component {
           return console.log(error);
         }
       }
-
+  componentDidMount(){
+    alert(this.state.id)
+    console.log(this.state.id)
+    alert(JSON.stringify(this.props.navigation.state.params))
+  }
   render() {
     return (
       
@@ -205,8 +224,15 @@ class RegistraRota extends Component {
               <Text style={stylesText.cabecalho}>Iniciar rota</Text>
             </View>
           </TouchableOpacity>
-
+          <TouchableOpacity
+            onPress={() => alert(JSON.stringify(this.props.navigation.state.params)) }
+            style={{ marginVertical: 10 }}>
+            <View style={stylesComponets.botao}>
+              <Text style={stylesText.cabecalho}>Iniciar rota</Text>
+            </View>
+          </TouchableOpacity>
         </ScrollView>
+        
       </View>
     );
   }

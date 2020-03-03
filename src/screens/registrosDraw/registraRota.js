@@ -34,7 +34,7 @@ class DetailsScreen extends React.Component {
 
   atualizarProps = (idParam) => {
     id =  idParam
-    alert(JSON.stringify(this.state.id))
+    console.log(id);
   }
 
   componentWillReceiveProps(newProps) { // esse componente é construido sempre que os props são modificados
@@ -47,9 +47,7 @@ class DetailsScreen extends React.Component {
     if (oldId != id) {
       this.setState({ id })
       this.atualizarProps(id)
-      this.props.navigation.navigate('RegistraR', {
-        id : id
-      });
+      this.props.navigation.navigate('RegistraR', {id : id});
     }
     
   }
@@ -57,6 +55,9 @@ class DetailsScreen extends React.Component {
   componentDidMount(){
     //alert(JSON.stringify(this.state.dadosRota))
     this.atualizarProps(this.state.id)
+    alert(JSON.stringify(id))
+    //console.log(this.state.id);
+    
   }
 
   static router = RegistraRotaDrawer.router;
