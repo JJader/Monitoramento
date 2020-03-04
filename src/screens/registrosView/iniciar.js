@@ -24,24 +24,33 @@ export default class App extends React.Component {
             error: null,
             x: (0, 1),
 
-            id_moto: this.props.navigation.getParam('id', 'null'),
-            turno_moto: this.props.navigation.getParam('turno', 'null'),
-            veiculo_moto: this.props.navigation.getParam('veiculo', 'null'),
-            rota_moto: this.props.navigation.getParam('rota', 'null'),
+            id_moto: 1,//this.props.navigation.getParam('id', 'null'),
+            turno_moto:'' ,//this.props.navigation.getParam('turno', 'null'),
+            veiculo_moto: '',//this.props.navigation.getParam('veiculo', 'null'),
+            rota_moto:'' ,//this.props.navigation.getParam('rota', 'null'),
 
             polylineRef:{},
             coords: {},
         }
     }
 
-    componentWillUpdate(newProps) { // esse componente é construido sempre que os props são modificados
+    componentWillReceiveProps(newProps) { // esse componente é construido sempre que os props são modificados
         //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
 
-        let id_moto= this.props.navigation.getParam('id', 'null')
-        let turno_moto= this.props.navigation.getParam('turno', 'null')
-        let veiculo_moto= this.props.navigation.getParam('veiculo', 'null')
-        let rota_moto= this.props.navigation.getParam('rota', 'null')
-    
+        let id_moto= newProps.navigation.getParam('id', 'null')
+        let turno_moto= newProps.navigation.getParam('turno', 'null')
+        let veiculo_moto= newProps.navigation.getParam('veiculo', 'null')
+        let rota_moto= newProps.navigation.getParam('rota', 'null')
+        
+        if (
+            id_moto == this.state.id_moto &&
+            turno_moto == this.state.turno_moto &&
+            veiculo_moto == this.state.veiculo_moto &&
+            rota_moto == this.state.rota_moto
+        ){
+            return (null)
+        }
+
         if (id_moto != null && turno_moto != null && veiculo_moto != null && rota_moto != null ) {
           this.setState({ id_moto })
           this.setState({ turno_moto })
@@ -135,7 +144,10 @@ export default class App extends React.Component {
                 <MarkerAnimated
                     onPress={() => this.polyUpdate() }
                     coordinate={this.state.region}
-                    title={"Id: " + this.state.id_moto} >
+                    title = {"Minha Localização"}
+                    description = {
+                        "Id: " + this.state.id_moto + "\n"               
+                    } >
                     <Image
                         style={styles.icon}
                         source={busIcon}
