@@ -139,9 +139,9 @@ class RegistraRota extends Component {
         }
       }
   componentDidMount(){
-    alert(this.state.id)
+    //alert(this.state.id)
     console.log(this.state.id)
-    alert(JSON.stringify(this.props.navigation.state.params))
+    //alert(JSON.stringify(this.props.navigation.state.params))
   }
   render() {
     return (
