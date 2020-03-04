@@ -72,7 +72,7 @@ const MyDrawerNavigation =
             drawerIcon: <Ionicons name="md-pin" size={30} color="white" />,
           })
       },
-      /*
+      
       Sair: {
         screen: Exit,
         navigationOptions: ({navigation}) => ({
@@ -81,6 +81,7 @@ const MyDrawerNavigation =
         })
       },
       
+      /*
       Informacao: {
         screen: Informacao,
         navigationOptions: ({navigation}) => ({
