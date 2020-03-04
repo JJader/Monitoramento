@@ -11,6 +11,8 @@ import RegistraEmbarque from './registrosView/Embarque/registraEmbarque';
 import Desembarque from './registrosView/desembarque/desembarque';
 import Informacao from './informacoesDraw/InformacaoDrawer'
 import Login from './login/login';
+import Exit from './exit';
+
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
@@ -71,6 +73,14 @@ const MyDrawerNavigation =
           })
       },
       /*
+      Sair: {
+        screen: Exit,
+        navigationOptions: ({navigation}) => ({
+          drawerLabel: 'Sair',
+          drawerIcon: <Ionicons name="md-bed" size={30} color="white" />,
+        })
+      },
+      
       Informacao: {
         screen: Informacao,
         navigationOptions: ({navigation}) => ({

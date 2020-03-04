@@ -24,12 +24,34 @@ export default class App extends React.Component {
             error: null,
             x: (0, 1),
 
-            //id_motorista: this.props.navigation.getParam('id', 'null'),
-            id_motorista: 1,
+            id_moto: this.props.navigation.getParam('id', 'null'),
+            turno_moto: this.props.navigation.getParam('turno', 'null'),
+            veiculo_moto: this.props.navigation.getParam('veiculo', 'null'),
+            rota_moto: this.props.navigation.getParam('rota', 'null'),
+
             polylineRef:{},
             coords: {},
         }
     }
+
+    componentWillUpdate(newProps) { // esse componente é construido sempre que os props são modificados
+        //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
+
+        let id_moto= this.props.navigation.getParam('id', 'null')
+        let turno_moto= this.props.navigation.getParam('turno', 'null')
+        let veiculo_moto= this.props.navigation.getParam('veiculo', 'null')
+        let rota_moto= this.props.navigation.getParam('rota', 'null')
+    
+        if (id_moto != null && turno_moto != null && veiculo_moto != null && rota_moto != null ) {
+          this.setState({ id_moto })
+          this.setState({ turno_moto })
+          this.setState({ veiculo_moto })
+          this.setState({ rota_moto })
+
+          this.polyServe()
+        }
+    }
+
     componentDidMount() {
         let geoOptions = {
             enableHighAccuracy: false,
@@ -61,7 +83,7 @@ export default class App extends React.Component {
     }
 
     async polyServe() {
-        let link = URL_API + '/polyline/' + this.state.id_motorista
+        let link = URL_API + '/polyline/' + this.state.id_moto
         try {
             const data = await fetch(link);
             const dataJson = await data.json();
@@ -113,7 +135,7 @@ export default class App extends React.Component {
                 <MarkerAnimated
                     onPress={() => this.polyUpdate() }
                     coordinate={this.state.region}
-                    title={"Id: " + this.state.id_motorista} >
+                    title={"Id: " + this.state.id_moto} >
                     <Image
                         style={styles.icon}
                         source={busIcon}

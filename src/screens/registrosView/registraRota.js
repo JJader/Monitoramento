@@ -21,7 +21,7 @@ class RegistraRota extends Component {
     super(props);
     this.state = {
 
-      id: this.props.navigation.state.params.id,
+      id: this.props.navigation.getParam('id', 'null'),
       turno: '',
       veiculo: '',
       rota: '',
@@ -43,9 +43,6 @@ class RegistraRota extends Component {
     if (oldId != id) {
       this.setState({ id })
     }
-    console.log("id");
-    
-    alert("Iniciar view")
   }
 
   async rotaServe(){
@@ -128,6 +125,12 @@ class RegistraRota extends Component {
           });
           if (response.ok){
             alert("Rota registrada");
+            this.props.navigation.navigate('Iniciar', {
+              id : rotas.id, 
+              turno: rotas.turno,
+              rota : rotas.rota,
+              veiculo: rotas.veiculo
+            })
           }
         }
         catch (error) {
@@ -220,13 +223,6 @@ class RegistraRota extends Component {
           <TouchableOpacity
             onPress={
               () => this.submeter()}
-            style={{ marginVertical: 10 }}>
-            <View style={stylesComponets.botao}>
-              <Text style={stylesText.cabecalho}>Iniciar rota</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => alert(JSON.stringify(this.props.navigation.state.params)) }
             style={{ marginVertical: 10 }}>
             <View style={stylesComponets.botao}>
               <Text style={stylesText.cabecalho}>Iniciar rota</Text>
