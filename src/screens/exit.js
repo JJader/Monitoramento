@@ -1,6 +1,16 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import { DrawerActions, NavigationActions } from 'react-navigation'
+import { View, Text, BackHandler } from 'react-native';
+import { NavigationActions, StackActions } from 'react-navigation'
+
+import { DrawerActions } from "react-navigation-drawer";
+
+const resetAction = StackActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({ routeName: 'Login' }),
+    ],
+    key: null
+});
 
 export default class exit extends Component {
     constructor(props) {
@@ -9,11 +19,7 @@ export default class exit extends Component {
         };
     }
 
-    resetAction() {
-       //return this.props.navigation.reset([NavigationActions.navigate({routeName: 'Login'})], 0)
-       return this.props.navigation.pop(1)
-    }
     render() {
-        return (this.resetAction());
+        return (BackHandler.exitApp());
     }
 }
