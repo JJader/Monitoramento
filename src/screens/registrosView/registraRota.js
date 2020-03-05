@@ -38,7 +38,7 @@ class RegistraRota extends Component {
   componentWillUpdate(newProps) { // esse componente é construido sempre que os props são modificados
     //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
     let oldId = this.state.id
-    const { id } = newProps.navigation.state.params
+    const id  = newProps.navigation.getParam('id', 'null')
 
     if (oldId != id) {
       this.setState({ id })
@@ -107,6 +107,12 @@ class RegistraRota extends Component {
 
       async submeter(){
         let link = URL_API + '/registrar/rota' 
+
+        if (this.state.rotasJson[0].value == 'Null'){
+          alert("Não é permitido enviar para o servidor")
+          return null
+        }
+
         const rotas = { 
             id : this.state.id,
             turno: this.state.turno,

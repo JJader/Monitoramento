@@ -68,7 +68,7 @@ class ModalAlunos extends Component {
 
     presencaTodosAluno(aluno, presenca){
         // não funciona, funciona so com o último
-        this.setState({listaPresenca : []})
+        /*this.setState({listaPresenca : []})
         let i
         if (this.state.alunos.length != 0){
                         
@@ -78,32 +78,40 @@ class ModalAlunos extends Component {
                 
                         
         }
+        */
+       return null
     }
 
     finalizarEmbarque(){
-        let listaPresenca = this.state.listaPresenca.slice()
-        
-        
-        let aluno, presenca
-        let elem
+
+        if (this.props.titulo != 'default'){
+            let listaPresenca = this.state.listaPresenca.slice()
             
-        while (listaPresenca.length != 0){
-            elem = listaPresenca.pop()
-            aluno = elem.aluno
-            presenca = elem.presenca
-            console.log(elem);
             
-            this.presencaAluno(aluno,presenca)
+            let aluno, presenca
+            let elem
+                
+            while (listaPresenca.length != 0){
+                elem = listaPresenca.pop()
+                aluno = elem.aluno
+                presenca = elem.presenca
+                console.log(elem);
+                
+                this.presencaAluno(aluno,presenca)
+            }
+            this.onRefreshFlat()  
+            
+            this.setState({backgColor: '#32CD32'})
+            this.setState({isVisible: !this.state.isVisible})
+
+            this.setState({listaPresenca : []})
+            this.setState({alunos_add : 0})
+
+            this.props.finalizarEmbarque(this.state.ponto, this.state.alunos)
         }
-        this.onRefreshFlat()  
-        
-        this.setState({backgColor: '#32CD32'})
-        this.setState({isVisible: !this.state.isVisible})
-
-        this.setState({listaPresenca : []})
-        this.setState({alunos_add : 0})
-
-        this.props.finalizarEmbarque(this.state.ponto, this.state.alunos)
+        else{
+            alert("Não é permitido enviar para o servidor")
+        }
     }
 
     //Operações especiais
@@ -111,18 +119,22 @@ class ModalAlunos extends Component {
         let aluno = this.props.retornaAluno(nome,idade)
         let lista = _.clone(this.state.alunos)
         let alunos_add = this.state.alunos_add + 1
-        
+        let exist = false
+
         lista.map((item) => {
             if(item.id == aluno.id){ 
                 alert("Não é possível adicionar esse aluno")
-                return
+                exist = true
+                return null
             } 
         })
         
-        lista.push(aluno)
-        this.setState({ alunos: lista })
-        this.setState({alunos_add})
-        this.onRefreshFlat()
+        if (!exist){
+            lista.push(aluno)
+            this.setState({ alunos: lista })
+            this.setState({alunos_add})
+            this.onRefreshFlat()
+        }
     }
 
     render() {

@@ -62,6 +62,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
+        
         let geoOptions = {
             enableHighAccuracy: false,
             timeOut: 20000, //20 second  
