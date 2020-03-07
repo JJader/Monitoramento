@@ -18,8 +18,10 @@ class BotaoPonto extends Component {
     finalizarEmbarque(){
         this.props.finalizarEmbarque()
     }
-    adicionarAluno(nome, idade){
-        this.props.adicionarAluno(nome,idade)
+    addStudent(id, oldPonto){
+        
+        this.props.addStudent(id,oldPonto)
+
     }
                                             
     cancelarSemSalvar(){
@@ -49,7 +51,7 @@ class BotaoPonto extends Component {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => this.adicionarAluno("nome","idade")} style = {{flex: 1}}>
+                    <TouchableOpacity onPress={() => this.addStudent(1,0)} style = {{flex: 1}}>
                         <View style={stylesComponets.botao}>
                             <Text style={stylesText.cabecalho}>Adicionar aluno</Text>
                         </View>
