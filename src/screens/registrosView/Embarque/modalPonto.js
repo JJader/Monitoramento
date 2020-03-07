@@ -37,14 +37,7 @@ class ModalAlunos extends Component {
 
     cancelar(){
         this.setState({listaPresenca : []})
-        let i = this.state.alunos_add
-        let alunos = _.clone(this.state.alunos)
-
-        for (i; i > 0 ; i--){
-            alunos.pop()
-        }
-        this.setState({alunos})
-        this.setState({alunos_add : 0})
+        
       }
 
     
@@ -75,8 +68,7 @@ class ModalAlunos extends Component {
             this.setListaPresenca(0,presenca)
             this.setListaPresenca(1,presenca)
             this.setListaPresenca(2,presenca)
-                
-                        
+
         }
         */
        return null
@@ -115,26 +107,54 @@ class ModalAlunos extends Component {
     }
 
     //Operações especiais
-    adicionarAluno(nome, idade){
-        let aluno = this.props.retornaAluno(nome,idade)
-        let lista = _.clone(this.state.alunos)
-        let alunos_add = this.state.alunos_add + 1
-        let exist = false
+    delStudent(id,ponto){
+        let aluno = this.props.delStudent(id,ponto)
+        return aluno
+    }
 
-        lista.map((item) => {
-            if(item.id == aluno.id){ 
-                alert("Não é possível adicionar esse aluno")
-                exist = true
-                return null
-            } 
-        })
-        
-        if (!exist){
-            lista.push(aluno)
-            this.setState({ alunos: lista })
-            this.setState({alunos_add})
-            this.onRefreshFlat()
+    searchStudent(id){
+        let alunos = _.clone(this.state.alunos)
+
+        let aluno = alunos.find(element => element.id == id)
+        if (aluno == undefined){
+            return false
+        }else{
+            return true
         }
+    }
+
+    addStudent(id, oldPonto){
+        let exist = this.searchStudent(id)
+        if (!exist){
+            let aluno = this.delStudent(id, oldPonto)
+
+            if(aluno != undefined){
+                let alunos_add = this.state.alunos_add + 1
+
+                let alunos = _.clone(this.state.alunos)
+                alunos.push(aluno)
+                this.setState({ alunos })
+                this.setState({alunos_add})
+                this.onRefreshFlat()
+            }else{
+                alert("O aluno não foi encontrado")
+            }   
+        }else{
+            alert("Esse aluno já existe nessa lista")
+        }
+    }
+
+    componentWillUpdate(newProps){
+        try {
+            if (newProps.data.length + this.state.alunos_add < this.state.alunos.length){
+                this.setState({alunos : newProps.data})
+                
+            }    
+        } catch (error) {
+            console.log("Erro modalPonto ");
+            
+        }
+        
     }
 
     render() {
@@ -188,7 +208,7 @@ class ModalAlunos extends Component {
                                 <BotaoPonto
                                     finalizarEmbarque={() => this.finalizarEmbarque()}
                                     modalSet = {(estado) => this.modalSet(estado)}
-                                    adicionarAluno = {(nome, idade) => this.adicionarAluno(nome,idade)}
+                                    addStudent = {(id, oldPonto) => this.addStudent(id, oldPonto)}
                                     cancelar = {() => this.cancelar()}
                                 />
                         </ScrollView>
