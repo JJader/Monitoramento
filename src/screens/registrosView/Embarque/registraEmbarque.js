@@ -68,20 +68,6 @@ class RegistraEmbarque extends Component {
       return console.log(error);
     } //to catch the errors if any
   }
-  
-  //funções especiais
-  retornaAluno(nome, idade){
-    // Back end busca 
-    //returno o aluno
-    return ({
-      id: 24,
-      nome: 'João abraam jose',
-      idade: '13',
-      escola: 'UFOP',
-      turno: 'Manha',
-      presenca: false,
-    })
-  }
 
   async finalizarEmbarque(ponto,AlunosPonto) {    
     let pontosJson = _.cloneDeep(this.state.pontosJson)
@@ -121,6 +107,37 @@ class RegistraEmbarque extends Component {
           return false
         }
   }
+  
+  //funções especiais
+  delStudent(id,ponto){
+    
+    let pontosJson = _.cloneDeep(this.state.pontosJson)
+    let alunos = pontosJson[ponto].alunos
+    let aluno = undefined
+    
+    let i = 0
+
+    for (i; i< alunos.length; i++){
+      
+      if (alunos[i].id == id){
+        aluno = alunos.splice(i,1)
+        break
+      }
+        
+    }
+
+    if (aluno == undefined){
+      return aluno
+
+    }else {
+      pontosJson[ponto].alunos = alunos
+      this.setState({pontosJson})
+      this.onRefreshFlat()
+      return (aluno[0])
+    }
+  }
+
+
 
   render() {
     return (
@@ -136,12 +153,13 @@ class RegistraEmbarque extends Component {
             renderItem={
               ({ item, index }) => {
                 return (
+                  
                   <ModalPonto
                     data={item.alunos}
                     ponto={index}
                     titulo = {item.value}
                     finalizarEmbarque={(ponto,AlunosPonto) => this.finalizarEmbarque(ponto,AlunosPonto)}
-                    retornaAluno = {(nome, idade) => this.retornaAluno(nome,idade)}
+                    delStudent = {(ponto, index) => this.delStudent(ponto,index)}
                     refresh = {() => this.onRefreshFlat()}
                   />)
               }
