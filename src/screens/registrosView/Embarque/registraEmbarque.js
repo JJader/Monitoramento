@@ -109,22 +109,13 @@ class RegistraEmbarque extends Component {
   }
   
   //funções especiais
-  delStudent(id,ponto){
+  delStudent(index,ponto){
     
     let pontosJson = _.cloneDeep(this.state.pontosJson)
     let alunos = pontosJson[ponto].alunos
     let aluno = undefined
-    
-    let i = 0
-
-    for (i; i< alunos.length; i++){
-      
-      if (alunos[i].id == id){
-        aluno = alunos.splice(i,1)
-        break
-      }
         
-    }
+    aluno = alunos.splice(index,1)
 
     if (aluno == undefined){
       return aluno
@@ -137,6 +128,32 @@ class RegistraEmbarque extends Component {
     }
   }
 
+  searchStudent(id, ponto){
+    let pontosJson = _.cloneDeep(this.state.pontosJson)
+    let alunos = pontosJson[ponto].alunos
+    let index = alunos.findIndex(
+      (element,index,array) => {
+        return (element.id == id)
+      }
+    )
+
+    if (index != -1){
+      let aluno = alunos[index]
+      let dados = {
+        aluno : aluno,
+        index : index
+      }
+      
+      return dados
+    }else{
+
+      return undefined
+
+    }
+    
+    
+
+  }
 
 
   render() {
@@ -159,7 +176,8 @@ class RegistraEmbarque extends Component {
                     ponto={index}
                     titulo = {item.value}
                     finalizarEmbarque={(ponto,AlunosPonto) => this.finalizarEmbarque(ponto,AlunosPonto)}
-                    delStudent = {(ponto, index) => this.delStudent(ponto,index)}
+                    delStudent = {(index,ponto) => this.delStudent(index,ponto)}
+                    searchStudent = {(id, ponto) => this.searchStudent(id, ponto)}
                     refresh = {() => this.onRefreshFlat()}
                   />)
               }

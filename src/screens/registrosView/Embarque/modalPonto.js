@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Modal, TouchableOpacity, Switch, ScrollView, FlatList } from 'react-native';
-
+import { View, Text, Modal, TouchableOpacity, Switch, ScrollView, FlatList, Alert } from 'react-native';
 import PresencaAluno from './PresencaAluno';
 import styles from '../../../styles/Modal'
 import stylesText from '../../../styles/text';
@@ -107,8 +106,8 @@ class ModalAlunos extends Component {
     }
 
     //Operações especiais
-    delStudent(id,ponto){
-        let aluno = this.props.delStudent(id,ponto)
+    delStudent(index,ponto){
+        let aluno = this.props.delStudent(index,ponto)
         return aluno
     }
 
@@ -123,24 +122,42 @@ class ModalAlunos extends Component {
         }
     }
 
-    addStudent(id, oldPonto){
-        let exist = this.searchStudent(id)
-        if (!exist){
-            let aluno = this.delStudent(id, oldPonto)
+    addStudent(index, oldPonto){
+        let aluno = this.delStudent(index, oldPonto)
+        
+        if(aluno != undefined){
+            let alunos_add = this.state.alunos_add + 1
 
-            if(aluno != undefined){
-                let alunos_add = this.state.alunos_add + 1
-
-                let alunos = _.clone(this.state.alunos)
-                alunos.push(aluno)
-                this.setState({ alunos })
-                this.setState({alunos_add})
-                this.onRefreshFlat()
-            }else{
-                alert("O aluno não foi encontrado")
-            }   
+            let alunos = _.clone(this.state.alunos)
+            alunos.push(aluno)
+            this.setState({ alunos })
+            this.setState({alunos_add})
+            this.onRefreshFlat()
         }else{
+            alert("O aluno não foi encontrado")
+        }   
+    }
+
+    printStudent(id, oldPonto){
+        let exist = this.searchStudent(id)
+        let dados = this.props.searchStudent(id, oldPonto)
+        
+        if (exist){
             alert("Esse aluno já existe nessa lista")
+            return null
+        }
+
+        if (dados != undefined){
+
+            let student = {
+                aluno : dados.aluno,
+                index : dados.index,
+            }
+
+            return student
+        }else{
+            alert("O aluno não foi encontrado")
+            return undefined
         }
     }
 
@@ -208,11 +225,13 @@ class ModalAlunos extends Component {
                                 <BotaoPonto
                                     finalizarEmbarque={() => this.finalizarEmbarque()}
                                     modalSet = {(estado) => this.modalSet(estado)}
-                                    addStudent = {(id, oldPonto) => this.addStudent(id, oldPonto)}
+                                    printStudent = {(id, oldPonto) => this.printStudent(id, oldPonto)}
+                                    addStudent = {(index, oldPonto) => this.addStudent(index, oldPonto)}
                                     cancelar = {() => this.cancelar()}
                                 />
                         </ScrollView>
                     </Modal>
+                    
                 </View>
             </View>
         );
