@@ -1,25 +1,25 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
 import styles from '../../styles/Modal'
 import stylesText from '../../styles/text';
 import stylesComponets from '../../styles/componets';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import { Ionicons } from '@expo/vector-icons';
 class BotaoPonto extends Component {
     constructor(props) {
         super(props);
         this.state = {
             aluno: {
-                id: 'null',
-                nome: 'null',
-                idade: 'null',
-                escola: 'nUll',
-                turno: 'nUll',
+                id: '',
+                nome: '',
+                idade: '',
+                escola: '',
+                turno: '',
                 presenca: 0,
             },
-            index: null,
-            oldPonto: null,
-            id: null,
+            index: '',
+            oldPonto: '',
+            id: '',
             isvisible : false
         };
     }
@@ -32,16 +32,54 @@ class BotaoPonto extends Component {
         this.props.finalizarEmbarque()
     }
 
-    printStudent(id, oldPonto) {
+    idChange = (id) => {
+        id ?
+        this.setState({ id: parseInt(id) }) :
+        this.setState({ id:'' })
+        
+    };
 
-        dados = this.props.printStudent(id, oldPonto)
+    oldpontoChange = (oldPonto) => {
+        oldPonto ?
+        this.setState({ oldPonto : parseInt(oldPonto)}) :
+        this.setState({ oldPonto : ''})
+    };
 
+    
+    restoreProps() {
+        this.setState({aluno: {
+            id: '',
+            nome: '',
+            idade: '',
+            escola: '',
+            turno: '',
+            presenca: 0,
+        }})
+        this.setState({index: ''})
+        this.setState({oldPonto: ''})
+        this.setState({id : ''})
+    }
+
+    printStudent() {
+
+        let id = this.state.id
+        let oldPonto = this.state.oldPonto
+        let dados = undefined
+
+        if (typeof(id) == "number" && typeof(oldPonto) == "number"){
+            
+            dados = this.props.printStudent(id, oldPonto)
+        }
+        
         if (dados != undefined) {
+            
             this.setState({ aluno: dados.aluno })
             this.setState({ index: dados.index })
             this.setState({ oldPonto })
             this.setState({isvisible: true})
             
+        }else{
+            this.restoreProps()
         }
     }
 
@@ -49,7 +87,7 @@ class BotaoPonto extends Component {
         let index = this.state.index
         let oldPonto = this.state.oldPonto
 
-        if (index != null && oldPonto != null){
+        if (typeof(index) == "number" && typeof(oldPonto) == "number"){
             this.props.addStudent(index, oldPonto)
             this.closeModal()
         }else{
@@ -59,17 +97,15 @@ class BotaoPonto extends Component {
 
     closeModal(){
         this.setState({isvisible: false})
-        this.setState({aluno: {
-            id: 'null',
-            nome: 'null',
-            idade: 'null',
-            escola: 'nUll',
-            turno: 'nUll',
-            presenca: 0,
-        }})
-        this.setState({index: null})
-        this.setState({oldPonto: null})
-        this.setState({id : null})
+        this.restoreProps()
+    }
+
+    showStudent(){
+        return( this.state.aluno.id != '' ? 
+            <Ionicons name="ios-happy" size={50} color="gray" />
+        :
+            <Ionicons name="ios-sad" size={50} color="gray" />)
+        
     }
 
     cancelarSemSalvar() {
@@ -87,7 +123,6 @@ class BotaoPonto extends Component {
             { cancelable: false }
         );
     }
-
 
     render() {
         return (
@@ -113,28 +148,54 @@ class BotaoPonto extends Component {
                 </TouchableOpacity>
 
                 <Modal visible = {this.state.isvisible}>
-                <ScrollView style={{ backgroundColor: 'white' , paddingTop: 30}}>
-                    <View style={stylesText.viewCabecalho}>
-                        <Text> Input </Text>
+                <ScrollView contentContainerStyle={{ flex : 1,  justifyContent: 'space-between'}}>
+
+                    <View style={[stylesText.viewCabecalho, {flexDirection: "column", alignItems: 'center'}]}>
+                        <Text style={stylesText.cabecalho}>Procurar</Text>
+                        <View style = {{flexDirection: "row", flex: 3, justifyContent: 'center', alignItems: "center"}}>
+                            <View style= {stylesText.viewTextInput}>
+                                <View style = {stylesText.textInput}>
+                                    <TextInput 
+                                        style = { {flex: 1}}
+                                        value={ String(this.state.id) }
+                                        onChangeText={this.idChange}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        placeholder={"Id"}
+                                        keyboardType={'numeric'} 
+                                    />
+                                </View>
+                                <View style = {stylesText.textInput}>
+                                    <TextInput 
+                                        style = {{flex: 1}}
+                                        value={ String(this.state.oldPonto)}
+                                        onChangeText={this.oldpontoChange}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        placeholder={"Bus stop"}
+                                        keyboardType={'numeric'}  
+                                    />
+                                </View>
+                                
+                            </View>
+
+                            <TouchableOpacity onPress={() => this.printStudent()} style={{ marginRight: 30 }}>
+                                <Ionicons name="md-search" size={30} color="white" />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <View style={stylesText.viewCabecalho}>
-                        <Text style={stylesText.cabecalho} > Id: {this.state.aluno.id}</Text>
-                        <Text style={stylesText.cabecalho} > Nome: {this.state.aluno.nome}</Text>
-                        <Text style={stylesText.cabecalho} > Idade: {this.state.aluno.idade}</Text>
-                        <Text style={stylesText.cabecalho} > Escola: {this.state.aluno.escola}</Text>
-                        <Text style={stylesText.cabecalho} > Turno: {this.state.aluno.turno}</Text>
+
+                    <View style={[stylesText.viewCabecalho, stylesComponets.BoxShadow,{ justifyContent: 'center', backgroundColor: 'white'}]}>
+                        {this.showStudent()}
+                        <Text style={stylesText.text} > Id: {this.state.aluno.id}</Text>
+                        <Text style={stylesText.text} >{this.state.aluno.nome}</Text>
                     </View>
+
                     <View style={{ marginTop: 20 }}>
                         <View style={{ flexDirection: 'row' }}>
                             <TouchableOpacity onPress={() => this.addStudent()} style={{ flex: 1 }}>
                                 <View style={stylesComponets.botao}>
                                     <Text style={stylesText.cabecalho}>Adicionar aluno</Text>
-                                </View>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity onPress={() => this.printStudent(11, 0)} style={{ flex: 1 }}>
-                                <View style={stylesComponets.botao}>
-                                    <Text style={stylesText.cabecalho}>Pesquisar aluno</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>

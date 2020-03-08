@@ -54,7 +54,6 @@ class ModalAlunos extends Component {
             presenca: presenca
         }
         listaPresenca.push(elem)
-        console.log(this.state.listaPresenca.length);
         this.setState({listaPresenca})
     }
 
@@ -86,7 +85,6 @@ class ModalAlunos extends Component {
                 elem = listaPresenca.pop()
                 aluno = elem.aluno
                 presenca = elem.presenca
-                console.log(elem);
                 
                 this.presencaAluno(aluno,presenca)
             }
@@ -140,8 +138,14 @@ class ModalAlunos extends Component {
 
     printStudent(id, oldPonto){
         let exist = this.searchStudent(id)
-        let dados = this.props.searchStudent(id, oldPonto)
+        let dados = undefined
         
+        try {
+            dados = this.props.searchStudent(id, oldPonto)
+        } catch (error) {
+
+        }
+
         if (exist){
             alert("Esse aluno já existe nessa lista")
             return null
@@ -178,7 +182,7 @@ class ModalAlunos extends Component {
         return (
             <View style={styles.conteiner}>
                 <TouchableOpacity onPress={() => this.modalSet(true)}>
-                    <View style={[stylesComponets.ponto, {backgroundColor : this.state.backgColor}]}>
+                    <View style={[ stylesComponets.BoxShadow, stylesComponets.ponto, {backgroundColor : this.state.backgColor}]}>
                         <Text style={stylesText.cabecalho}>
                             {this.props.titulo}
                         </Text>
