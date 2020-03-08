@@ -9,6 +9,7 @@ export default StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         margin: 5,
+        flex: 1
     },
     titulo: {
         fontWeight: 'bold',
@@ -35,6 +36,30 @@ export default StyleSheet.create({
         backgroundColor: '#0279be',
         fontWeight: 'bold',
         alignItems: "center",
+    },
+    textLogin: {
+        minHeight: 40,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingHorizontal: 20
+    },
+
+    textInput: {
+        minHeight: 40,
+        backgroundColor: 'white',
+        paddingHorizontal: 20,
+        marginVertical: 30,
+        flex: 1
+    },
+    
+    viewTextInput:{
+        marginBottom: 20,
+        marginHorizontal: 20,
+        flex: 1,
+        justifyContent: 'space-around',
+        flexDirection: 'column',
+        alignItems: 'stretch'
+    
     },
 
 

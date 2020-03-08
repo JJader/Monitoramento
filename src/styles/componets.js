@@ -50,4 +50,17 @@ export default StyleSheet.create({
         backgroundColor: '#0279be',
         color: 'white',
       },
+
+      BoxShadow: {
+        borderWidth: 1,
+        borderRadius: 2,
+        borderColor: '#ddd',
+        borderBottomWidth: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 30,
+        elevation: 6,
+        margin: 10,
+      }
 })

@@ -100,10 +100,10 @@ class login extends Component {
             />
           </View>
 
-          <View style = {styles.infomacoes}>
+          <View style = {stylesText.viewTextInput}>
             <Text style = {[stylesText.text, styles.text]}> Usuário : </Text>
             <TextInput 
-              style = {styles.textInput}
+              style = {stylesText.textLogin}
               value={this.state.user}
               onChangeText={this.userChange}
               autoCapitalize="none"
@@ -112,7 +112,7 @@ class login extends Component {
             
             <Text style = {[stylesText.text, styles.text]}> Senha : </Text>
             <TextInput 
-              style = {styles.textInput}
+              style = {stylesText.textLogin}
               value={this.state.password}
               onChangeText={this.passwordChange}
               autoCapitalize="none"
@@ -156,23 +156,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  infomacoes:{
-    marginBottom: 20,
-    marginHorizontal: 20,
-    flex: 1,
-    justifyContent: 'space-around',
-    flexDirection: 'column',
-    alignItems: 'stretch'
-  },
   text:{
     fontWeight: 'bold',
     color: 'white',
-  },
-  textInput: {
-    minHeight: 40,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 20
   },
   botaoConteiner:{
     marginBottom: 10,
