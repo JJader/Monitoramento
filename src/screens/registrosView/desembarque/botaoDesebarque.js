@@ -68,7 +68,7 @@ class BotaoDesembarque extends Component {
         <TouchableOpacity style={{ flex: 1 }}
           onPress = {() => this.ClickDesemparcar()}
         >
-          <View style={[stylesComponets.botao, {backgroundColor: this.state.backgColor}]}>
+          <View style={[stylesComponets.BoxShadow,stylesComponets.botao, {backgroundColor: this.state.backgColor}]}>
             <Text style={stylesText.cabecalho}>Desembarcar</Text>
           </View>
         </TouchableOpacity>
