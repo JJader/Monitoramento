@@ -12,6 +12,7 @@ import Desembarque from './registrosView/desembarque/desembarque';
 import Informacao from './informacoesDraw/InformacaoDrawer'
 import Login from './login/login';
 import Exit from './exit';
+import Start from './start'
 
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
@@ -80,6 +81,14 @@ const MyDrawerNavigation =
           drawerIcon: <Ionicons name="md-bed" size={30} color="white" />,
         })
       },
+
+      Start: {
+        screen: Start,
+        navigationOptions: ({navigation}) => ({
+          drawerLabel: () => null
+        })
+        
+      },
       
       /*
       Informacao: {
@@ -92,7 +101,7 @@ const MyDrawerNavigation =
       */
     },
     {
-      initialRouteName: 'Login',
+      initialRouteName: 'Iniciar',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
