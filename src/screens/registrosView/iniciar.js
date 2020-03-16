@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Platform, Text, View, Image } from 'react-native';
 
-import MapView, { Marker, Polyline, MarkerAnimated } from 'react-native-maps'
+import MapView, { Marker, Polyline, MarkerAnimated, UrlTile, MAP_TYPES, PROVIDER_DEFAULT } from 'react-native-maps'
 
 const busIcon = require('../../assets/logo/busMap.png');
 
@@ -124,6 +124,10 @@ export default class App extends React.Component {
         this.setState({polyline})
     }
 
+    get mapType() {
+        return this.props.provider === PROVIDER_DEFAULT ? MAP_TYPES.STANDARD : MAP_TYPES.NONE;
+    }
+
     
     mostraMapa() {
         return (
@@ -131,8 +135,13 @@ export default class App extends React.Component {
             <Header title = "Mapa" navigationProps={this.props.navigation.toggleDrawer}/>
             <MapView
                 style={stylesContainer.conteiner}
-                region={this.state.region}>
-
+                region={this.state.region}
+                mapType={this.mapType}
+                >
+                <UrlTile urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                maximumZ={19}
+                />
+                
                 {this.state.polyline.lengthe == 0 ? null :
                     <Polyline
                         key={'0'}
