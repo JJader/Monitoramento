@@ -43,6 +43,7 @@ class login extends Component {
 
   navegar(idParam){
     this.props.navigation.navigate('RegistraR', {id : idParam}) 
+    this.props.navigation.navigate('Start') 
   }
 
   async loginServe(){
