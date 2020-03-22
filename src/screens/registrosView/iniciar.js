@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Platform, Text, View, Image } from 'react-native';
+import { StyleSheet, Platform, Dimensions,Text, View, Image, Button } from 'react-native';
 
 import MapView, { Marker, Polyline, MarkerAnimated, UrlTile, MAP_TYPES, PROVIDER_DEFAULT } from 'react-native-maps'
 
@@ -11,7 +11,11 @@ import stylesContainer from '../../styles/Modal';
 
 import Header from '../../components/navigationMenu'
 
+const { width, height } = Dimensions.get('window');
 
+const ASPECT_RATIO = width / height;
+const LATITUDE_DELTA = 0.000922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 export default class App extends React.Component {
     constructor() {
@@ -31,8 +35,8 @@ export default class App extends React.Component {
             region: {
                 latitude: '',
                 longitude: '',
-                latitudeDelta: 0.000722,
-                longitudeDelta: 0.000221,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
             },
             error: null,
 
@@ -149,16 +153,12 @@ export default class App extends React.Component {
 
         this.updateLocation(latitude, longitude)
 
-        let start = {
-            longitude: longitude,
-            latitude: latitude
-        }
         let end = {
             longitude: -44.4441286,
             latitude: -18.7268367
         }
-        this.getPolyWrongline(start,end)
 
+        this.getPolyWrongline(end)
     }
 
     geoFailure = (err) => {
@@ -196,7 +196,13 @@ export default class App extends React.Component {
         this.setState({ polyBusRoute })
     }
 
-    async getPolyWrongline(start, end) {
+    async getPolyWrongline(end) {
+        
+        let start = {
+            longitude: this.state.region.longitude,
+            latitude: this.state.region.latitude
+        }
+
         let link = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' + 
         '&start=' + start.longitude + ',' + start.latitude + '&end=' + end.longitude + ',' + end.latitude;
         try {
@@ -242,9 +248,7 @@ export default class App extends React.Component {
                     //onRegionChange = {this.onRegionChange}
                     showsUserLocation={true}
                 >
-                    <UrlTile urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        maximumZ={30}
-                    />
+                    
 
                     {this.state.polyBusRoute.lengthe == 0 ? null :
                         < Polyline
@@ -264,10 +268,15 @@ export default class App extends React.Component {
                             geodesic={true}
                             coordinates={this.state.polyWrongRoute}
                             strokeColor="red"
-                            strokeWidth={10} 
-                            
+                            strokeColors={['red','#72bcd4']}
+                            strokeWidth={12}     
                         />
                     }
+
+                    <UrlTile urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        maximumZ={25}
+                        zIndex={-3}
+                    />
 
                     <MarkerAnimated
                         onPress={() => this.polyUpdate()}
