@@ -268,8 +268,7 @@ export default class App extends React.Component {
                             geodesic={true}
                             coordinates={this.state.polyWrongRoute}
                             strokeColor="red"
-                            strokeColors={['red','#72bcd4']}
-                            strokeWidth={12}     
+                            strokeWidth={12}   
                         />
                     }
 
