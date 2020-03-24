@@ -13,6 +13,8 @@ import Header from '../../components/navigationMenu'
 
 const { width, height } = Dimensions.get('window');
 
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -27,8 +29,12 @@ export default class App extends React.Component {
 
             polyWrongRoute: [],
             polyWrongRef: {},
-            busStops: [],
-
+            busStops: [
+                //latitude: '',
+                //longitude: '',
+                //value: ''
+            ],
+            busStopsRoute: [],
 
             ready: false,
 
@@ -40,13 +46,12 @@ export default class App extends React.Component {
             },
             error: null,
 
+            timeOut : false,
+
             id_moto: 1,//this.props.navigation.getParam('id', 'null'),
             turno_moto: '',//this.props.navigation.getParam('turno', 'null'),
             veiculo_moto: '',//this.props.navigation.getParam('veiculo', 'null'),
             rota_moto: '',//this.props.navigation.getParam('rota', 'null'),
-
-            
-            coords: {},
         }
     }
 
@@ -54,32 +59,41 @@ export default class App extends React.Component {
     componentWillReceiveProps(newProps) {
         //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
 
+        let updateServe = false
+
         let id_moto = newProps.navigation.getParam('id', 'null')
         let turno_moto = newProps.navigation.getParam('turno', 'null')
         let veiculo_moto = newProps.navigation.getParam('veiculo', 'null')
         let rota_moto = newProps.navigation.getParam('rota', 'null')
 
-        if (
-            id_moto == this.state.id_moto &&
-            turno_moto == this.state.turno_moto &&
-            veiculo_moto == this.state.veiculo_moto &&
-            rota_moto == this.state.rota_moto
-        ) {
-            return (null)
-        }
+        let busStops = newProps.navigation.getParam('busStops', 'null')
 
-        if (id_moto != null &&
-            turno_moto != null &&
-            veiculo_moto != null &&
-            rota_moto != null) {
-
+        if(id_moto != this.state.id_moto && id_moto != null){
             this.setState({ id_moto })
+            updateServe = true
+        }
+        if(turno_moto != this.state.turno_moto && turno_moto != null){
             this.setState({ turno_moto })
+            updateServe = true
+        }
+        if(veiculo_moto != this.state.veiculo_moto && veiculo_moto != null){
             this.setState({ veiculo_moto })
+            updateServe = true
+        }
+        if(rota_moto != this.state.rota_moto && rota_moto != null){
             this.setState({ rota_moto })
-
+            updateServe = true
+        }
+        if(updateServe){
             this.polyServe()
         }
+
+        if(busStops != null){
+            this.setState({busStops})
+            this.setState({busStopsRoute: busStops})
+            //console.log(busStops);
+        }
+
     }
 
     componentDidMount() {
@@ -97,13 +111,16 @@ export default class App extends React.Component {
             geoOptions);
 
 
-        this.setState({ ready: false, error: null });
         this.polyServe()
+
+        setInterval(this.getPolyWrongline.bind(this) , 10000);
         
     }
 
     //geoLocation function
     updateLocation(latitude, longitude) {
+        // Update bus Icon
+
         const newCoordinate = {
             latitude,
             longitude
@@ -133,7 +150,9 @@ export default class App extends React.Component {
     }
 
     geoChange = (position) => {
-        const minDelta = 0.0001222 
+        //call the updateLocation function if bus to drive more than 13 meters
+
+        const minDelta = 0.44/3600
         let latitude = position.nativeEvent.coordinate.latitude
         let longitude = position.nativeEvent.coordinate.longitude
 
@@ -143,30 +162,39 @@ export default class App extends React.Component {
         if (detLat > minDelta && detLon > minDelta){
             this.updateLocation(latitude, longitude)
         }
+        
+        //this.getPolyWrongline()
     }
 
     geoSuccess = (position) => {
-        console.log(position.coords.latitude);
+        // constructor of GeoLocation, first location
 
         let latitude = position.coords.latitude
         let longitude = position.coords.longitude
 
         this.updateLocation(latitude, longitude)
-
-        let end = {
-            longitude: -44.4441286,
-            latitude: -18.7268367
-        }
-
-        this.getPolyWrongline(end)
     }
 
     geoFailure = (err) => {
         this.setState({ error: err.message });
     }
 
+    isWithin100m(a ,  b) {
+        const R = 6371000
+        let dy = (a.latitude - b.latitude) * R * Math.PI / 180.0;
+    
+        if (dy < -100 || dy > 100) return false;
+    
+        let dmid = 0.5 * (a.lat + b.lat) * Math.PI / 180.0;
+        let dx = (a.lng - b.lng) * R * Math.PI / 180.0 / Math.cos(dmid);
+
+        return dx*dx + dy*dy <= 10000.0;
+    }
+
     // Polyline function
     async polyServe() {
+        // get polyline route
+
         let link = URL_API + '/polyline/' + this.state.id_moto
         try {
             const data = await fetch(link);
@@ -186,29 +214,46 @@ export default class App extends React.Component {
         catch (error) {
             alert("Ops !! alguma coisa errada no polyServe")
             return console.log(error);
-        } //to catch the errors if any
+        }
     }
     
     polyUpdate() {
+        // delete the first point of polyline route
+
         let polyline = _.cloneDeep(this.state.polyBusRoute)
         polyline.shift()
         this.state.polyRouteRef.setNativeProps({ coordinates: Polyline })
         this.setState({ polyBusRoute })
     }
 
-    async getPolyWrongline(end) {
+    async getPolyWrongline() {
+        // Get Polyline if driver was not on route
+        let busStopsRoute = this.state.busStopsRoute
         
+        if(busStopsRoute.length == 0){
+            return null
+        }
+
+        let bustop = busStopsRoute.pop() //busStopsRoute.shift()
+        this.setState({busStopsRoute})
+
         let start = {
             longitude: this.state.region.longitude,
             latitude: this.state.region.latitude
         }
+        
+        let end = {
+            longitude: bustop.longitude,
+            latitude: bustop.latitude,
+        }
 
         let link = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' + 
         '&start=' + start.longitude + ',' + start.latitude + '&end=' + end.longitude + ',' + end.latitude;
+        
         try {
             const data = await fetch(link);
             const dataJson = await data.json();
-            console.log(dataJson);
+            //console.log(dataJson);
             dataArray = dataJson.features[0].geometry.coordinates
             
             
@@ -221,13 +266,13 @@ export default class App extends React.Component {
             
             this.setState({ polyWrongRoute: coords });
             console.log("New route okay");
-            console.log(JSON.stringify(coords));
+            //console.log(JSON.stringify(coords));
 
         }
         catch (error) {
             alert("Ops !! alguma coisa errada no getPolyWrongline")
             return console.log(error);
-        } //to catch the errors if any
+        }
     }
 
     // map function
@@ -276,6 +321,25 @@ export default class App extends React.Component {
                         maximumZ={25}
                         zIndex={-3}
                     />
+
+                    {this.state.busStops.map(marker => (
+                        <Marker
+                            coordinate={{
+                                latitude: marker.latitude,
+                                longitude: marker.longitude,
+                                latitudeDelta: this.state.region.latitudeDelta,
+                                longitudeDelta: this.state.region.longitudeDelta,
+                            }}
+                            title={marker.value}
+                            key={marker.value}
+                        >
+                            <MaterialIcons 
+                                name="person-pin-circle" 
+                                size={styles.icon.height} 
+                                color="#0279be" 
+                            />
+                        </Marker>
+                    ))}
 
                     <MarkerAnimated
                         onPress={() => this.polyUpdate()}
