@@ -59,8 +59,12 @@ class RegistraEmbarque extends Component {
       const data = await fetch(link);
       const dataJson = await data.json();
       this.setState({ pontosJson: dataJson.pontos });
+      
       console.log("Aluno okay");
+      
+      this.shareBustop(dataJson.pontos)
       this.setState({refreshServer: false})
+
     }
     catch (error) {
       alert("Ops !! alguma coisa errada no alunoServe")
@@ -108,7 +112,20 @@ class RegistraEmbarque extends Component {
         }
   }
   
-  //funções especiais
+  //Share Functions
+  shareBustop(dataArray){
+    let data = dataArray.map((point, index) => {
+      return {
+          latitude: point.lat,
+          longitude: point.lon,
+          value: point.value
+      }
+  })
+    this.props.navigation.navigate('Iniciar', {busStops: data}) 
+  }
+
+
+  //special functions for students
   delStudent(index,ponto){
     
     let pontosJson = _.cloneDeep(this.state.pontosJson)
@@ -150,9 +167,6 @@ class RegistraEmbarque extends Component {
       return undefined
 
     }
-    
-    
-
   }
 
 
