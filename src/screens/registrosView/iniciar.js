@@ -312,8 +312,8 @@ export default class App extends React.Component {
                             ref={(ref => { this.state.polyWrongRef = ref })}
                             geodesic={true}
                             coordinates={this.state.polyWrongRoute}
-                            strokeColor="red"
-                            strokeWidth={12}   
+                            strokeColor="#72bcd4"
+                            strokeWidth={10}   
                         />
                     }
 
@@ -336,7 +336,7 @@ export default class App extends React.Component {
                             <MaterialIcons 
                                 name="person-pin-circle" 
                                 size={styles.icon.height} 
-                                color="#0279be" 
+                                color="#0279be" //#72bcd4
                             />
                         </Marker>
                     ))}
