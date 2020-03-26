@@ -48,7 +48,7 @@ export default class App extends React.Component {
 
             timeOut : false,
 
-            id_moto: 1,//this.props.navigation.getParam('id', 'null'),
+            id_moto: 0,//this.props.navigation.getParam('id', 'null'),
             turno_moto: '',//this.props.navigation.getParam('turno', 'null'),
             veiculo_moto: '',//this.props.navigation.getParam('veiculo', 'null'),
             rota_moto: '',//this.props.navigation.getParam('rota', 'null'),
@@ -56,17 +56,14 @@ export default class App extends React.Component {
     }
 
     // component function
-    componentWillReceiveProps(newProps) {
+
+    componentWillUpdate(newProps) { 
         //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
-
-        let updateServe = false
-
+        
         let id_moto = newProps.navigation.getParam('id', 'null')
         let turno_moto = newProps.navigation.getParam('turno', 'null')
         let veiculo_moto = newProps.navigation.getParam('veiculo', 'null')
         let rota_moto = newProps.navigation.getParam('rota', 'null')
-
-        let busStops = newProps.navigation.getParam('busStops', 'null')
 
         if(id_moto != this.state.id_moto && id_moto != null){
             this.setState({ id_moto })
@@ -84,13 +81,16 @@ export default class App extends React.Component {
             this.setState({ rota_moto })
             updateServe = true
         }
-        if(updateServe){
-            this.polyServe()
-        }
+    }
+    componentWillReceiveProps(newProps) {
+        //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
+        
+        let busStops = newProps.navigation.getParam('busStops', 'null')
 
         if(busStops != null){
             this.setState({busStops})
-            this.setState({busStopsRoute: busStops})
+
+            this.setState({busStopsRoute: _.cloneDeep(busStops) })
             //console.log(busStops);
         }
 
@@ -110,8 +110,6 @@ export default class App extends React.Component {
             this.geoFailure,
             geoOptions);
 
-
-        this.polyServe()
 
         setInterval(this.getPolyWrongline.bind(this) , 10000);
         
@@ -228,15 +226,16 @@ export default class App extends React.Component {
 
     async getPolyWrongline() {
         // Get Polyline if driver was not on route
-        let busStopsRoute = this.state.busStopsRoute
         
-        if(busStopsRoute.length == 0){
+        if(this.state.busStopsRoute.length == 0){
             return null
         }
 
-        let bustop = busStopsRoute.pop() //busStopsRoute.shift()
-        this.setState({busStopsRoute})
+        let busStopsRoute = _.cloneDeep(this.state.busStopsRoute)
+        
 
+        let bustop = busStopsRoute.shift() //this.deletMarket()
+        
         let start = {
             longitude: this.state.region.longitude,
             latitude: this.state.region.latitude
@@ -280,6 +279,12 @@ export default class App extends React.Component {
         return this.props.provider === PROVIDER_DEFAULT ? MAP_TYPES.STANDARD : MAP_TYPES.NONE;
     }
 
+    deletMarket(){
+        let busStopsRoute = this.state.busStopsRoute
+        busStopsRoute.shift() //busStopsRoute.pop()
+        this.setState({busStopsRoute})
+    }
+
 
     mostraMapa() {
         return (
@@ -313,7 +318,7 @@ export default class App extends React.Component {
                             geodesic={true}
                             coordinates={this.state.polyWrongRoute}
                             strokeColor="#72bcd4"
-                            strokeWidth={10}   
+                            strokeWidth={12}   
                         />
                     }
 
@@ -322,7 +327,7 @@ export default class App extends React.Component {
                         zIndex={-3}
                     />
 
-                    {this.state.busStops.map(marker => (
+                    {this.state.busStopsRoute.map(marker => (
                         <Marker
                             coordinate={{
                                 latitude: marker.latitude,
