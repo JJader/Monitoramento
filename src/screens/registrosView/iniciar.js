@@ -13,7 +13,7 @@ import Header from '../../components/navigationMenu'
 
 const { width, height } = Dimensions.get('window');
 
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
@@ -32,9 +32,12 @@ export default class App extends React.Component {
             busStops: [
                 //latitude: '',
                 //longitude: '',
-                //value: ''
+                //value: '',
+                // arrive : false
             ],
-            busStopsRoute: [],
+            
+            lastBus : null,
+            lastBusNumber: 0,
 
             ready: false,
 
@@ -64,7 +67,7 @@ export default class App extends React.Component {
         let turno_moto = newProps.navigation.getParam('turno', 'null')
         let veiculo_moto = newProps.navigation.getParam('veiculo', 'null')
         let rota_moto = newProps.navigation.getParam('rota', 'null')
-
+        
         if(id_moto != this.state.id_moto && id_moto != null){
             this.setState({ id_moto })
             updateServe = true
@@ -86,14 +89,19 @@ export default class App extends React.Component {
         //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
         
         let busStops = newProps.navigation.getParam('busStops', 'null')
+        let index = newProps.navigation.getParam('index', 'null')
 
         if(busStops != null){
             this.setState({busStops})
-
-            this.setState({busStopsRoute: _.cloneDeep(busStops) })
             //console.log(busStops);
         }
 
+        if(index != null){
+
+            this.arriveMarket(index)
+            this.deletMarket(index+1)
+    
+        }
     }
 
     componentDidMount() {
@@ -227,23 +235,22 @@ export default class App extends React.Component {
     async getPolyWrongline() {
         // Get Polyline if driver was not on route
         
-        if(this.state.busStopsRoute.length == 0){
-            return null
+        let bustop = this.state.lastBus
+    
+        if (this.state.lastBusNumber == 0){
+            bustop = this.deletMarket(0)
         }
-
-        let busStopsRoute = _.cloneDeep(this.state.busStopsRoute)
         
+        if (bustop == null) return null
 
-        let bustop = busStopsRoute.shift() //this.deletMarket()
-        
         let start = {
             longitude: this.state.region.longitude,
             latitude: this.state.region.latitude
         }
         
         let end = {
-            longitude: bustop.longitude,
-            latitude: bustop.latitude,
+            longitude: bustop[0].longitude,
+            latitude: bustop[0].latitude,
         }
 
         let link = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' + 
@@ -270,7 +277,7 @@ export default class App extends React.Component {
         }
         catch (error) {
             alert("Ops !! alguma coisa errada no getPolyWrongline")
-            return console.log(error);
+        //    return console.log(error);
         }
     }
 
@@ -279,10 +286,32 @@ export default class App extends React.Component {
         return this.props.provider === PROVIDER_DEFAULT ? MAP_TYPES.STANDARD : MAP_TYPES.NONE;
     }
 
-    deletMarket(){
-        let busStopsRoute = this.state.busStopsRoute
-        busStopsRoute.shift() //busStopsRoute.pop()
-        this.setState({busStopsRoute})
+    deletMarket(index){
+
+        let busStops = _.cloneDeep(this.state.busStops)
+        let busStop = busStops.splice(index, 1)
+
+        if (busStop.length > 0){
+            this.setState({lastBus: busStop})
+            this.setState({lastBusNumber: this.state.lastBusNumber + 1})
+            
+            return busStop    
+        }
+            return null
+    
+    }
+
+    arriveMarket(index){
+        let busStops = this.state.busStops
+       
+        try {
+
+            busStops[index].arrive = true
+            this.setState({busStops})
+
+        } catch (error) {
+            
+        }
     }
 
 
@@ -327,7 +356,7 @@ export default class App extends React.Component {
                         zIndex={-3}
                     />
 
-                    {this.state.busStopsRoute.map(marker => (
+                    {this.state.busStops.map(marker => (
                         <Marker
                             coordinate={{
                                 latitude: marker.latitude,
@@ -338,11 +367,20 @@ export default class App extends React.Component {
                             title={marker.value}
                             key={marker.value}
                         >
-                            <MaterialIcons 
-                                name="person-pin-circle" 
-                                size={styles.icon.height} 
-                                color="#0279be" //#72bcd4
-                            />
+                            {marker.arrive ? 
+                                <FontAwesome 
+                                    name= "map-pin" 
+                                    size={styles.icon.height} 
+                                    color="#32CD32" 
+                                />
+                                :
+                                <FontAwesome 
+                                    name= "map-pin"//"nature-people" 
+                                    size={styles.icon.height} 
+                                    color="#bc3422" //#72bcd4
+                                />
+                            }
+
                         </Marker>
                     ))}
 

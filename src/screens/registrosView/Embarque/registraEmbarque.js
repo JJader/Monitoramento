@@ -82,6 +82,8 @@ class RegistraEmbarque extends Component {
     await this.enviarServer(ponto)
     
     this.onRefreshFlat()
+
+    this.props.navigation.navigate('Iniciar', {index: ponto})
   }
 
   async enviarServer(ponto){
@@ -118,7 +120,8 @@ class RegistraEmbarque extends Component {
       return {
           latitude: point.lat,
           longitude: point.lon,
-          value: point.value
+          value: point.value,
+          arrive: false
       }
   })
     this.props.navigation.navigate('Iniciar', {busStops: data}) 
