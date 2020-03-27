@@ -45,13 +45,7 @@ const MyDrawerNavigation =
           drawerIcon: <Ionicons name="ios-body" size={30} color="white" />,
         })
       },
-      Iniciar: {
-        screen: Iniciar,
-        navigationOptions: ({navigation}) => ({
-          drawerLabel: 'Iniciar',
-          drawerIcon: <Ionicons name="md-speedometer" size={30} color="white" />,
-        })
-      },
+      
       RegistraR: {
         screen: RegistraRota,
         navigationOptions: ({navigation}) => ({
@@ -59,17 +53,27 @@ const MyDrawerNavigation =
             drawerIcon: <Ionicons name="md-bus" size={30} color="white" />,
           })
       },
+
+      Iniciar: {
+        screen: Iniciar,
+        navigationOptions: ({navigation}) => ({
+          drawerLabel: 'Iniciar rota',
+          drawerIcon: <Ionicons name="md-speedometer" size={30} color="white" />,
+        })
+      },
+
       RegistraE: {
         screen: RegistraEmbarque,
         navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Embarque',
+            drawerLabel: 'Embarcar',
             drawerIcon: <Ionicons name="md-person-add" size={30} color="white" />,
           })
       },
+      
       Desembarque: {
         screen: Desembarque,
         navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Desembarque',
+            drawerLabel: 'Desembarcar',
             drawerIcon: <Ionicons name="md-pin" size={30} color="white" />,
           })
       },
