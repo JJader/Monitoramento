@@ -74,7 +74,7 @@ class RegistraEmbarque extends Component {
   }
 
   async finalizarEmbarque(ponto,AlunosPonto) {    
-    let pontosJson = _.cloneDeep(this.state.pontosJson)
+    let pontosJson = this.state.pontosJson
     pontosJson[ponto].alunos = _.cloneDeep(AlunosPonto)
     this.setState({pontosJson})
 

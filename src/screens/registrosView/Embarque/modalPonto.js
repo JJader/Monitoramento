@@ -18,8 +18,6 @@ class ModalAlunos extends Component {
             backgColor: '#0279be',
             refresh: false,
 
-            listaPresenca : [],
-
             alunos_add : 0,
         };
     }
@@ -35,7 +33,8 @@ class ModalAlunos extends Component {
       }
 
     cancelar(){
-        this.setState({listaPresenca : []})
+
+        this.presencaTodosAluno(-1,false)
         
       }
 
@@ -47,53 +46,25 @@ class ModalAlunos extends Component {
         this.setState({ alunos })
     }
 
-    setListaPresenca(aluno, presenca){
-        let listaPresenca = _.clone(this.state.listaPresenca)
-        let elem = {
-            aluno : aluno,
-            presenca: presenca
-        }
-        listaPresenca.push(elem)
-        this.setState({listaPresenca})
-    }
-
     presencaTodosAluno(aluno, presenca){
-        // não funciona, funciona so com o último
-        /*this.setState({listaPresenca : []})
+        
         let i
-        if (this.state.alunos.length != 0){
-                        
-            this.setListaPresenca(0,presenca)
-            this.setListaPresenca(1,presenca)
-            this.setListaPresenca(2,presenca)
-
+        for (i = 0; i< this.state.alunos.length; i++){
+            this.presencaAluno(i,presenca)
         }
-        */
+        
        return null
     }
 
     finalizarEmbarque(){
 
-        if (this.props.titulo != 'default'){
-            let listaPresenca = this.state.listaPresenca.slice()
-            
-            
-            let aluno, presenca
-            let elem
-                
-            while (listaPresenca.length != 0){
-                elem = listaPresenca.pop()
-                aluno = elem.aluno
-                presenca = elem.presenca
-                
-                this.presencaAluno(aluno,presenca)
-            }
+        if (this.props.titulo != 'default'){    
+        
             this.onRefreshFlat()  
             
             this.setState({backgColor: '#32CD32'})
             this.setState({isVisible: !this.state.isVisible})
 
-            this.setState({listaPresenca : []})
             this.setState({alunos_add : 0})
 
             this.props.finalizarEmbarque(this.state.ponto, this.state.alunos)
@@ -201,7 +172,7 @@ class ModalAlunos extends Component {
                             </View>
                             <View style = {{marginBottom: 10}}>
                                 <PresencaAluno
-                                    setListaPresenca={(aluno, presenca) => this.presencaTodosAluno(aluno, presenca)}
+                                    presencaAluno={(aluno, presenca) => this.presencaTodosAluno(aluno, presenca)}
                                     nome = "Todos Alunos"
                                     aluno = {-1}
                                     presenca = {false}
@@ -217,7 +188,7 @@ class ModalAlunos extends Component {
                                         return (
                                             //item.presenca ? null :
                                             <PresencaAluno
-                                                setListaPresenca={(aluno, presenca) => this.setListaPresenca(aluno, presenca)}
+                                                presencaAluno={(aluno, presenca) => this.presencaAluno(aluno, presenca)}
                                                 nome={item.nome}
                                                 escola={item.escola}
                                                 aluno={index}

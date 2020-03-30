@@ -16,9 +16,27 @@ export default class PresencaAluno extends Component {
         };
     };
 
+    componentWillUpdate(newProps){
+        
+        try {
+            if (newProps.aluno == -1){
+                return null
+            }
+            console.log(newProps)
+            if (newProps.presenca && !this.state.presenca){
+                this.alteraPresenca(true)
+            }else if (!newProps.presenca && this.state.presenca){
+                this.alteraPresenca(false)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
+
     alteraPresenca(presenca) {
         var i = presenca ? 1 : 0 
-        this.props.setListaPresenca(this.state.aluno_index, i)
+        this.props.presencaAluno(this.state.aluno_index, i)
         this.setState({ presenca })
     }
 
