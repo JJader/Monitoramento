@@ -369,13 +369,13 @@ export default class App extends React.Component {
                         >
                             {marker.arrive ? 
                                 <FontAwesome 
-                                    name= "map-pin" 
+                                    name= "map-marker" 
                                     size={styles.icon.height} 
                                     color="#32CD32" 
                                 />
                                 :
                                 <FontAwesome 
-                                    name= "map-pin"//"nature-people" 
+                                    name= "map-marker"//"nature-people" 
                                     size={styles.icon.height} 
                                     color="#bc3422" //#72bcd4
                                 />
