@@ -26,7 +26,7 @@ const CustomDrawerContentComponent = props => (
         source={require('../assets/logo/logo.png')}
         style={{ width: WINDOW_WIDTH * 0.80, height: WINDOW_WIDTH * 0.80 }}
         resizeMode="cover"
-        
+
       />
     </View>
     <View style={{ marginLeft: 30, flex: 1 }}>
@@ -43,6 +43,15 @@ const MyDrawerNavigation =
         navigationOptions: ({navigation}) => ({
           drawerLabel: 'Login',
           drawerIcon: <Ionicons name="ios-body" size={30} color="white" />,
+        })
+      },
+
+      Start: {
+        screen: Start,
+        navigationOptions: ({navigation}) => ({
+          drawerLabel: 'Entrada',
+          drawerIcon: <Ionicons name="ios-cloud-upload" size={30} color="white" />
+          //drawerLabel: () => null
         })
       },
       
@@ -86,13 +95,7 @@ const MyDrawerNavigation =
         })
       },
 
-      Start: {
-        screen: Start,
-        navigationOptions: ({navigation}) => ({
-          drawerLabel: () => null
-        })
-        
-      },
+      
       
       /*
       Informacao: {
