@@ -335,12 +335,17 @@ export default class App extends React.Component {
                 <MapView
                     style={stylesContainer.conteiner}
                     region={this.state.region}
+                    provider={null}
                     mapType={this.mapType}
                     onUserLocationChange={this.geoChange}
                     //onRegionChange = {this.onRegionChange}
                     showsUserLocation={true}
                 >
-                    
+
+                    <UrlTile urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        maximumZ={25}
+                        zIndex={-3}
+                    />
 
                     {this.state.polyBusRoute.lengthe == 0 ? null :
                         < Polyline
@@ -350,7 +355,6 @@ export default class App extends React.Component {
                             coordinates={this.state.polyBusRoute}
                             strokeColor="#72bcd4"
                             strokeWidth={6} 
-
                         />
                     }
                     {this.state.polyWrongRoute.lengthe == 0 ? null :
@@ -363,11 +367,6 @@ export default class App extends React.Component {
                             strokeWidth={12}   
                         />
                     }
-
-                    <UrlTile urlTemplate="http://c.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        maximumZ={25}
-                        zIndex={-3}
-                    />
 
                     {this.state.busStops.map(marker => (
                         <Marker
