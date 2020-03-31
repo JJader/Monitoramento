@@ -14,6 +14,7 @@ import Header from '../../components/navigationMenu'
 const { width, height } = Dimensions.get('window');
 
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Permissions from 'expo-permissions'
 
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
@@ -104,8 +105,10 @@ export default class App extends React.Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
 
+        await this.getLocationAsync();
+        
         let geoOptions = {
             enableHighAccuracy: true,
             timeOut: 20000,
@@ -122,6 +125,16 @@ export default class App extends React.Component {
         setInterval(this.getPolyWrongline.bind(this) , 10000);
         
     }
+
+    async getLocationAsync() {
+        // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
+        const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status === 'granted') {
+          return true;
+        } else {
+          throw new Error('Location permission not granted');
+        }
+      }
 
     //geoLocation function
     updateLocation(latitude, longitude) {
@@ -158,7 +171,7 @@ export default class App extends React.Component {
     geoChange = (position) => {
         //call the updateLocation function if bus to drive more than 13 meters
 
-        const minDelta = 0.44/3600
+        const minDelta = 0//0.44/3600
         let latitude = position.nativeEvent.coordinate.latitude
         let longitude = position.nativeEvent.coordinate.longitude
 
