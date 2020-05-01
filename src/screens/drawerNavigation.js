@@ -41,8 +41,8 @@ const MyDrawerNavigation =
       Login: {
         screen: Login,
         navigationOptions: ({navigation}) => ({
-          drawerLabel: 'Login',
-          drawerIcon: <Ionicons name="ios-body" size={30} color="white" />,
+          drawerLabel: () => null,
+          drawerLockMode: 'locked-closed',
         })
       },
 
