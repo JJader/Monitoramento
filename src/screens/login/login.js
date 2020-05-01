@@ -16,7 +16,7 @@ import stylesText from '../../styles/text';
 
 import LoadingButton from '../../components/button/loadingButton'
 import Header from '../../components/header/logoHeader'
-import Input from '../../components/input/input'
+import Input from '../../components/input/inputVertical'
 
 import _ from "lodash";
 
@@ -45,19 +45,15 @@ class login extends Component {
     this.setState({ password })
   };
 
-  async buttonEnterEvent(){
+  async buttonEnterEvent() {
     let userDate = await this.callLoginServe()
-    
-    if (!userDate.error){
-      this.setState({name : userDate.name})
-      this.setState({id : userDate.id})
-      this.setState({token: userDate.token})
-      
-      this.callNewScreen()
 
-    }else{
+    if (!userDate.error) {
+      this.callNewScreen(userDate)
+
+    } else {
       alert(userDate.error)
-      this.setState({loading: false})
+      this.setState({ loading: false })
     }
   }
 
@@ -78,6 +74,7 @@ class login extends Component {
 
   async sendUserPassToServer() {
     let link = URL_API + 'user/login'
+
     const dados = {
       email: this.state.user,
       pass: this.state.password,
@@ -95,11 +92,11 @@ class login extends Component {
     return responseJson
   }
 
-  callNewScreen() {
-    this.props.navigation.navigate('RegistraR', { 
-      id : this.state.id, 
-      token: this.state.token,
-      name: this.state.name, 
+  callNewScreen(userDate) {
+    this.props.navigation.navigate('RegistraR', {
+      id: userDate.id,
+      token: userDate.token,
+      name: userDate.name ,
     })
 
     this.props.navigation.navigate('Start')
@@ -107,35 +104,35 @@ class login extends Component {
 
   render() {
     return (
-      <View style = {stylesContainer.background}>
+      <View style={stylesContainer.background}>
 
-        <KeyboardAvoidingView style = {styles.background} behavior="height" enabled>
+        <KeyboardAvoidingView style={styles.background} behavior="height" enabled>
 
-          <Header text="Login"/>
+          <Header text="Login" />
 
-          <View style = {stylesText.viewTextInput}>
-            <Input 
-              text = "Usuário: " 
-              secureText = {false} 
-              updateParameter = {this.updateUser}
+          <View style={stylesText.viewTextInput}>
+            <Input
+              text="Usuário: "
+              secureText={false}
+              updateParameter={this.updateUser}
             />
-            <Input 
-              text = "Senha: " 
-              secureText = {true} 
-              updateParameter = {this.updatePassword}
+            <Input
+              text="Senha: "
+              secureText={true}
+              updateParameter={this.updatePassword}
             />
           </View>
 
         </KeyboardAvoidingView>
 
-        <View style = {styles.buttonConteiner}>
+        <View style={styles.buttonConteiner}>
           <LoadingButton
-            onPress = {() => this.buttonEnterEvent()}
+            onPress={() => this.buttonEnterEvent()}
             text={"Entrar"}
-            loading = {this.state.loading}
+            loading={this.state.loading}
           />
         </View>
-        
+
       </View>
     );
   }
@@ -147,7 +144,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 4,
   },
-  
+
   buttonConteiner: {
     marginBottom: 10,
     flex: 1,

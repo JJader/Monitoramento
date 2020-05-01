@@ -95,7 +95,7 @@ const MyDrawerNavigation =
     },
     
     {
-      initialRouteName: 'Login',
+      initialRouteName: 'RegistraR',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
