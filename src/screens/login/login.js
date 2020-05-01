@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
-import { 
-          View, 
-          Text,
-          TextInput, 
-          TouchableOpacity, 
-          Image, 
-          Dimensions, 
-          StyleSheet, 
-          KeyboardAvoidingView
-       } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  StyleSheet,
+  KeyboardAvoidingView
+} from 'react-native';
 
 import stylesContainer from '../../styles/Modal'
 import stylesComponets from '../../styles/componets';
 import stylesText from '../../styles/text';
-import Welcome from './welcome'
+
+import LoadingButton from '../../components/button/loadingButton'
+import Header from '../../components/header/logoHeader'
+import Input from '../../components/input/input'
 
 import _ from "lodash";
 
@@ -23,116 +26,116 @@ class login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user : '',
-      password : '',
+      user: '',
+      password: '',
+
+      token: '',
+      id: '',
+      name: '',
+
+      loading: false
     };
   }
 
-  userChange = (user) => {
+  updateUser = (user) => {
     this.setState({ user })
   };
-  
-  passwordChange = (password) => {
+
+  updatePassword = (password) => {
     this.setState({ password })
   };
 
-  finalizarLogin(response){
-    let dados = _.cloneDeep(response)
-    return dados
-  }
-
-  navegar(idParam){
-    this.props.navigation.navigate('RegistraR', {id : idParam}) 
-    this.props.navigation.navigate('Start') 
-  }
-
-  async loginServe(){
-    let link = URL_API + '/login' 
-
-        const dados = { 
-            user : this.state.user,
-            password : this.state.password,  
-        };
-
-        try{
-          const response = await fetch(link, {
-            method: 'POST', // or 'PUT'
-            headers:{
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dados),
-          });
-          let responseJson = await response.json();
-          
-          if (response.ok && response.status != 404){
-            return this.finalizarLogin(responseJson)
-          }
-          else{
-            alert("Usuário ou senha incorreto")
-            return false
-          }
-
-        }
-        catch (error) {
-          alert("Ops !! alguma coisa errada no submeter_Rota")
-          console.log(error);
-          return false
-        }
-      
+  async buttonEnterEvent(){
+    let userDate = await this.callLoginServe()
     
+    if (!userDate.error){
+      this.setState({name : userDate.name})
+      this.setState({id : userDate.id})
+      this.setState({token: userDate.token})
+      
+      this.callNewScreen()
+
+    }else{
+      alert(userDate.error)
+      this.setState({loading: false})
+    }
+  }
+
+  async callLoginServe() {
+    let responseJson = {}
+
+    try {
+      responseJson = await this.sendUserPassToServer()
+    }
+    catch (error) {
+      responseJson = {
+        error: "There's something wrong with the server"
+      }
+    }
+
+    return responseJson
+  }
+
+  async sendUserPassToServer() {
+    let link = URL_API + 'user/login'
+    const dados = {
+      email: this.state.user,
+      pass: this.state.password,
+    };
+
+    const response = await fetch(link, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dados),
+    });
+
+    let responseJson = await response.json();
+    return responseJson
+  }
+
+  callNewScreen() {
+    this.props.navigation.navigate('RegistraR', { 
+      id : this.state.id, 
+      token: this.state.token,
+      name: this.state.name, 
+    })
+
+    this.props.navigation.navigate('Start')
   }
 
   render() {
     return (
       <View style = {stylesContainer.background}>
 
-        <KeyboardAvoidingView 
-          style = {styles.background}
-          behavior= "padding" enabled>
+        <KeyboardAvoidingView style = {styles.background} behavior="height" enabled>
 
-          <View style={styles.cabecalho}>
-
-            <Text style = {styles.cabecalhoText}>Login</Text>
-            <Image
-              source={require('../../assets/logo/logo.png')}
-              style={{ flex: 1 }}
-              resizeMode="center"
-
-            />
-          </View>
+          <Header text="Login"/>
 
           <View style = {stylesText.viewTextInput}>
-            <Text style = {[stylesText.text, styles.text]}> Usuário : </Text>
-            <TextInput 
-              style = {stylesText.textLogin}
-              value={this.state.user}
-              onChangeText={this.userChange}
-              autoCapitalize="none"
-              autoCorrect={false}
+            <Input 
+              text = "Usuário: " 
+              secureText = {false} 
+              updateParameter = {this.updateUser}
             />
-            
-            <Text style = {[stylesText.text, styles.text]}> Senha : </Text>
-            <TextInput 
-              style = {stylesText.textLogin}
-              value={this.state.password}
-              onChangeText={this.passwordChange}
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
+            <Input 
+              text = "Senha: " 
+              secureText = {true} 
+              updateParameter = {this.updatePassword}
             />
           </View>
 
         </KeyboardAvoidingView>
-        
-        <View style={styles.botaoConteiner}>
-          
 
-          <Welcome
-          loginServe = {() => this.loginServe()}
-          navegar = {(id)=> this.navegar(id)}
+        <View style = {styles.buttonConteiner}>
+          <LoadingButton
+            onPress = {() => this.buttonEnterEvent()}
+            text={"Entrar"}
+            loading = {this.state.loading}
           />
-
         </View>
+        
       </View>
     );
   }
@@ -141,27 +144,11 @@ class login extends Component {
 export default login;
 
 const styles = StyleSheet.create({
-  cabecalho:{
-    marginTop: 30,
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    flex: 2
-  },
-  background:{
+  background: {
     flex: 4,
-    //borderTopLeftRadius: 110,
-    //borderBottomRightRadius: 110,
   },
-  cabecalhoText:{
-    fontSize: 70,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  text:{
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  botaoConteiner:{
+  
+  buttonConteiner: {
     marginBottom: 10,
     flex: 1,
     justifyContent: 'center',
