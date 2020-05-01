@@ -2,14 +2,12 @@ import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
 import stylesContainer from '../../styles/Modal'
-import stylesComponets from '../../styles/componets';
-import stylesText from '../../styles/text';
 
 class loadingButton extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading : false,
+      loading: false,
     };
   }
 
@@ -17,9 +15,9 @@ class loadingButton extends Component {
     this.props.onPress(parameter)
   }
 
-  componentWillUpdate(newProps){
-    
-    if (newProps.loading != this.state.loading){
+  componentWillUpdate(newProps) {
+
+    if (newProps.loading != this.state.loading) {
       this.updateLoading(newProps.loading)
     }
   }
@@ -28,30 +26,30 @@ class loadingButton extends Component {
     this.setState({ loading })
   }
 
-  noIsLoding(){
-    return(
-      <TouchableOpacity onPress={() => {this.onPress(); this.updateLoading(true)}}>
+  noIsLoding() {
+    return (
+      <TouchableOpacity onPress={() => { this.onPress(); this.updateLoading(true) }}>
 
-          <View style = {stylesComponets.botao}>
-            <Text style = {styles.text}>
-              {this.props.text}
-            </Text>
-          </View>
+        <View style={styles.button}>
+          <Text style={styles.text}>
+            {this.props.text}
+          </Text>
+        </View>
 
       </TouchableOpacity>
     )
   }
 
-  isLoding(){
-    return(
-    <ActivityIndicator size="large" color="blue" animating={true}/>
-   ) 
+  isLoding() {
+    return (
+      <ActivityIndicator size="large" color="blue" animating={true} />
+    )
   }
 
   render() {
     return (
       <View>
-        {this.state.loading ? 
+        {this.state.loading ?
           this.isLoding()
           :
           this.noIsLoding()
@@ -71,5 +69,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 5,
     flex: 1
-},
+  },
+
+  button: {
+    padding: 10,
+    backgroundColor: stylesContainer.background.backgroundColor,
+    marginVertical: 10,
+    minHeight: 50,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+
 });
