@@ -37,12 +37,6 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         alignItems: "center",
     },
-    textLogin: {
-        minHeight: 40,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingHorizontal: 20
-    },
 
     textInput: {
         minHeight: 40,
@@ -61,7 +55,5 @@ export default StyleSheet.create({
         alignItems: 'stretch'
     
     },
-
-
 
 })
