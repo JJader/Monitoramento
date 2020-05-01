@@ -9,7 +9,6 @@ import Iniciar from './registrosView/iniciar'
 import RegistraRota from './registrosView/registraRota';
 import RegistraEmbarque from './registrosView/Embarque/registraEmbarque';
 import Desembarque from './registrosView/desembarque/desembarque';
-import Informacao from './informacoesDraw/InformacaoDrawer'
 import Login from './login/login';
 import Exit from './exit';
 import Start from './start'
@@ -51,7 +50,6 @@ const MyDrawerNavigation =
         navigationOptions: ({navigation}) => ({
           drawerLabel: 'Entrada',
           drawerIcon: <Ionicons name="ios-cloud-upload" size={30} color="white" />
-          //drawerLabel: () => null
         })
       },
       
@@ -94,19 +92,8 @@ const MyDrawerNavigation =
           drawerIcon: <Ionicons name="md-bed" size={30} color="white" />,
         })
       },
-
-      
-      
-      /*
-      Informacao: {
-        screen: Informacao,
-        navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Informações',
-            drawerIcon: <Ionicons name="md-finger-print" size={30} color="white" />,
-          })
-      },
-      */
     },
+    
     {
       initialRouteName: 'Login',
       contentOptions: {
