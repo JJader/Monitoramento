@@ -6,7 +6,7 @@ import { createDrawerNavigator, DrawerNavigatorItems } from 'react-navigation-dr
 import { Ionicons } from '@expo/vector-icons';
 
 import Iniciar from './registrosView/iniciar'
-import RegistraRota from './registrosView/registraRota';
+import RegistraRota from './registrarRota/registraRota';
 import RegistraEmbarque from './registrosView/Embarque/registraEmbarque';
 import Desembarque from './registrosView/desembarque/desembarque';
 import Login from './login/login';
