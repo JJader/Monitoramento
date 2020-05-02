@@ -1,20 +1,13 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
-  Picker,
   StyleSheet,
-  TouchableOpacity,
-  TextInput,
   KeyboardAvoidingView,
   ScrollView,
   RefreshControl
 } from 'react-native';
-import stylesText from '../../styles/text';
-import stylesComponets from '../../styles/componets';
+
 import stylesContainer from '../../styles/Modal';
-
-
 
 import Header from '../../components/navigationMenu'
 import PickerItem from '../../components/list/picker'
@@ -26,94 +19,167 @@ class RegistraRota extends Component {
     super(props);
     this.state = {
 
-      id: this.props.navigation.getParam('id', 'null'),
+      id: 1,//this.props.navigation.getParam('id', 'null'),
       shift: '',
       vehicle: '',
       route: '',
       notes: '',
 
       routesJson: [{ id: 0, value: 'Null' }],
-      shiftJson: [{ id: 0, value: 'Null' }],
-      vehicleJson: [{ id: 0, value: 'Null' }],
+      shiftsJson: [{ id: 0, value: 'Null' }],
+      vehiclesJson: [{ id: 0, value: 'Null' }],
 
       loading: false
     };
   }
 
-  componentWillUpdate(newProps) { // esse componente é construido sempre que os props são modificados
-    //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
-    let oldId = this.state.id
-    const id = newProps.navigation.getParam('id', 'null')
+  componentWillUpdate(newProps) {
+    try {
+      const id = newProps.navigation.getParam('id', null)
+      this.updateId(id)
+    }
+    catch (error) {
 
-    if (oldId != id) {
-      this.setState({ id })
     }
   }
+
+  updateId = (id) => {
+    if (id != this.state.id && id != null) {
+      this.setState({ id })
+    }
+  };
 
   updateNotes = (notes) => {
     this.setState({ notes })
   };
 
-  // modificar essa função para chamar todos os try catchs das funçoes de rotas 
+  updateVehicle = (vehicle) => {
+    this.setState({ vehicle })
+  };
+
+  updateRoute = (route) => {
+    this.setState({ route })
+  };
+
+  updateShift = (shift) => {
+    this.setState({ shift })
+  };
+
   ScrollRefreshControl() {
     return (
       <RefreshControl
         refreshing={this.state.loading}
-        onRefresh={() => this.onRefresh()}
+        onRefresh={() => { this.callAllUpdatesJson() }
+        }
       />
     )
   }
 
-  async rotaServe() {
+  async callAllUpdatesJson() {
+    this.setState({ loading: true })
+    await this.updateRoutesJson()
+    await this.updateShiftsJson()
+    await this.updateVehiclesJson()
+    this.setState({ loading: false })
+
+  }
+
+  async updateRoutesJson() {
+    let routesJson = await this.callRouteServer()
+
+    if (!routesJson.error) {
+      this.setState({ routesJson: routesJson.rotas })
+    }
+  }
+
+  async callRouteServer() {
+    let responseJson = {}
+
+    try {
+      responseJson = await this.returnRouteList()
+    }
+    catch (error) {
+      responseJson = {
+        error: "There's something wrong with the server"
+      }
+    }
+
+    return responseJson
+  }
+
+  async returnRouteList() {
     let link = URL_API + '/rotas.json'
-    try {
-      const data = await fetch(link);
-      const dataJson = await data.json();
-      this.setState({ routesJson: dataJson.rotas });
-      console.log("Rotas okay");
-    }
-    catch (error) {
-      alert("Ops !! alguma coisa errada na rotaServer")
-      return console.log(error);
-    } //to catch the errors if any
+
+    const routes = await fetch(link);
+    const routesJson = await routes.json();
+
+    return routesJson
   }
 
-  async turnoServe() {
+  async updateShiftsJson() {
+    let shiftsJson = await this.callShiftServer()
+
+    if (!shiftsJson.error) {
+      this.setState({ shiftsJson: shiftsJson.turnos })
+    }
+  }
+
+  async callShiftServer() {
+    let responseJson = {}
+
+    try {
+      responseJson = await this.returnShiftList()
+    }
+    catch (error) {
+      responseJson = {
+        error: "There's something wrong with the server"
+      }
+    }
+
+    return responseJson
+  }
+
+  async returnShiftList() {
     let link = URL_API + '/turnos.json'
-    try {
-      const data = await fetch(link);
-      const dataJson = await data.json();
-      this.setState({ shiftJson: dataJson.turnos });
-      console.log("Turno okay");
-    }
-    catch (error) {
-      alert("Ops !! alguma coisa errada no turnoServer")
-      return console.log(error);
-    } //to catch the errors if any
+
+    const shifts = await fetch(link);
+    const shiftsJson = await shifts.json();
+
+    return shiftsJson
+
   }
 
-  async veiculoServe() {
+  async updateVehiclesJson() {
+    let vehiclesJson = await this.callVehicleServer()
+
+    if (!vehiclesJson.error) {
+      this.setState({ vehiclesJson: vehiclesJson.veiculos })
+    }
+  }
+
+  async callVehicleServer() {
+    let responseJson = {}
+
+    try {
+      responseJson = await this.returnVehicleList()
+    }
+    catch (error) {
+      responseJson = {
+        error: "There's something wrong with the server"
+      }
+    }
+
+    return responseJson
+  }
+
+  async returnVehicleList() {
     let link = URL_API + '/veiculos.json'
-    try {
-      const data = await fetch(link);
-      const dataJson = await data.json();
-      this.setState({ vehicleJson: dataJson.veiculos });
-      console.log("Veiculo okay");
-    }
-    catch (error) {
-      alert("Ops !! alguma coisa errada veiculoServer")
-      return console.log(error);
-    } //to catch the errors if any
-  }
 
-  acionandoServe() {
-    this.turnoServe()
-    this.rotaServe()
-    this.veiculoServe()
-    this.setState({ refreshing: false })
-  }
+    const vehicles = await fetch(link);
+    const vehiclesJson = await vehicles.json();
 
-  
+    return vehiclesJson
+  }
 
   async buttonEnterEvent() {
     let mapDate = await this.callDaylyServe()
@@ -151,7 +217,7 @@ class RegistraRota extends Component {
       turno: this.state.shift,
       rota: this.state.route,
       veiculo: this.state.vehicle,
-      notes: this.state.notes,
+      nota: this.state.notes,
     };
 
     const response = await fetch(link, {
@@ -166,7 +232,7 @@ class RegistraRota extends Component {
     return responseJson
   }
 
-  callNewScreen(mapDate){
+  callNewScreen(mapDate) {
     this.props.navigation.navigate('Iniciar', {
       id: mapDate.id,
       turno: mapDate.turno,
@@ -191,21 +257,24 @@ class RegistraRota extends Component {
           <KeyboardAvoidingView style={styles.viewPicker} behavior="height" enabled>
 
             <PickerItem
-              dates={this.state.routesJson}
+              dates={this.state.shiftsJson}
               text={"TURNO:"}
               iconName={"ios-partly-sunny"}
+              onValueChange={this.updateShift}
             />
 
             <PickerItem
-              dates={this.state.shiftJson}
+              dates={this.state.routesJson}
               text={"ROTA:"}
               iconName={"md-git-network"}
+              onValueChange={this.updateRoute}
             />
 
             <PickerItem
-              dates={this.state.vehicleJson}
+              dates={this.state.vehiclesJson}
               text={"VEÍCULO:"}
               iconName={"ios-bus"}
+              onValueChange={this.updateVehicle}
             />
 
             <View style={{ flex: 4 }}>
