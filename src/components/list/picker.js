@@ -19,6 +19,23 @@ export default class pickerItem extends Component {
     this.setState({dates: this.props.dates})
   }
 
+  componentWillUpdate(newProps) {
+    
+    try {
+      this.updateDates(newProps.dates)
+    } 
+    catch (error) {
+    
+    }
+
+  }
+
+  updateDates(dates){
+    if (dates[0].id != this.state.dates[0].id){
+      this.setState({dates})
+    }
+  }
+
   updateSelectedItem(selectedItem){
     this.setState({selectedItem})
     this.props.onValueChange(selectedItem)

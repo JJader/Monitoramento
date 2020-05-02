@@ -16,19 +16,29 @@ class loadingButton extends Component {
   }
 
   componentWillUpdate(newProps) {
-
-    if (newProps.loading != this.state.loading) {
-      this.updateLoading(newProps.loading)
+    
+    try {
+      this.updateLoading(newProps.loading)  
+    } 
+    catch (error) {
+      
     }
+    
   }
 
   updateLoading = (loading) => {
-    this.setState({ loading })
+    if (loading != this.state.loading) {
+      this.setState({loading})
+    }
   }
 
   noIsLoding() {
     return (
-      <TouchableOpacity onPress={() => { this.onPress(); this.updateLoading(true) }}>
+      <TouchableOpacity onPress={() => { 
+        this.onPress(); 
+        this.updateLoading(true) 
+        }
+      }>
 
         <View style={styles.button}>
           <Text style={styles.text}>
