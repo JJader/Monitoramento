@@ -81,7 +81,6 @@ class RegistraRota extends Component {
     await this.updateShiftsJson()
     await this.updateVehiclesJson()
     this.setState({ loading: false })
-
   }
 
   async updateRoutesJson() {
@@ -89,6 +88,9 @@ class RegistraRota extends Component {
 
     if (!routesJson.error) {
       this.setState({ routesJson: routesJson.rotas })
+    }
+    else {
+      alert(routesJson.error)
     }
   }
 
@@ -122,6 +124,9 @@ class RegistraRota extends Component {
     if (!shiftsJson.error) {
       this.setState({ shiftsJson: shiftsJson.turnos })
     }
+    else {
+      alert(shiftsJson.error)
+    }
   }
 
   async callShiftServer() {
@@ -154,6 +159,9 @@ class RegistraRota extends Component {
 
     if (!vehiclesJson.error) {
       this.setState({ vehiclesJson: vehiclesJson.veiculos })
+    }
+    else {
+      alert(vehiclesJson.error)
     }
   }
 
