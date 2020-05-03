@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
   Dimensions,
   StyleSheet,
   KeyboardAvoidingView
 } from 'react-native';
 
 import stylesContainer from '../../styles/Modal'
-import stylesComponets from '../../styles/componets';
-import stylesText from '../../styles/text';
 
 import LoadingButton from '../../components/button/loadingButton'
 import Header from '../../components/header/logoHeader'
@@ -96,7 +90,7 @@ class login extends Component {
     this.props.navigation.navigate('RegistraR', {
       id: userDate.id,
       token: userDate.token,
-      name: userDate.name ,
+      name: userDate.name,
     })
 
     this.props.navigation.navigate('Start')
@@ -110,7 +104,7 @@ class login extends Component {
 
           <Header text="Login" />
 
-          <View style={stylesText.viewTextInput}>
+          <View style={styles.viewTextInput}>
             <Input
               text="Usuário: "
               secureText={false}
@@ -151,5 +145,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column',
     alignItems: 'stretch',
+  },
+
+  viewTextInput: {
+    marginBottom: 20,
+    marginHorizontal: 20,
+    flex: 1,
+    justifyContent: 'space-around',
+    flexDirection: 'column',
+    alignItems: 'stretch'
+
   },
 });
