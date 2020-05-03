@@ -19,7 +19,9 @@ class RegistraRota extends Component {
     super(props);
     this.state = {
 
-      id: 1,//this.props.navigation.getParam('id', 'null'),
+      id: 1,
+      token: '',
+
       shift: '',
       vehicle: '',
       route: '',
@@ -37,6 +39,9 @@ class RegistraRota extends Component {
     try {
       const id = newProps.navigation.getParam('id', null)
       this.updateId(id)
+
+      const token = newProps.navigation.getParam('token', null)
+      this.updateToken(token)
     }
     catch (error) {
 
@@ -46,6 +51,12 @@ class RegistraRota extends Component {
   updateId = (id) => {
     if (id != this.state.id && id != null) {
       this.setState({ id })
+    }
+  };
+
+  updateToken = (token) => {
+    if (token != this.state.token && token != null) {
+      this.setState({ token })
     }
   };
 
@@ -242,10 +253,8 @@ class RegistraRota extends Component {
 
   callNewScreen(mapDate) {
     this.props.navigation.navigate('Iniciar', {
-      id: mapDate.id,
-      turno: mapDate.turno,
-      rota: mapDate.rota,
-      veiculo: mapDate.veiculo
+      id: this.state.id,
+      token : this.state.token,
     })
   }
 
