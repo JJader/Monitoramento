@@ -48,6 +48,7 @@ class busStopMarker extends Component {
         }}
         title={marker.value}
         key={marker.value}
+        description={marker.description}
       >
 
         {this.renderIconBusStops(marker.arrive)}
