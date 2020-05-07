@@ -22,7 +22,7 @@ class input extends Component {
       <View>
         <Text style={[stylesText.text, styles.text]}> {this.props.text} </Text>
             <TextInput
-              style={styles.TextInput}
+              style={styles.textInput}
               value={this.state.parameter}
               onChangeText={this.updateParameter}
               autoCapitalize="none"
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         color: 'white',
     },
 
-    TextInput: {
+    textInput: {
       minHeight: 40,
       backgroundColor: 'white',
       borderRadius: 20,
