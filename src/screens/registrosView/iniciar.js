@@ -1,25 +1,23 @@
 import React from 'react';
-import { StyleSheet, Platform, Dimensions, Text, View, Image, Button } from 'react-native';
+import { Dimensions, Text, View, StyleSheet } from 'react-native';
 
-import MapView, { Marker, Polyline, MarkerAnimated, UrlTile, MAP_TYPES, PROVIDER_DEFAULT } from 'react-native-maps'
-
-const busIcon = require('../../assets/logo/busMap.png');
+import MapView, { MAP_TYPES, PROVIDER_DEFAULT } from 'react-native-maps'
 
 import _ from "lodash";
 
-import stylesContainer from '../../styles/Modal';
-
-import Header from '../../components/navigationMenu'
-
-const { width, height } = Dimensions.get('window');
-
 import * as Permissions from 'expo-permissions'
 
+import stylesContainer from '../../styles/Modal';
+const busIcon = require('../../assets/logo/busMap.png');
+
+import Header from '../../components/navigationMenu'
 import TileComponent from '../../components/map/urlTile';
 import PolylineComponent from '../../components/map/polyline'
 import BusStopMarker from '../../components/map/busStopMarker'
 import UserMarker from '../../components/map/marker'
+import IconButton from '../../components/button/iconButton'
 
+const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -31,12 +29,10 @@ export default class App extends React.Component {
     super();
     this.state = {
 
-      polyBusRoute: [],
-    
-
-      polyWrongRoute: [],
-      polyWrongRef: {},
+      polyRoute: [],
       polyToNextBusStop: [],
+      polycolor: 'red',
+
       busStops: [
         //latitude: '',
         //longitude: '',
@@ -44,26 +40,19 @@ export default class App extends React.Component {
         // arrive : false
       ],
 
-      lastBus: null,
-      lastBusNumber: 0,
       nextBusStop: 0,
 
-      color : 'red',
-
-      ready: false,
-
+      id: 1,
+      token: '',
       userLocation: {
         latitude: 0,
         longitude: 0,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
+
+      ready: false,
       error: null,
-
-      timeOut: false,
-
-      id: 1,
-      token: ''
     }
   }
 
@@ -73,7 +62,7 @@ export default class App extends React.Component {
     if (permission) {
       this.startMap()
       this.startUser(this.props)
-      
+
     } else {
       this.geoFailure('Location permission not granted');
     }
@@ -122,9 +111,9 @@ export default class App extends React.Component {
   }
 
   async getPolyToNextBusStop() {
-    
+
     let isRead = this.state.busStops.length
-    
+
     if (isRead) {
 
       let APIpoly = await this.sendStartEndPointToServe()
@@ -180,7 +169,7 @@ export default class App extends React.Component {
     let responseJson = {}
 
     try {
-      responseJson = await this.getpolyAPI(start, end)
+      responseJson = await this.callpolyAPI(start, end)
     }
     catch (error) {
       responseJson = {
@@ -191,7 +180,7 @@ export default class App extends React.Component {
     return responseJson
   }
 
-  async getpolyAPI(start, end) {
+  async callpolyAPI(start, end) {
 
     const link = 'https://api.openrouteservice.org/v2/directions/driving-car?' +
       'api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' +
@@ -200,9 +189,9 @@ export default class App extends React.Component {
 
     const response = await fetch(link);
     const responseJson = await response.json();
-    
+
     let polyFormat = {
-      distance : responseJson.features[0].properties.segments[0].distance,
+      distance: responseJson.features[0].properties.segments[0].distance,
       duration: responseJson.features[0].properties.segments[0].duration,
       coordinates: responseJson.features[0].geometry.coordinates,
     }
@@ -221,13 +210,61 @@ export default class App extends React.Component {
     return coords
   }
 
-  updateColor(distance){
-    if (distance > minDistanceForReDPoly){
-      this.setState({color : 'red'})
+  updateColor(distance) {
+    if (distance > minDistanceForReDPoly) {
+      this.setState({ polycolor: 'red' })
     }
-    else{
-      this.setState({color : "#72bcd4"})
+    else {
+      this.setState({ polycolor: "#72bcd4" })
     }
+  }
+
+  async getPolyRoute() {
+    let serverPoly = await this.callPolyRouteServer()
+
+    if (!serverPoly.error) {
+      let polyRoute = this.formatServerPolyResponse(serverPoly)
+      this.setState({ polyRoute })
+    }
+    else {
+      alert(APIpoly.error)
+    }
+  }
+
+  async callPolyRouteServer() {
+    let responseJson = {}
+
+    try {
+      responseJson = await this.callPolyRoute()
+    }
+    catch (error) {
+      responseJson = {
+        error: "There's something wrong with the server"
+      }
+    }
+
+    return responseJson
+  }
+
+  async callPolyRoute() {
+    let link = URL_API + '/polyline/' + this.state.id
+
+    const response = await fetch(link);
+    const responseJson = await response.json();
+
+    return responseJson
+
+  }
+
+  formatServerPolyResponse(dataArray) {
+    let coords = dataArray.map((point, index) => {
+      return {
+        latitude: point[0],
+        longitude: point[1]
+      }
+    })
+
+    return coords
   }
 
   componentWillUpdate(newProps) {
@@ -283,31 +320,6 @@ export default class App extends React.Component {
     this.setState({ nextBusStop })
   }
 
-  async polyServe() {
-    // get polyline route
-
-    let link = URL_API + '/polyline/' + this.state.id
-    try {
-      const data = await fetch(link);
-      const dataJson = await data.json();
-
-      let coords = dataJson.map((point, index) => {
-        return {
-          latitude: point[0],
-          longitude: point[1]
-        }
-      })
-      this.setState({ polyBusRoute: coords });
-      console.log("route okay");
-
-      return coords
-    }
-    catch (error) {
-      alert("Ops !! alguma coisa errada no polyServe")
-      return console.log(error);
-    }
-  }
-
   get mapType() {
     return this.props.provider === PROVIDER_DEFAULT ? MAP_TYPES.STANDARD : MAP_TYPES.NONE;
   }
@@ -320,7 +332,7 @@ export default class App extends React.Component {
     }
   }
 
-  updateUserLocation(position){
+  updateUserLocation(position) {
     let userLocation = _.cloneDeep(this.state.userLocation)
 
     let newlat = position.nativeEvent.coordinate.latitude
@@ -349,13 +361,13 @@ export default class App extends React.Component {
 
           <PolylineComponent
             id={'rightPoly'}
-            polyline={this.state.polyBusRoute}
+            polyline={this.state.polyRoute}
           />
 
           <PolylineComponent
             id={'wrongPoly'}
             polyline={this.state.polyToNextBusStop}
-            color={this.state.color}
+            color={this.state.polycolor}
           />
 
           <BusStopMarker
@@ -372,6 +384,15 @@ export default class App extends React.Component {
           />
 
         </MapView>
+
+        <View style={styles.button}>
+          <IconButton
+            onPress={() => this.getPolyRoute()}
+            name={"update"}
+            text={"Update polyline"}
+          />
+        </View>
+
       </View>
     )
   }
@@ -382,3 +403,15 @@ export default class App extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    position: 'absolute',
+    alignItems: 'flex-end',
+    top: '90%',
+    right: '40%',
+    backgroundColor: stylesContainer.background.backgroundColor,
+    minHeight: 20,
+    borderRadius: 60,
+  },
+})
