@@ -10,7 +10,7 @@ import stylesContainer from '../../styles/Modal'
 
 import LoadingButton from '../../components/button/loadingButton'
 import Header from '../../components/header/logoHeader'
-import Input from '../../components/input/inputVertical'
+import Input from '../../components/input/inputHorizontal'
 
 import _ from "lodash";
 
@@ -140,11 +140,10 @@ const styles = StyleSheet.create({
   },
 
   buttonConteiner: {
-    marginBottom: 10,
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'column',
-    alignItems: 'stretch',
+    backgroundColor: stylesContainer.background.backgroundColor,
+    marginVertical: 20,
+    minHeight: 50,
+    borderRadius: 15,
   },
 
   viewTextInput: {
@@ -154,6 +153,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flexDirection: 'column',
     alignItems: 'stretch'
-
   },
 });
