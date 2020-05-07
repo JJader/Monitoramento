@@ -11,40 +11,41 @@ class loadingButton extends Component {
     };
   }
 
-  onPress(parameter) {
-    this.props.onPress(parameter)
+  async onPress(parameter) {
+    this.setState({ loading: true })
+    await this.props.onPress(parameter)
+    this.setState({ loading: false })
   }
 
   componentWillUpdate(newProps) {
-    
+
     try {
-      this.updateLoading(newProps.loading)  
-    } 
-    catch (error) {
-      
+      this.updateLoading(newProps.loading)
     }
-    
+    catch (error) {
+
+    }
+
   }
 
   updateLoading = (loading) => {
-    if (loading != this.state.loading) {
-      this.setState({loading})
+    if (loading && loading != this.state.loading) {
+      this.setState({ loading })
     }
   }
 
   noIsLoding() {
     return (
-      <TouchableOpacity onPress={() => { 
-        this.onPress(); 
-        this.updateLoading(true) 
-        }
-      }>
+      <TouchableOpacity style={styles.button}
+        onPress={() => {
+          this.onPress();
+          this.updateLoading(true)
+        }}
+      >
 
-        <View style={styles.button}>
-          <Text style={styles.text}>
-            {this.props.text}
-          </Text>
-        </View>
+        <Text style={styles.text}>
+          {this.props.text}
+        </Text>
 
       </TouchableOpacity>
     )
@@ -52,19 +53,16 @@ class loadingButton extends Component {
 
   isLoding() {
     return (
-      <ActivityIndicator size="large" color="blue" animating={true} />
+      <ActivityIndicator style = {styles.button} size="large" color="blue" animating={true} />
     )
   }
 
   render() {
     return (
-      <View>
-        {this.state.loading ?
-          this.isLoding()
-          :
-          this.noIsLoding()
-        }
-      </View>
+      this.state.loading ?
+        this.isLoding()
+        :
+        this.noIsLoding()
     );
   }
 }
@@ -82,14 +80,11 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    padding: 10,
-    backgroundColor: stylesContainer.background.backgroundColor,
-    marginVertical: 10,
-    minHeight: 50,
-    borderRadius: 15,
-    justifyContent: "center",
+    flex: 1,
+    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
-    flexDirection: 'row'
+    alignContent: 'center'
   },
 
 });
