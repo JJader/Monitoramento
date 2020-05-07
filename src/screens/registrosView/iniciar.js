@@ -13,16 +13,18 @@ import Header from '../../components/navigationMenu'
 
 const { width, height } = Dimensions.get('window');
 
-import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Permissions from 'expo-permissions'
 
 import TileComponent from '../../components/map/urlTile';
 import PolylineComponent from '../../components/map/polyline'
 import BusStopMarker from '../../components/map/busStopMarker'
+import UserMarker from '../../components/map/marker'
 
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+const minDistanceForReDPoly = 100
 
 export default class App extends React.Component {
   constructor() {
@@ -30,10 +32,11 @@ export default class App extends React.Component {
     this.state = {
 
       polyBusRoute: [],
-      polyRouteRef: {},
+    
 
       polyWrongRoute: [],
       polyWrongRef: {},
+      polyToNextBusStop: [],
       busStops: [
         //latitude: '',
         //longitude: '',
@@ -43,12 +46,15 @@ export default class App extends React.Component {
 
       lastBus: null,
       lastBusNumber: 0,
+      nextBusStop: 0,
+
+      color : 'red',
 
       ready: false,
 
       userLocation: {
-        latitude: '',
-        longitude: '',
+        latitude: 0,
+        longitude: 0,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
@@ -56,140 +62,231 @@ export default class App extends React.Component {
 
       timeOut: false,
 
-      id_moto: 0,//this.props.navigation.getParam('id', 'null'),
-      turno_moto: '',//this.props.navigation.getParam('turno', 'null'),
-      veiculo_moto: '',//this.props.navigation.getParam('veiculo', 'null'),
-      rota_moto: '',//this.props.navigation.getParam('rota', 'null'),
-    }
-  }
-
-  // component function
-
-  componentWillUpdate(newProps) {
-    //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
-
-    let id_moto = newProps.navigation.getParam('id', 'null')
-    let turno_moto = newProps.navigation.getParam('turno', 'null')
-    let veiculo_moto = newProps.navigation.getParam('veiculo', 'null')
-    let rota_moto = newProps.navigation.getParam('rota', 'null')
-
-    if (id_moto != this.state.id_moto && id_moto != null) {
-      this.setState({ id_moto })
-      updateServe = true
-    }
-    if (turno_moto != this.state.turno_moto && turno_moto != null) {
-      this.setState({ turno_moto })
-      updateServe = true
-    }
-    if (veiculo_moto != this.state.veiculo_moto && veiculo_moto != null) {
-      this.setState({ veiculo_moto })
-      updateServe = true
-    }
-    if (rota_moto != this.state.rota_moto && rota_moto != null) {
-      this.setState({ rota_moto })
-      updateServe = true
-    }
-  }
-  componentWillReceiveProps(newProps) {
-    //alert(JSON.stringify(newProps.navigation.state.params.dadosRota))
-
-    let busStops = newProps.navigation.getParam('busStops', null)
-    let index = newProps.navigation.getParam('index', null)
-
-    if (busStops != null) {
-      this.setState({ busStops })
-      //console.log(busStops);
-    }
-
-    if (index != null) {
-
-      this.arriveMarket(index)
-      this.deletMarket(index + 1)
-
+      id: 1,
+      token: ''
     }
   }
 
   async componentDidMount() {
+    let permission = await this.getUserPermissionLocation();
 
-    await this.getLocationAsync();
-
-    let geoOptions = {
-      enableHighAccuracy: true,
-      timeOut: 20000,
-      maximumAge: 1000,
-      distanceFilter: 10,
+    if (permission) {
+      this.startMap()
+      this.startUser(this.props)
+      
+    } else {
+      this.geoFailure('Location permission not granted');
     }
+  }
 
+  async getUserPermissionLocation() {
+    const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+
+    if (status === 'granted') {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  startMap() {
     navigator.geolocation.watchPosition(
       this.geoSuccess,
       this.geoFailure,
-      geoOptions);
-
-
-    setInterval(this.getPolyWrongline.bind(this), 10000);
-
-  }
-
-  async getLocationAsync() {
-    // permissions returns only for location permissions on iOS and under certain conditions, see Permissions.LOCATION
-    const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status === 'granted') {
-      return true;
-    } else {
-      throw new Error('Location permission not granted');
-    }
-  }
-
-  //geoLocation function
-  updateLocation(latitude, longitude) {
-    // Update bus Icon
-
-    const newCoordinate = {
-      latitude,
-      longitude
-    };
-
-    if (Platform.OS === "android") {
-      if (this.marker) {
-        this.marker._component.animateMarkerToCoordinate(
-          newCoordinate,
-          500
-        );
+      {
+        enableHighAccuracy: true,
+        timeOut: 20000,
+        maximumAge: 1000,
+        distanceFilter: 10,
       }
-    } else {
-      coordinate.timing(newCoordinate).start();
-    }
+    );
 
-    this.setState({
-      ready: true,
-      userLocation: {
-        latitude: latitude,
-        longitude: longitude,
-        latitudeDelta: this.state.userLocation.latitudeDelta,
-        longitudeDelta: this.state.userLocation.longitudeDelta,
-      },
-    })
-
-  }
-
-  geoSuccess = (position) => {
-    // constructor of GeoLocation, first location
-
-    let latitude = position.coords.latitude
-    let longitude = position.coords.longitude
-
-    this.updateLocation(latitude, longitude)
+    setInterval(this.getPolyToNextBusStop.bind(this), 10000);
   }
 
   geoFailure = (err) => {
     this.setState({ error: err.message });
   }
 
-  // Polyline function
+  geoSuccess = (position) => {
+    let latitude = position.coords.latitude
+    let longitude = position.coords.longitude
+
+    let userLocation = _.cloneDeep(this.state.userLocation)
+    userLocation.latitude = latitude
+    userLocation.longitude = longitude
+
+    this.setState({ ready: true })
+    this.setState({ userLocation })
+  }
+
+  async getPolyToNextBusStop() {
+    
+    let isRead = this.state.busStops.length
+    
+    if (isRead) {
+
+      let APIpoly = await this.sendStartEndPointToServe()
+
+      if (!APIpoly.error) {
+        let polyToNextBusStop = this.formatAPIPolyResponse(APIpoly.coordinates)
+        this.setState({ polyToNextBusStop })
+        this.updateColor(APIpoly.distance)
+      }
+      else {
+        alert(APIpoly.error)
+      }
+
+    }
+  }
+
+  async sendStartEndPointToServe() {
+    let nextStop = await this.returnNextStop()
+
+    if (!nextStop.error) {
+      let start = {
+        longitude: this.state.userLocation.longitude,
+        latitude: this.state.userLocation.latitude
+      }
+
+      let end = {
+        longitude: nextStop.longitude,
+        latitude: nextStop.latitude,
+      }
+
+      return await this.callPolyToNextStopServer(start, end)
+    }
+    else {
+      return nextStop
+    }
+  }
+
+  async returnNextStop() {
+    let nextBusStop = this.state.nextBusStop
+    let busStops = this.state.busStops
+
+    if (busStops.length > nextBusStop) {
+      return busStops[nextBusStop]
+    }
+    else {
+      return responseJson = {
+        error: "There is not next stop"
+      }
+    }
+  }
+
+  async callPolyToNextStopServer(start, end) {
+    let responseJson = {}
+
+    try {
+      responseJson = await this.getpolyAPI(start, end)
+    }
+    catch (error) {
+      responseJson = {
+        error: "There's something wrong with the server"
+      }
+    }
+
+    return responseJson
+  }
+
+  async getpolyAPI(start, end) {
+
+    const link = 'https://api.openrouteservice.org/v2/directions/driving-car?' +
+      'api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' +
+      '&start=' + start.longitude + ',' + start.latitude +
+      '&end=' + end.longitude + ',' + end.latitude;
+
+    const response = await fetch(link);
+    const responseJson = await response.json();
+    
+    let polyFormat = {
+      distance : responseJson.features[0].properties.segments[0].distance,
+      duration: responseJson.features[0].properties.segments[0].duration,
+      coordinates: responseJson.features[0].geometry.coordinates,
+    }
+
+    return polyFormat
+  }
+
+  formatAPIPolyResponse(dataArray) {
+    let coords = dataArray.map((point, index) => {
+      return {
+        latitude: point[1],
+        longitude: point[0]
+      }
+    })
+
+    return coords
+  }
+
+  updateColor(distance){
+    if (distance > minDistanceForReDPoly){
+      this.setState({color : 'red'})
+    }
+    else{
+      this.setState({color : "#72bcd4"})
+    }
+  }
+
+  componentWillUpdate(newProps) {
+    if (!this.state.id || !this.state.token) {
+      this.startUser(newProps)
+    }
+  }
+
+  startUser(newProps) {
+    let id = newProps.navigation.getParam('id', 1)
+    let token = newProps.navigation.getParam('token', null)
+
+    if (id != this.state.id) {
+      this.setState({ id })
+    }
+    if (token != this.state.token) {
+      this.setState({ token })
+    }
+  }
+
+  componentWillReceiveProps(newProps) {
+    let busStops = newProps.navigation.getParam('busStops', null)
+    let finishedBusStop = newProps.navigation.getParam('index', null)
+
+    if (busStops != null) {
+      this.setState({ busStops })
+    }
+
+    if (finishedBusStop != null) {
+
+      this.arriveAtBusStop(finishedBusStop)
+      this.updateNextBusStop(finishedBusStop + 1)
+
+    }
+  }
+
+  arriveAtBusStop(index) {
+    try {
+      this.changeBusStopsArrive(index)
+    }
+    catch (error) {
+    }
+  }
+
+  changeBusStopsArrive(index) {
+    let busStops = this.state.busStops
+
+    busStops[index].arrive = true
+    this.setState({ busStops })
+  }
+
+  updateNextBusStop(nextBusStop) {
+    this.setState({ nextBusStop })
+  }
+
   async polyServe() {
     // get polyline route
 
-    let link = URL_API + '/polyline/' + this.state.id_moto
+    let link = URL_API + '/polyline/' + this.state.id
     try {
       const data = await fetch(link);
       const dataJson = await data.json();
@@ -211,95 +308,8 @@ export default class App extends React.Component {
     }
   }
 
-  polyUpdate() {
-    // delete the first point of polyline route
-
-    let polyline = _.cloneDeep(this.state.polyBusRoute)
-    polyline.shift()
-    this.state.polyRouteRef.setNativeProps({ coordinates: Polyline })
-    this.setState({ polyBusRoute })
-  }
-
-  async getPolyWrongline() {
-    // Get Polyline if driver was not on route
-
-    let bustop = this.state.lastBus
-
-    if (this.state.lastBusNumber == 0) {
-      bustop = this.deletMarket(0)
-    }
-
-    if (bustop == null) return null
-
-    let start = {
-      longitude: this.state.userLocation.longitude,
-      latitude: this.state.userLocation.latitude
-    }
-
-    let end = {
-      longitude: bustop[0].longitude,
-      latitude: bustop[0].latitude,
-    }
-
-    let link = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' +
-      '&start=' + start.longitude + ',' + start.latitude + '&end=' + end.longitude + ',' + end.latitude;
-
-    try {
-      const data = await fetch(link);
-      const dataJson = await data.json();
-      //console.log(dataJson);
-      dataArray = dataJson.features[0].geometry.coordinates
-
-
-      let coords = dataArray.map((point, index) => {
-        return {
-          latitude: point[1],
-          longitude: point[0]
-        }
-      })
-
-      this.setState({ polyWrongRoute: coords });
-      console.log("New route okay");
-      //console.log(JSON.stringify(coords));
-
-    }
-    catch (error) {
-      alert("Ops !! alguma coisa errada no getPolyWrongline")
-      //    return console.log(error);
-    }
-  }
-
-  // map function
   get mapType() {
     return this.props.provider === PROVIDER_DEFAULT ? MAP_TYPES.STANDARD : MAP_TYPES.NONE;
-  }
-
-  deletMarket(index) {
-
-    let busStops = _.cloneDeep(this.state.busStops)
-    let busStop = busStops.splice(index, 1)
-
-    if (busStop.length > 0) {
-      this.setState({ lastBus: busStop })
-      this.setState({ lastBusNumber: this.state.lastBusNumber + 1 })
-
-      return busStop
-    }
-    return null
-
-  }
-
-  arriveMarket(index) {
-    let busStops = this.state.busStops
-
-    try {
-
-      busStops[index].arrive = true
-      this.setState({ busStops })
-
-    } catch (error) {
-
-    }
   }
 
   onUserLocationChange = (position) => {
@@ -310,8 +320,7 @@ export default class App extends React.Component {
     }
   }
 
-  updateUserLocation = (position) =>{
-
+  updateUserLocation(position){
     let userLocation = _.cloneDeep(this.state.userLocation)
 
     let newlat = position.nativeEvent.coordinate.latitude
@@ -322,8 +331,7 @@ export default class App extends React.Component {
     this.setState({ userLocation })
   }
 
-
-  mostraMapa() {
+  showMap() {
     return (
       <View style={stylesContainer.background}>
         <Header title="Mapa" navigationProps={this.props.navigation.toggleDrawer} />
@@ -333,7 +341,7 @@ export default class App extends React.Component {
           region={this.state.userLocation}
           provider={null}
           mapType={this.mapType}
-          onUserLocationChange={this.updateUserLocation}
+          onUserLocationChange={this.onUserLocationChange}
           showsUserLocation={true}
         >
 
@@ -346,61 +354,31 @@ export default class App extends React.Component {
 
           <PolylineComponent
             id={'wrongPoly'}
-            polyline={this.state.polyWrongRoute}
-            color={'red'}
+            polyline={this.state.polyToNextBusStop}
+            color={this.state.color}
           />
 
           <BusStopMarker
-            busStopList = {this.state.busStops}
-            latitudeDelta = {LATITUDE_DELTA}
-            longitudeDelta = {LONGITUDE_DELTA}
+            busStopList={this.state.busStops}
+            latitudeDelta={LATITUDE_DELTA}
+            longitudeDelta={LONGITUDE_DELTA}
           />
 
-          <MarkerAnimated
-            onPress={() => this.polyUpdate()}
-            coordinate={this.state.userLocation}
-            title={"Minha Localização"}
-            description={
-              "Id: " + this.state.id_moto + "\n"
-            } >
-            <Image
-              style={styles.icon}
-              source={busIcon}
-            />
-          </MarkerAnimated>
+          <UserMarker
+            location={this.state.userLocation}
+            urlImag={busIcon}
+            title={"My location"}
+            description={''}
+          />
 
         </MapView>
       </View>
     )
   }
+
   render() {
     return (
-      this.state.ready ? this.mostraMapa() : <Text>{this.state.error}</Text>
+      this.state.ready ? this.showMap() : <Text>{this.state.error}</Text>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  big: {
-    fontSize: 25
-  },
-  map: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
-  },
-  icon: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
-    zIndex: 3
-  }
-});  
