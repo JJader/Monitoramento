@@ -254,7 +254,7 @@ class RegistraRota extends Component {
   callNewScreen(mapDate) {
     this.props.navigation.navigate('Iniciar', {
       id: this.state.id,
-      token : this.state.token,
+      token: this.state.token,
     })
   }
 
@@ -304,11 +304,13 @@ class RegistraRota extends Component {
 
           </KeyboardAvoidingView >
 
-          <LoadingButton
-            onPress={() => this.buttonEnterEvent()}
-            text={"Iniciar Rota"}
-            loading={this.state.loading}
-          />
+          <View style={styles.buttonConteiner}>
+            <LoadingButton
+              onPress={() => this.buttonEnterEvent()}
+              text={"Iniciar Rota"}
+              loading={this.state.loading}
+            />
+          </View>
 
         </ScrollView>
 
@@ -325,6 +327,13 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     alignContent: "stretch",
     flex: 1,
+  },
+
+  buttonConteiner: {
+    backgroundColor: stylesContainer.background.backgroundColor,
+    marginVertical: 20,
+    minHeight: 50,
+    borderRadius: 15,
   },
 
 });
