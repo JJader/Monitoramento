@@ -22,8 +22,8 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const minDistanceForReDPoly = 50
-const distanceForStayOnPoint = 10
+const minDistanceForReDPoly = 100
+const distanceForStayOnPoint = 80
 
 export default class App extends React.Component {
   constructor() {
@@ -98,7 +98,7 @@ export default class App extends React.Component {
       }
     );
 
-    setInterval(this.getPolyToNextPoint.bind(this), 10000);
+    setInterval(this.getPolyToNextPoint.bind(this), 2000);
   }
 
   geoFailure = (err) => {
@@ -132,12 +132,7 @@ export default class App extends React.Component {
         this.updateNextPolyPoint(APIpoly.distance)
 
         console.log("distance: " + APIpoly.distance);
-        
       }
-      else {
-        alert(APIpoly.error)
-      }
-
     }
   }
 
@@ -170,9 +165,7 @@ export default class App extends React.Component {
       return polyRoute[nextPoint]
     }
     else {
-      return responseJson = {
-        error: "There is not next point"
-      }
+      return polyRoute[polyRoute.length - 1]
     }
   }
 
@@ -378,11 +371,12 @@ export default class App extends React.Component {
         <MapView
           style={stylesContainer.conteiner}
           initialRegion={this.state.userLocation}
-          region={this.state.region}
-          onRegionChangeComplete={(region) => this.updateRegion(region)}
+          region={this.state.userLocation}
+          //onRegionChangeComplete={(region) => this.updateRegion(region)}
+          //onUserLocationChange={this.onUserLocationChange}
           provider={null}
           mapType={this.mapType}
-          onUserLocationChange={this.onUserLocationChange}
+          onPress={this.onUserLocationChange}
           showsUserLocation={true}
           followsUserLocation={true}
           onMapReady={() => this.centerRegion()}
