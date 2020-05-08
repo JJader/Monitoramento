@@ -22,8 +22,8 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const minDistanceForReDPoly = 100
-const DistanceForStayOnPoint = 10
+const minDistanceForReDPoly = 50
+const distanceForStayOnPoint = 10
 
 export default class App extends React.Component {
   constructor() {
@@ -41,7 +41,7 @@ export default class App extends React.Component {
         // arrive : false
       ],
 
-      nextBusStop: 0,
+      nextPolyPoint: 0,
 
       id: 1,
       token: '',
@@ -129,7 +129,10 @@ export default class App extends React.Component {
         let polyToNextBusStop = this.formatAPIPolyResponse(APIpoly.coordinates)
         this.setState({ polyToNextBusStop })
         this.updateColor(APIpoly.distance)
-        this.updatePolyRoute(APIpoly.distance)
+        this.updateNextPolyPoint(APIpoly.distance)
+
+        console.log("distance: " + APIpoly.distance);
+        
       }
       else {
         alert(APIpoly.error)
@@ -160,10 +163,11 @@ export default class App extends React.Component {
   }
 
   async returnNextPoint() {
-    let nextPoint = this.state.polyRoute
+    let nextPoint = this.state.nextPolyPoint
+    let polyRoute = this.state.polyRoute
 
-    if (nextPoint.length) {
-      return nextPoint[0]
+    if (polyRoute.length > nextPoint) {
+      return polyRoute[nextPoint]
     }
     else {
       return responseJson = {
@@ -222,15 +226,14 @@ export default class App extends React.Component {
       this.setState({ polycolor: 'red' })
     }
     else {
-      this.setState({ polycolor: "#72bcd4" })
+      this.setState({ polycolor: "#6E88E0" })
     }
   }
 
-  updatePolyRoute(distance){
-    if (distance <= DistanceForStayOnPoint) {
-      let polyRoute = this.state.polyRoute
-      polyRoute.shift()
-      this.setState({polyRoute})
+  updateNextPolyPoint(distance){
+    if (distance <= distanceForStayOnPoint) {
+      let nextPolyPoint = this.state.nextPolyPoint
+      this.setState({nextPolyPoint: nextPolyPoint + 1})
     }
   }
 
