@@ -98,7 +98,7 @@ export default class App extends React.Component {
       }
     );
 
-    setInterval(this.getPolyToNextBusStop.bind(this), 10000);
+    setInterval(this.getPolyToNextPoint.bind(this), 10000);
   }
 
   geoFailure = (err) => {
@@ -117,9 +117,9 @@ export default class App extends React.Component {
     this.setState({ userLocation })
   }
 
-  async getPolyToNextBusStop() {
+  async getPolyToNextPoint() {
 
-    let isRead = this.state.busStops.length
+    let isRead = this.state.polyRoute.length
 
     if (isRead) {
 
@@ -129,6 +129,7 @@ export default class App extends React.Component {
         let polyToNextBusStop = this.formatAPIPolyResponse(APIpoly.coordinates)
         this.setState({ polyToNextBusStop })
         this.updateColor(APIpoly.distance)
+        this.updatePolyRoute(APIpoly.distance)
       }
       else {
         alert(APIpoly.error)
@@ -138,41 +139,40 @@ export default class App extends React.Component {
   }
 
   async sendStartEndPointToServe() {
-    let nextStop = await this.returnNextStop()
+    let nextPoint = await this.returnNextPoint()
 
-    if (!nextStop.error) {
+    if (!nextPoint.error) {
       let start = {
         longitude: this.state.userLocation.longitude,
         latitude: this.state.userLocation.latitude
       }
 
       let end = {
-        longitude: nextStop.longitude,
-        latitude: nextStop.latitude,
+        longitude: nextPoint.longitude,
+        latitude: nextPoint.latitude,
       }
 
-      return await this.callPolyToNextStopServer(start, end)
+      return await this.callPolyToNextPointServer(start, end)
     }
     else {
-      return nextStop
+      return nextPoint
     }
   }
 
-  async returnNextStop() {
-    let nextBusStop = this.state.nextBusStop
-    let busStops = this.state.busStops
+  async returnNextPoint() {
+    let nextPoint = this.state.polyRoute
 
-    if (busStops.length > nextBusStop) {
-      return busStops[nextBusStop]
+    if (nextPoint.length) {
+      return nextPoint[0]
     }
     else {
       return responseJson = {
-        error: "There is not next stop"
+        error: "There is not next point"
       }
     }
   }
 
-  async callPolyToNextStopServer(start, end) {
+  async callPolyToNextPointServer(start, end) {
     let responseJson = {}
 
     try {
@@ -223,6 +223,14 @@ export default class App extends React.Component {
     }
     else {
       this.setState({ polycolor: "#72bcd4" })
+    }
+  }
+
+  updatePolyRoute(distance){
+    if (distance <= DistanceForStayOnPoint) {
+      let polyRoute = this.state.polyRoute
+      polyRoute.shift()
+      this.setState({polyRoute})
     }
   }
 
