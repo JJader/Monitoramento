@@ -23,6 +23,7 @@ const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const minDistanceForReDPoly = 100
+const DistanceForStayOnPoint = 10
 
 export default class App extends React.Component {
   constructor() {
@@ -45,6 +46,12 @@ export default class App extends React.Component {
       id: 1,
       token: '',
       userLocation: {
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      },
+      region: {
         latitude: 0,
         longitude: 0,
         latitudeDelta: LATITUDE_DELTA,
@@ -343,6 +350,15 @@ export default class App extends React.Component {
     this.setState({ userLocation })
   }
 
+  centerRegion() {
+    let region = _.cloneDeep(this.state.userLocation)
+    this.setState({ region })
+  }
+
+  updateRegion(region) {
+    this.setState({region})
+  }
+
   showMap() {
     return (
       <View style={stylesContainer.background}>
@@ -350,11 +366,15 @@ export default class App extends React.Component {
 
         <MapView
           style={stylesContainer.conteiner}
-          region={this.state.userLocation}
+          initialRegion={this.state.userLocation}
+          region={this.state.region}
+          onRegionChangeComplete={(region) => this.updateRegion(region)}
           provider={null}
           mapType={this.mapType}
           onUserLocationChange={this.onUserLocationChange}
           showsUserLocation={true}
+          followsUserLocation={true}
+          onMapReady={() => this.centerRegion()}
         >
 
           <TileComponent />
@@ -385,10 +405,18 @@ export default class App extends React.Component {
 
         </MapView>
 
-        <View style={styles.button}>
+        <View style={styles.buttonUpdatePoly}>
           <IconButton
             onPress={() => this.getPolyRoute()}
             name={"update"}
+            text={"Update polyline"}
+          />
+        </View>
+
+        <View style={styles.buttonUpdateRegion}>
+          <IconButton
+            onPress={() => this.centerRegion()}
+            name={"center-focus-weak"}
             text={"Update polyline"}
           />
         </View>
@@ -405,7 +433,7 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  button: {
+  buttonUpdatePoly: {
     position: 'absolute',
     alignItems: 'flex-end',
     top: '90%',
@@ -414,4 +442,13 @@ const styles = StyleSheet.create({
     minHeight: 20,
     borderRadius: 60,
   },
+
+  buttonUpdateRegion: {
+    position: 'absolute',
+    alignItems: 'flex-end',
+    top: '10%',
+    right: '0%',
+    //backgroundColor: stylesContainer.background.backgroundColor,
+    minHeight: 20,
+  }
 })
