@@ -118,7 +118,6 @@ export default class App extends React.Component {
   }
 
   async getPolyToNextPoint() {
-
     let isRead = this.state.polyRoute.length
 
     if (isRead) {
@@ -219,14 +218,14 @@ export default class App extends React.Component {
       this.setState({ polycolor: 'red' })
     }
     else {
-      this.setState({ polycolor: "#6E88E0" })
+      this.setState({ polycolor: stylesContainer.background.backgroundColor })
     }
   }
 
-  updateNextPolyPoint(distance){
+  updateNextPolyPoint(distance) {
     if (distance <= distanceForStayOnPoint) {
       let nextPolyPoint = this.state.nextPolyPoint
-      this.setState({nextPolyPoint: nextPolyPoint + 1})
+      this.setState({ nextPolyPoint: nextPolyPoint + 1 })
     }
   }
 
@@ -238,7 +237,7 @@ export default class App extends React.Component {
       this.setState({ polyRoute })
     }
     else {
-      alert(APIpoly.error)
+      alert(serverPoly.error)
     }
   }
 
@@ -356,11 +355,11 @@ export default class App extends React.Component {
 
   centerRegion() {
     let region = _.cloneDeep(this.state.userLocation)
-    this.setState({ region })
+    this.map.animateToRegion(region, 1000 * 2)
   }
 
   updateRegion(region) {
-    this.setState({region})
+    this.setState({ region })
   }
 
   showMap() {
@@ -369,25 +368,21 @@ export default class App extends React.Component {
         <Header title="Mapa" navigationProps={this.props.navigation.toggleDrawer} />
 
         <MapView
+          ref={ref => { this.map = ref; }}
           style={stylesContainer.conteiner}
           initialRegion={this.state.userLocation}
           region={this.state.userLocation}
           //onRegionChangeComplete={(region) => this.updateRegion(region)}
           //onUserLocationChange={this.onUserLocationChange}
+          onPress={this.onUserLocationChange}
           provider={null}
           mapType={this.mapType}
-          onPress={this.onUserLocationChange}
           showsUserLocation={true}
           followsUserLocation={true}
           onMapReady={() => this.centerRegion()}
         >
 
           <TileComponent />
-
-          <PolylineComponent
-            id={'rightPoly'}
-            polyline={this.state.polyRoute}
-          />
 
           <PolylineComponent
             id={'wrongPoly'}

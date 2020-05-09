@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
-import { MarkerAnimated } from 'react-native-maps'
+import MapView, { MarkerAnimated } from 'react-native-maps'
 import { FontAwesome } from '@expo/vector-icons';
 
 class marker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      location: {
+      location: new MapView.AnimatedRegion ({
         latitude: 0,
         longitude: 0,
-      }
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      })
     };
   }
 
@@ -37,7 +39,7 @@ class marker extends Component {
     if (newLocation.longitude != location.longitude &&
       newLocation.latitude != location.latitude) {
 
-      this.setState({ location: newLocation })
+        this.state.location.timing(newLocation, 500).start();
 
     }
   }
@@ -60,13 +62,14 @@ class marker extends Component {
 
   render() {
     return (
-      <MarkerAnimated
+      <MapView.Marker.Animated
         coordinate={this.state.location}
         title={this.props.title}
         description={this.props.description}
+        ref={marker => { this.marker = marker; }}
       >
         {this.renderIcon(this.props.urlImag)}
-      </MarkerAnimated>
+      </MapView.Marker.Animated>
     );
   }
 }
