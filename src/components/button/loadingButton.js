@@ -28,8 +28,8 @@ class loadingButton extends Component {
 
   }
 
-  updateLoading = (loading) => {
-    if (loading && loading != this.state.loading) {
+  updateLoading(loading) {
+    if (loading != this.state.loading) {
       this.setState({ loading })
     }
   }
