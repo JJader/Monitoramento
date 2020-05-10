@@ -49,6 +49,7 @@ class busStopMarker extends Component {
         title={marker.value}
         key={marker.value}
         description={marker.description}
+        onPress={() => this.props.onPress()}
       >
 
         {this.renderIconBusStops(marker.arrive)}
