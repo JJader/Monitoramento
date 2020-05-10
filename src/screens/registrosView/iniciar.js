@@ -362,6 +362,10 @@ export default class App extends React.Component {
     this.setState({ region })
   }
 
+  changeScreen(){
+    this.props.navigation.navigate('RegistraE')
+  }
+
   showMap() {
     return (
       <View style={stylesContainer.background}>
@@ -394,6 +398,7 @@ export default class App extends React.Component {
             busStopList={this.state.busStops}
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
+            onPress={() => this.changeScreen()}
           />
 
           <UserMarker
