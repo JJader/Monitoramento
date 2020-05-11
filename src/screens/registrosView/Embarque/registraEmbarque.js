@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ScrollView, RefreshControl } from 'react-native';
+import { View, Alert, FlatList, ScrollView, RefreshControl } from 'react-native';
 import ModalStudent from './modalPonto';
 import stylesContainer from '../../../styles/Modal';
 import ModalButton from '../../../components/button/modalButton'
@@ -14,6 +14,7 @@ class RegistraEmbarque extends Component {
     this.state = {
 
       refreshScroll: false,
+      modal: false,
 
       pontosJson: [
         {
@@ -225,28 +226,57 @@ class RegistraEmbarque extends Component {
     })
   }
 
-  returnModalStudentComponent(item, index){
+  returnModalStudentComponent(item, index) {
     return (
       <ModalButton
         title={item.value}
-        view={this.returnStudentListComponent(item,index)}
+        modal={this.state.modal}
+        view={this.returnStudentListComponent(item, index)}
+        onRequestClose={() => this.closedModalnotSave()}
       />
-
     )
   }
 
-  returnStudentListComponent(item,index) {
+  returnStudentListComponent(item, index) {
     return (
       <ModalStudent
         data={item.alunos}
+        title={item.va}
         ponto={index}
         finisheA={(ponto, AlunosPonto) => this.endingABoarding(ponto, AlunosPonto)}
         deleteStudent={(index, ponto) => this.deleteStudent(index, ponto)}
         searchStudent={(id, ponto) => this.searchStudent(id, ponto)}
         refresh={(param) => this.updateRefreshScroll(param)}
+        closedModalnotSave={() => this.closedModalnotSave()}
       />
     )
   }
+
+  closedModalnotSave() {
+    Alert.alert(
+      "Cancelar embarque",
+      "Você não salvou o embarque",
+      [
+        {
+          text: "Ok",
+          onPress: () => { this.closedModal() },
+          style: "cancel"
+        },
+        {
+          text: "cancelar",
+          onPress: () => { return false }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  async closedModal() {
+    this.updateRefreshScroll(true)
+    this.setState({ modal: false })
+    this.updateRefreshScroll(false)
+  }
+
   render() {
     return (
       <View style={stylesContainer.background}>
@@ -263,8 +293,6 @@ class RegistraEmbarque extends Component {
             extraData={this.state.refreshScroll}
             renderItem={({ item, index }) => this.returnModalStudentComponent(item, index)}
           />
-
-
 
         </ScrollView>
       </View>
