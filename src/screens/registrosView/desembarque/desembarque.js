@@ -7,7 +7,7 @@ import stylesText from '../../../styles/text';
 
 import BotaoDesembarque from './botaoDesebarque';
 
-import Header from '../../../components/navigationMenu'
+import Header from '../../../components/header/navigationMenu'
 
 import _ from "lodash";
 

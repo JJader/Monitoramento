@@ -4,7 +4,7 @@ import { View, Text, Image, Dimensions, TextInput } from 'react-native';
 import stylesText from '../styles/text';
 import stylesComponets from '../styles/componets';
 import stylesContainer from '../styles/Modal';
-import Header from '../components/navigationMenu'
+import Header from '../components/header/navigationMenu'
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 

@@ -9,7 +9,7 @@ import {
 
 import stylesContainer from '../../styles/Modal';
 
-import Header from '../../components/navigationMenu'
+import Header from '../../components/header/navigationMenu'
 import PickerItem from '../../components/list/picker'
 import LoadingButton from '../../components/button/loadingButton'
 import Notes from '../../components/input/inputVertical'

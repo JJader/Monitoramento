@@ -10,7 +10,7 @@ import * as Permissions from 'expo-permissions'
 import stylesContainer from '../../styles/Modal';
 const busIcon = require('../../assets/logo/busMap.png');
 
-import Header from '../../components/navigationMenu'
+import Header from '../../components/header/navigationMenu'
 import TileComponent from '../../components/map/urlTile';
 import PolylineComponent from '../../components/map/polyline'
 import BusStopMarker from '../../components/map/busStopMarker'
