@@ -14,11 +14,14 @@ class ModalAlunos extends Component {
     };
   }
 
-  setModal(param) {
-    this.setState({ modal: param })
+
+  componentDidMount(){
+    this.setState({modal: this.props.modal})
   }
 
   componentWillUpdate(newProps) {
+    console.log(newProps.modal);
+    
     try {
       if (newProps.modal != this.state.modal) {
         this.setModal(newProps.modal)
@@ -27,6 +30,16 @@ class ModalAlunos extends Component {
     catch (error) {
     }
 
+  }
+
+  setModal(param) {
+    this.setState({ modal: param })
+  }
+
+  async onRequestClose(){
+    if(this.state.modal){
+      this.props.onRequestClose()
+    }
   }
 
   render() {
@@ -44,7 +57,7 @@ class ModalAlunos extends Component {
           animationType="slide"
           transparent={false}
           visible={this.state.modal}
-          onRequestClose={() => this.setModal(false)}
+          onRequestClose={() => this.onRequestClose() } 
         >
 
           <View style={{ flex: 1 }}>
