@@ -15,13 +15,13 @@ class ModalAlunos extends Component {
   }
 
 
-  componentDidMount(){
-    this.setState({modal: this.props.modal})
+  componentDidMount() {
+    this.setState({ modal: this.props.modal })
   }
 
   componentWillUpdate(newProps) {
     console.log(newProps.modal);
-    
+
     try {
       if (newProps.modal != this.state.modal) {
         this.setModal(newProps.modal)
@@ -36,8 +36,8 @@ class ModalAlunos extends Component {
     this.setState({ modal: param })
   }
 
-  async onRequestClose(){
-    if(this.state.modal){
+  async onRequestClose() {
+    if (this.state.modal) {
       this.props.onRequestClose()
     }
   }
@@ -46,18 +46,18 @@ class ModalAlunos extends Component {
     return (
       <View style={{ flex: 1 }}>
 
-        <View style={[stylesComponets.BoxShadow, styles.buttonConteiner]}>
-          <LoadingButton
-            onPress={() => this.setModal(true)}
-            text={this.props.title}
-          />
-        </View>
+        <LoadingButton
+          onPress={() => this.setModal(true)}
+          text={this.props.title}
+          style={this.props.style}
+        />
+
 
         <Modal
           animationType="slide"
           transparent={false}
           visible={this.state.modal}
-          onRequestClose={() => this.onRequestClose() } 
+          onRequestClose={() => this.onRequestClose()}
         >
 
           <View style={{ flex: 1 }}>
@@ -72,12 +72,3 @@ class ModalAlunos extends Component {
 }
 
 export default ModalAlunos;
-
-const styles = StyleSheet.create({
-  buttonConteiner: {
-    backgroundColor: stylesContainer.background.backgroundColor,
-    marginVertical: 20,
-    minHeight: 50,
-    borderRadius: 15,
-  },
-})
