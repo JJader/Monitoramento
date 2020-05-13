@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, Switch, StyleSheet } from 'react-native';
-import styles from '../../../styles/Modal'
-import stylesComponets from '../../../styles/componets';
-import stylesText from '../../../styles/text';
+import styles from '../../styles/Modal'
+import stylesComponets from '../../styles/componets';
+import stylesText from '../../styles/text';
 
 import _ from "lodash";
 
