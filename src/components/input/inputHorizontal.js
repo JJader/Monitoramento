@@ -19,7 +19,7 @@ class input extends Component {
 
   render() {
     return (
-      <View>
+      <View style = {this.props.style}>
         <Text style={[stylesText.text, styles.text]}> {this.props.text} </Text>
             <TextInput
               style={styles.textInput}
@@ -28,6 +28,7 @@ class input extends Component {
               autoCapitalize="none"
               autoCorrect={false}
               secureTextEntry = {this.props.secureText}
+              placeholder= {this.props.placeholder}
             />
       </View>
     );
