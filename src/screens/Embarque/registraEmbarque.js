@@ -17,6 +17,8 @@ class RegistraEmbarque extends Component {
     this.state = {
 
       refreshScroll: false,
+      refreshFlat: false,
+
       modal: false,
 
       pontosJson: [
@@ -36,6 +38,14 @@ class RegistraEmbarque extends Component {
         },
       ]
     };
+  }
+
+  onRefreshFlat(){
+    this.setState({refreshFlat: !this.state.refreshFlat})
+  }
+
+  updateRefreshScroll(param) {
+    this.setState({ refreshScroll: param })
   }
 
   returnRefreshControllConfig() {
@@ -64,6 +74,7 @@ class RegistraEmbarque extends Component {
 
     if (!busStops.error) {
       this.setState({ pontosJson: busStops })
+      this.onRefreshFlat()
       return true
     }
     else {
@@ -86,7 +97,7 @@ class RegistraEmbarque extends Component {
       }
     })
     this.props.navigation.navigate('Iniciar', { busStops: data })
-    this.setState({modal: false})
+    this.setState({ modal: false })
   }
 
   async callBusStopsServer() {
@@ -142,6 +153,8 @@ class RegistraEmbarque extends Component {
         view={this.returnStudentListComponent(item, index)}
         onRequestClose={() => this.closedModalnotSave()}
         style={[stylesComponets.BoxShadow, styles.buttonConteiner]}
+        index={index}
+        color={(index) => this.isBusStopReady(index)}
       />
     )
   }
@@ -153,28 +166,38 @@ class RegistraEmbarque extends Component {
         ponto={index}
         endingABoarding={(ponto, AlunosPonto) => this.endingABoarding(ponto, AlunosPonto)}
         searchStudent={(id, ponto) => this.searchStudent(id, ponto)}
-        updateRefresh={(param) => this.updateRefreshScroll(param)}
-        refresh = {this.state.refreshScroll}
+        refresh={this.state.refreshFlat}
         closedModalnotSave={() => this.closedModalnotSave()}
       />
     )
   }
 
+  isBusStopReady(index) {
+    try {
+      return this.state.pontosJson[index].color
+    }
+    catch (error) {
+      return false
+    }
+  }
+
   async endingABoarding(ponto, AlunosPonto) {
     // excluir alunos adicionados
-    let pontosJson = this.state.pontosJson
-    pontosJson[ponto].alunos = _.cloneDeep(AlunosPonto)
-
-    this.updateRefreshScroll(true)
-    this.setState({ pontosJson })
-    let response = await this.callPostServer(ponto)
-    this.updateRefreshScroll(false)
+    let response = await this.callPostServer(AlunosPonto)
 
     if (!response.error) {
+
+      let pontosJson = this.state.pontosJson
+      pontosJson[ponto].alunos = _.cloneDeep(AlunosPonto)
+      pontosJson[ponto].color = 'green'
+      this.setState({ pontosJson })
+
       this.shareIndexReadyBustopToMaps(ponto)
+
+      this.onRefreshFlat()
     }
     else {
-      return response.error   
+      return response.error
     }
   }
 
@@ -188,11 +211,11 @@ class RegistraEmbarque extends Component {
 
       if (student) {
         let busStops = _.cloneDeep(this.state.pontosJson)
-        this.updateRefreshScroll(true)
+        this.onRefreshFlat()
 
         busStops[indexStop].alunos = students
         this.setState({ pontosJson: busStops })
-        
+
         return student
       }
     }
@@ -203,16 +226,16 @@ class RegistraEmbarque extends Component {
     }
   }
 
-  shareIndexReadyBustopToMaps(index){
+  shareIndexReadyBustopToMaps(index) {
     this.props.navigation.navigate('Iniciar', { index })
-    this.setState({modal: false})
+    this.setState({ modal: false })
   }
 
-  async callPostServer(stop) {
+  async callPostServer(students) {
     let responseJson = {}
 
     try {
-      responseJson = await this.sendStudentsToServer(stop)
+      responseJson = await this.sendStudentsToServer(students)
     }
     catch (error) {
       responseJson = {
@@ -223,11 +246,11 @@ class RegistraEmbarque extends Component {
     return responseJson
   }
 
-  async sendStudentsToServer(ponto) {
+  async sendStudentsToServer(students) {
     let link = URL_API + '/pontos.json'
 
     const dados = {
-      alunos: this.state.pontosJson[ponto].alunos
+      alunos: students
     };
 
     const response = await fetch(link, {
@@ -264,10 +287,6 @@ class RegistraEmbarque extends Component {
     }
   }
 
-  updateRefreshScroll(param) {
-    this.setState({ refreshScroll: param })
-  }
-
   closedModalnotSave() {
     Alert.alert(
       "Cancelar embarque",
@@ -288,9 +307,9 @@ class RegistraEmbarque extends Component {
   }
 
   async closedModal() {
-    this.updateRefreshScroll(true)
+    
     this.setState({ modal: false })
-    this.updateRefreshScroll(false)
+    this.onRefreshFlat()
   }
 
   render() {
@@ -306,7 +325,7 @@ class RegistraEmbarque extends Component {
           <FlatList
             keyExtractor={item => String(item.id)}
             data={this.state.pontosJson}
-            extraData={this.state.refreshScroll}
+            extraData={this.state.refreshFlat}
             renderItem={({ item, index }) => this.returnButtonModalComponent(item, index)}
           />
 

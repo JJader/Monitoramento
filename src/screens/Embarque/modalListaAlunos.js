@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Modal, TouchableOpacity, Switch, StyleSheet, ScrollView, FlatList, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, FlatList } from 'react-native';
 import PresencaAluno from './PresencaAluno';
 import stylesContainer from '../../styles/Modal'
 
@@ -23,10 +23,9 @@ class ModalAlunos extends Component {
 
   componentWillUpdate(newProps) {
     try {
-      if (newProps.data && newProps.refresh) {
+      if (newProps.data && newProps.refresh != this.state.refresh) {
         this.setState({ alunos: newProps.data })
         this.onRefreshFlat()
-        this.onRefreshRegistraEmbarque()
       }
     } 
     catch (error) { 
@@ -36,10 +35,6 @@ class ModalAlunos extends Component {
   onRefreshFlat() {
     this.setState({ refresh: !this.state.refresh })
     
-  }
-
-  onRefreshRegistraEmbarque(){
-    this.props.updateRefresh(false)
   }
 
   cancel(){
@@ -66,8 +61,6 @@ class ModalAlunos extends Component {
         alert(response.error)
       }
       else {
-        this.onRefreshRegistraEmbarque()
-        this.setState({ backgColor: '#32CD32' })
         this.setState({ alunos_add: 0 })
       }
     }
