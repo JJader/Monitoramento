@@ -23,7 +23,6 @@ class login extends Component {
       user: '',
       password: '',
 
-      token: '',
       id: '',
       name: '',
 
@@ -94,6 +93,7 @@ class login extends Component {
     })
 
     this.props.navigation.navigate('Start')
+    globalThis.token = userDate.token
   }
 
   render() {
