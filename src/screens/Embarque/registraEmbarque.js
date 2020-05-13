@@ -306,8 +306,7 @@ class RegistraEmbarque extends Component {
     );
   }
 
-  async closedModal() {
-    
+  async closedModal(){
     this.setState({ modal: false })
     this.onRefreshFlat()
   }
