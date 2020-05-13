@@ -11,6 +11,7 @@ class ModalAlunos extends Component {
     super(props);
     this.state = {
       modal: false,
+      color: '',
     };
   }
 
@@ -20,26 +21,43 @@ class ModalAlunos extends Component {
   }
 
   componentWillUpdate(newProps) {
-    console.log(newProps.modal);
-
     try {
       if (newProps.modal != this.state.modal) {
         this.setModal(newProps.modal)
+        this.updateColor()
       }
     }
     catch (error) {
     }
-
   }
 
   setModal(param) {
     this.setState({ modal: param })
   }
 
+  updateColor() {
+    if (this.props.index == 0 || this.props.index) {
+
+      let color = this.props.color(this.props.index)
+      if (color) {
+        this.setState({ color })
+      }
+
+    }
+  }
+
   async onRequestClose() {
     if (this.state.modal) {
       this.props.onRequestClose()
     }
+  }
+
+  returnStyle() {
+    return (this.state.color != '' ?
+      [this.props.style, { backgroundColor: this.state.color }]
+      :
+      this.props.style
+    )
   }
 
   render() {
@@ -49,7 +67,7 @@ class ModalAlunos extends Component {
         <LoadingButton
           onPress={() => this.setModal(true)}
           text={this.props.title}
-          style={this.props.style}
+          style={this.returnStyle()}
         />
 
 
