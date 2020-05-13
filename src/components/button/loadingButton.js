@@ -11,9 +11,9 @@ class loadingButton extends Component {
     };
   }
 
-  async onPress(parameter) {
+  onPress(parameter) {
     this.setState({ loading: true })
-    await this.props.onPress(parameter)
+    this.props.onPress(parameter)
     this.setState({ loading: false })
   }
 
@@ -53,16 +53,20 @@ class loadingButton extends Component {
 
   isLoding() {
     return (
-      <ActivityIndicator style = {styles.button} size="large" color="blue" animating={true} />
+      <ActivityIndicator style={styles.button} size="large" color="blue" animating={true} />
     )
   }
 
   render() {
     return (
-      this.state.loading ?
-        this.isLoding()
-        :
-        this.noIsLoding()
+      <View style = {[this.props.style, {flex: 1}]}>
+        {
+          this.state.loading ?
+            this.isLoding()
+            :
+            this.noIsLoding()
+        }
+      </View>
     );
   }
 }
