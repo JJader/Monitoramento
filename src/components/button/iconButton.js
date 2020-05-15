@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-
-import stylesContainer from '../../styles/Modal'
 import { MaterialIcons } from '@expo/vector-icons';
 
 class loadingButton extends Component {
@@ -18,40 +16,20 @@ class loadingButton extends Component {
     this.setState({ loading: false })
   }
 
-  onLongPress(){
+  onLongPress() {
     alert(this.props.text)
-  }
-
-  componentWillUpdate(newProps) {
-
-    try {
-      this.updateLoading(newProps.loading)
-    }
-    catch (error) {
-
-    }
-
-  }
-
-  updateLoading = (loading) => {
-    if (loading && loading != this.state.loading) {
-      this.setState({ loading })
-    }
   }
 
   noIsLoding() {
     return (
-      <TouchableOpacity style={styles.button}
-        onPress={() => {
-          this.onPress();
-          this.updateLoading(true)
-        }}
-        onLongPress = {()=> this.onLongPress()}
-        delayLongPress = {1000}
+      <TouchableOpacity style={[this.props.style, styles.button]}
+        onPress={() => this.onPress()}
+        onLongPress={() => this.onLongPress()}
+        delayLongPress={1000}
       >
 
         <MaterialIcons
-          name= {this.props.name}
+          name={this.props.name}
           size={50}
           color={"white"}
         />
@@ -62,7 +40,12 @@ class loadingButton extends Component {
 
   isLoding() {
     return (
-      <ActivityIndicator style={styles.button} size="large" color="blue" animating={true} />
+      <ActivityIndicator
+        style={[this.props.style, styles.button]}
+        size={50}
+        color={"white"}
+        animating={true}
+      />
     )
   }
 
@@ -82,5 +65,4 @@ const styles = StyleSheet.create({
   button: {
     flex: 1
   }
-
-});
+})
