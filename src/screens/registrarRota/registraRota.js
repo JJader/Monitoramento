@@ -20,7 +20,7 @@ class RegistraRota extends Component {
     this.state = {
 
       id: 1,
-      token: '',
+      token: globalThis.token,
 
       shift: '',
       vehicle: '',
@@ -39,9 +39,6 @@ class RegistraRota extends Component {
     try {
       const id = newProps.navigation.getParam('id', null)
       this.updateId(id)
-
-      const token = newProps.navigation.getParam('token', null)
-      this.updateToken(token)
     }
     catch (error) {
 
@@ -51,12 +48,6 @@ class RegistraRota extends Component {
   updateId = (id) => {
     if (id != this.state.id && id != null) {
       this.setState({ id })
-    }
-  };
-
-  updateToken = (token) => {
-    if (token != this.state.token && token != null) {
-      this.setState({ token })
     }
   };
 
@@ -254,7 +245,6 @@ class RegistraRota extends Component {
   callNewScreen(mapDate) {
     this.props.navigation.navigate('Iniciar', {
       id: this.state.id,
-      token: this.state.token,
     })
   }
 

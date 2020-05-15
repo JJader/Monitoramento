@@ -44,7 +44,7 @@ export default class App extends React.Component {
       nextPolyPoint: 0,
 
       id: 1,
-      token: '',
+      token: globalThis.token,
       userLocation: {
         latitude: 0,
         longitude: 0,
@@ -278,20 +278,16 @@ export default class App extends React.Component {
   }
 
   componentWillUpdate(newProps) {
-    if (!this.state.id || !this.state.token) {
+    if (!this.state.id) {
       this.startUser(newProps)
     }
   }
 
   startUser(newProps) {
     let id = newProps.navigation.getParam('id', 1)
-    let token = newProps.navigation.getParam('token', null)
 
     if (id != this.state.id) {
       this.setState({ id })
-    }
-    if (token != this.state.token) {
-      this.setState({ token })
     }
   }
 

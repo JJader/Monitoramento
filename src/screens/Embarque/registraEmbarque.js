@@ -16,6 +16,8 @@ class RegistraEmbarque extends Component {
     super(props);
     this.state = {
 
+      token : globalThis.token,
+
       refreshScroll: false,
       refreshFlat: false,
 
