@@ -358,7 +358,7 @@ export default class App extends React.Component {
     this.setState({ region })
   }
 
-  changeScreen(){
+  changeScreen() {
     this.props.navigation.navigate('RegistraE')
   }
 
@@ -406,21 +406,20 @@ export default class App extends React.Component {
 
         </MapView>
 
-        <View style={styles.buttonUpdatePoly}>
-          <IconButton
-            onPress={() => this.getPolyRoute()}
-            name={"update"}
-            text={"Update polyline"}
-          />
-        </View>
+        <IconButton
+          style={styles.buttonUpdatePoly}
+          onPress={() => this.getPolyRoute()}
+          name={"update"}
+          text={"Update polyline"}
+        />
 
-        <View style={styles.buttonUpdateRegion}>
-          <IconButton
-            onPress={() => this.centerRegion()}
-            name={"center-focus-weak"}
-            text={"Update polyline"}
-          />
-        </View>
+        <IconButton
+          style={styles.buttonUpdateRegion}
+          onPress={() => this.centerRegion()}
+          name={"center-focus-weak"}
+          text={"Update polyline"}
+        />
+
 
       </View>
     )
@@ -449,7 +448,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     top: '10%',
     right: '0%',
-    //backgroundColor: stylesContainer.background.backgroundColor,
     minHeight: 20,
   }
 })
