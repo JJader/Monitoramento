@@ -5,6 +5,7 @@ import stylesContainer from '../../styles/Modal'
 import stylesComponets from '../../styles/componets';
 
 import LoadingButton from './loadingButton';
+import IconButton from './iconButton'
 
 class ModalAlunos extends Component {
   constructor(props) {
@@ -15,7 +16,6 @@ class ModalAlunos extends Component {
     };
   }
 
-
   componentDidMount() {
     this.setState({ modal: this.props.modal })
   }
@@ -24,7 +24,6 @@ class ModalAlunos extends Component {
     try {
       if (newProps.modal != this.state.modal) {
         this.setModal(newProps.modal)
-        this.updateColor()
       }
     }
     catch (error) {
@@ -35,47 +34,30 @@ class ModalAlunos extends Component {
     this.setState({ modal: param })
   }
 
-  updateColor() {
-    if (this.props.index == 0 || this.props.index) {
-
-      let color = this.props.color(this.props.index)
-      if (color) {
-        this.setState({ color })
-      }
-
-    }
-  }
-
-  async onRequestClose() {
-    if (this.state.modal) {
-      this.props.onRequestClose()
-    }
-  }
-
-  returnStyle() {
-    return (this.state.color != '' ?
-      [this.props.style, { backgroundColor: this.state.color }]
-      :
-      this.props.style
-    )
-  }
-
   render() {
     return (
       <View style={{ flex: 1 }}>
 
-        <LoadingButton
-          onPress={() => this.setModal(true)}
-          text={this.props.title}
-          style={this.returnStyle()}
-        />
-
+        {this.props.icon ?
+          <IconButton
+            onPress={() => this.props.onPress()}
+            name={this.props.icon}
+            text={this.props.text}
+            style={this.props.style}
+          />
+          :
+          <LoadingButton
+            onPress={() => this.props.onPress()}
+            text={this.props.title}
+            style={this.props.style}
+          />
+        }
 
         <Modal
           animationType="slide"
           transparent={false}
           visible={this.state.modal}
-          onRequestClose={() => this.onRequestClose()}
+          onRequestClose={() => this.props.onRequestClose()}
         >
 
           <View style={{ flex: 1 }}>
