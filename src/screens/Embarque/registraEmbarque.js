@@ -99,6 +99,7 @@ class RegistraEmbarque extends Component {
       }
     })
     this.props.navigation.navigate('Iniciar', { busStops: data })
+    this.props.navigation.navigate('Iniciar', { busStops: data })
     this.setState({ modal: false })
   }
 

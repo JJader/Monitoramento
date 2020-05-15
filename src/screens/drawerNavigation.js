@@ -5,9 +5,9 @@ import { createDrawerNavigator, DrawerNavigatorItems } from 'react-navigation-dr
 
 import { Ionicons } from '@expo/vector-icons';
 
-import Iniciar from './registrosView/iniciar'
+import Iniciar from './mapa/iniciar'
 import RegistraRota from './registrarRota/registraRota';
-import RegistraEmbarque from './registrosView/Embarque/registraEmbarque';
+import RegistraEmbarque from './Embarque/registraEmbarque';
 import Desembarque from './registrosView/desembarque/desembarque';
 import Login from './login/login';
 import Exit from './exit';
@@ -95,7 +95,7 @@ const MyDrawerNavigation =
     },
     
     {
-      initialRouteName: 'RegistraR',
+      initialRouteName: 'RegistraE',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
