@@ -17,6 +17,10 @@ import BusStopMarker from '../../components/map/busStopMarker'
 import UserMarker from '../../components/map/marker'
 import IconButton from '../../components/button/iconButton'
 
+import busStopAPI from '../../api/busStop/getBusStop'
+import openRouteAPI from '../../api/polyline/openRoute'
+import polyRouteAPI from '../../api/polyline/polyRoute'
+
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
@@ -69,8 +73,8 @@ export default class App extends React.Component {
     if (permission) {
       this.startMap()
       this.startUser(this.props)
-
-    } else {
+    }
+    else {
       this.geoFailure('Location permission not granted');
     }
   }
@@ -121,17 +125,17 @@ export default class App extends React.Component {
     let isRead = this.state.polyRoute.length
 
     if (isRead) {
-
       let APIpoly = await this.sendStartEndPointToServe()
 
       if (!APIpoly.error) {
-        let polyToNextBusStop = this.formatAPIPolyResponse(APIpoly.coordinates)
-        this.setState({ polyToNextBusStop })
+        this.setState({ polyToNextBusStop: APIpoly.coordinates })
         this.updateColor(APIpoly.distance)
         this.updateNextPolyPoint(APIpoly.distance)
-
-        console.log("distance: " + APIpoly.distance);
       }
+    }
+    else {
+      await this.updateBuStops()
+      await this.updatePolyRoute()
     }
   }
 
@@ -149,7 +153,7 @@ export default class App extends React.Component {
         latitude: nextPoint.latitude,
       }
 
-      return await this.callPolyToNextPointServer(start, end)
+      return await openRouteAPI.polyToNextPoint(start, end)
     }
     else {
       return nextPoint
@@ -168,51 +172,6 @@ export default class App extends React.Component {
     }
   }
 
-  async callPolyToNextPointServer(start, end) {
-    let responseJson = {}
-
-    try {
-      responseJson = await this.callpolyAPI(start, end)
-    }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
-    }
-
-    return responseJson
-  }
-
-  async callpolyAPI(start, end) {
-
-    const link = 'https://api.openrouteservice.org/v2/directions/driving-car?' +
-      'api_key=5b3ce3597851110001cf62489ea5b3cf827249b192042b4334794e4e' +
-      '&start=' + start.longitude + ',' + start.latitude +
-      '&end=' + end.longitude + ',' + end.latitude;
-
-    const response = await fetch(link);
-    const responseJson = await response.json();
-
-    let polyFormat = {
-      distance: responseJson.features[0].properties.segments[0].distance,
-      duration: responseJson.features[0].properties.segments[0].duration,
-      coordinates: responseJson.features[0].geometry.coordinates,
-    }
-
-    return polyFormat
-  }
-
-  formatAPIPolyResponse(dataArray) {
-    let coords = dataArray.map((point, index) => {
-      return {
-        latitude: point[1],
-        longitude: point[0]
-      }
-    })
-
-    return coords
-  }
-
   updateColor(distance) {
     if (distance > minDistanceForReDPoly) {
       this.setState({ polycolor: 'red' })
@@ -229,52 +188,27 @@ export default class App extends React.Component {
     }
   }
 
-  async getPolyRoute() {
-    let serverPoly = await this.callPolyRouteServer()
+  async updateBuStops() {
+    const busStops = await busStopAPI.BusStopsToMap();
 
-    if (!serverPoly.error) {
-      let polyRoute = this.formatServerPolyResponse(serverPoly)
+    if (!busStops.error) {
+      this.setState({ busStops })
+    }
+    else {
+      alert(busStops.error)
+    }
+  }
+
+  async updatePolyRoute() {
+    let id = this.state.id
+    let polyRoute = await polyRouteAPI.polyRoute(id)
+
+    if (!polyRoute.error) {
       this.setState({ polyRoute })
     }
     else {
       alert(serverPoly.error)
     }
-  }
-
-  async callPolyRouteServer() {
-    let responseJson = {}
-
-    try {
-      responseJson = await this.callPolyRoute()
-    }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
-    }
-
-    return responseJson
-  }
-
-  async callPolyRoute() {
-    let link = URL_API + '/polyline/' + this.state.id
-
-    const response = await fetch(link);
-    const responseJson = await response.json();
-
-    return responseJson
-
-  }
-
-  formatServerPolyResponse(dataArray) {
-    let coords = dataArray.map((point, index) => {
-      return {
-        latitude: point[0],
-        longitude: point[1]
-      }
-    })
-
-    return coords
   }
 
   componentWillUpdate(newProps) {
@@ -292,12 +226,7 @@ export default class App extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    let busStops = newProps.navigation.getParam('busStops', null)
     let finishedBusStop = newProps.navigation.getParam('index', null)
-
-    if (busStops != null) {
-      this.setState({ busStops })
-    }
 
     if (finishedBusStop != null) {
 
@@ -408,19 +337,20 @@ export default class App extends React.Component {
 
         <IconButton
           style={styles.buttonUpdatePoly}
-          onPress={() => this.getPolyRoute()}
+          onPress={ async () => {
+            await this.updatePolyRoute()
+            await this.updateBuStops()
+          }}
           name={"update"}
           text={"Update polyline"}
         />
 
         <IconButton
-          style={styles.buttonUpdateRegion}
+          style={styles.buttonCenterRegion}
           onPress={() => this.centerRegion()}
           name={"center-focus-weak"}
           text={"Update polyline"}
         />
-
-
       </View>
     )
   }
@@ -443,7 +373,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
   },
 
-  buttonUpdateRegion: {
+  buttonCenterRegion: {
     position: 'absolute',
     alignItems: 'flex-end',
     top: '10%',
