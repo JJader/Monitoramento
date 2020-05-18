@@ -37,7 +37,7 @@ class busStopMarker extends Component {
     }
   }
 
-  renderBusStops(marker) {
+  renderBusStops(marker,index) {
     return (
       <Marker
         coordinate={{
@@ -49,7 +49,7 @@ class busStopMarker extends Component {
         title={marker.value}
         key={marker.value}
         description={marker.description}
-        onPress={() => this.props.onPress()}
+        onPress={() => this.props.onPress(index)}
       >
 
         {this.renderIconBusStops(marker.arrive)}
@@ -78,7 +78,7 @@ class busStopMarker extends Component {
   render() {
     return (
       this.state.busStopList && this.state.busStopList.length > 0 ?
-        this.state.busStopList.map(marker => this.renderBusStops(marker))
+        this.state.busStopList.map((marker,index) => this.renderBusStops(marker,index))
         :
         null
     );
