@@ -10,7 +10,7 @@ export default class BarcodeScannerExample extends React.Component {
   state = {
     hasCameraPermission: null,
     scanned: false,
-    data: '',
+    qrcode: '',
     studentOnBus: [],
   };
 
@@ -28,7 +28,7 @@ export default class BarcodeScannerExample extends React.Component {
       this.addStudentOnBus(data)
     }
 
-    this.setState({ data })
+    this.setState({ qrcode: data })
     this.setState({ scanned: true });
     this.updateScannedWithDelay()
   };
@@ -56,7 +56,7 @@ export default class BarcodeScannerExample extends React.Component {
   }
 
   whichviewStudent() {
-    let isOkay = this.validQrCode(this.state.data)
+    let isOkay = this.validQrCode(this.state.qrcode)
 
     return (
       isOkay ?
@@ -96,6 +96,24 @@ export default class BarcodeScannerExample extends React.Component {
     return !isNaN(parseFloat(param)) && isFinite(param);
   }
 
+  async changeScreen() {
+    if (this.state.studentOnBus.length) {
+      
+      await this.sendListStudentsToServer()
+      this.props.navigation.navigate('Iniciar', {
+        index: this.props.navigation.getParam('index', null)
+      })
+
+    }
+    else {
+      this.props.navigation.navigate('Iniciar')
+    }
+  }
+
+  async sendListStudentsToServer(){
+    this.setState({studentOnBus: []})
+  }
+
   render() {
     const { hasCameraPermission, scanned } = this.state;
 
@@ -115,7 +133,7 @@ export default class BarcodeScannerExample extends React.Component {
 
         <ModalButton
           modal={this.state.scanned}
-          onPress={() => alert(this.state.studentOnBus)}
+          onPress={() => this.changeScreen()}
           icon={"map"}
           text={"Retornar para o mapa"}
           style={styles.button}
