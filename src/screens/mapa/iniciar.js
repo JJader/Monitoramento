@@ -226,12 +226,12 @@ export default class App extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    let finishedBusStop = newProps.navigation.getParam('index', null)
+    let indexBusWithStudent = newProps.navigation.getParam('index', null)
+    
+    if (indexBusWithStudent != null) {
 
-    if (finishedBusStop != null) {
-
-      this.arriveAtBusStop(finishedBusStop)
-      this.updateNextBusStop(finishedBusStop + 1)
+      this.arriveAtBusStop(indexBusWithStudent)
+      this.updateNextBusStop(indexBusWithStudent + 1)
 
     }
   }
@@ -287,8 +287,8 @@ export default class App extends React.Component {
     this.setState({ region })
   }
 
-  changeScreen() {
-    this.props.navigation.navigate('RegistraE')
+  changeScreen(index) {
+    this.props.navigation.navigate('RegistraE',{index})
   }
 
   showMap() {
@@ -323,7 +323,7 @@ export default class App extends React.Component {
             busStopList={this.state.busStops}
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
-            onPress={() => this.changeScreen()}
+            onPress={(index) => this.changeScreen(index)}
           />
 
           <UserMarker
