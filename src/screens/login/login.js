@@ -12,7 +12,9 @@ import LoadingButton from '../../components/button/loadingButton'
 import Header from '../../components/header/logoHeader'
 import Input from '../../components/input/inputHorizontal'
 
-import _ from "lodash";
+import * as SecureStore from "expo-secure-store";
+import loginAPI from '../../api/login/userData'
+import dadosUserStore from '../../api/offline/dadosUser'
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
@@ -30,6 +32,12 @@ class login extends Component {
     };
   }
 
+  async componentWillMount() {
+    //await dadosUserStore.delet()
+    const dados = await dadosUserStore.get()
+    this.callNewScreen(dados);
+  }
+
   updateUser = (user) => {
     this.setState({ user })
   };
@@ -39,61 +47,29 @@ class login extends Component {
   };
 
   async buttonEnterEvent() {
-    let userDate = await this.callLoginServe()
+    let user = this.state.user
+    let password = this.state.password
+
+    let userDate = await loginAPI.callLoginServe(user, password)
 
     if (!userDate.error) {
-      this.callNewScreen(userDate)
-
-    } else {
+      let user = await dadosUserStore.set(userDate)
+      this.callNewScreen(user)
+    }
+    else {
       alert(userDate.error)
       this.setState({ loading: false })
     }
   }
 
-  async callLoginServe() {
-    let responseJson = {}
-
-    try {
-      responseJson = await this.sendUserPassToServer()
+  callNewScreen(user) {
+    if (user.name) {
+      this.props.navigation.navigate('RegistraR')
+      this.props.navigation.navigate('Start', { name: user.name })
     }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
+    else {
+      console.log(user.error)
     }
-
-    return responseJson
-  }
-
-  async sendUserPassToServer() {
-    let link = URL_API + 'user/login'
-
-    const dados = {
-      email: this.state.user,
-      pass: this.state.password,
-    };
-
-    const response = await fetch(link, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dados),
-    });
-
-    let responseJson = await response.json();
-    return responseJson
-  }
-
-  callNewScreen(userDate) {
-    this.props.navigation.navigate('RegistraR', {
-      id: userDate.id,
-      token: userDate.token,
-      name: userDate.name,
-    })
-
-    this.props.navigation.navigate('Start')
-    globalThis.token = userDate.token
   }
 
   render() {
