@@ -14,6 +14,9 @@ import PickerItem from '../../components/list/picker'
 import LoadingButton from '../../components/button/loadingButton'
 import Notes from '../../components/input/inputVertical'
 
+import routeAPI from '../../api/registrarRota/routeServer'
+import dadosUserStore from '../../api/offline/dadosUser'
+
 class RegistraRota extends Component {
   constructor(props) {
     super(props);
@@ -28,133 +31,65 @@ class RegistraRota extends Component {
       notes: '',
 
       routesJson: [{ id: 0, value: 'Null' }],
-      shiftsJson: [{ id: 0, value: 'Null' }],
       vehiclesJson: [{ id: 0, value: 'Null' }],
+      shiftsJson: [
+        { value: "M", name: "Manhã" },
+        { value: "A", name: "Tarde" },
+        { value: "N", name: "Noite" },
+        { value: "F", name: "Tempo Todo" },
+        { value: "U", name: "Indefinido" }
+      ],
 
       loading: false
     };
   }
 
-  componentWillUpdate(newProps) {
-    try {
-      const id = newProps.navigation.getParam('id', null)
-      this.updateId(id)
-    }
-    catch (error) {
-
-    }
-  }
-
-  updateId = (id) => {
-    if (id != this.state.id && id != null) {
-      this.setState({ id })
-    }
-  };
-
-  updateNotes = (notes) => {
+  updateNotes(notes) {
     this.setState({ notes })
   };
 
-  updateVehicle = (vehicle) => {
-    this.setState({ vehicle })
+  async updateShift(shift) {
+    if (shift != '') {
+      let dadosUser = await this.updateUserShifts(shift)
+      if (dadosUser.error){
+        alert(dadosUser.error)      
+      }
+      else{
+      await this.updateRoutesJson(shift)
+    }
+    }
   };
 
-  updateRoute = (route) => {
-    this.setState({ route })
-  };
+  async updateUserShifts(shift) {
+    let dadosUser = await dadosUserStore.get()
 
-  updateShift = (shift) => {
-    this.setState({ shift })
-  };
-
-  ScrollRefreshControl() {
-    return (
-      <RefreshControl
-        refreshing={this.state.loading}
-        onRefresh={() => { this.callAllUpdatesJson() }
-        }
-      />
-    )
+    if (!dadosUser.error) {
+      dadosUser.turn = shift
+      return await dadosUserStore.set(dadosUser)
+    }
+    else {
+      return dadosUser
+    }
   }
 
-  async callAllUpdatesJson() {
-    this.setState({ loading: true })
-    await this.updateRoutesJson()
-    await this.updateShiftsJson()
-    await this.updateVehiclesJson()
-    this.setState({ loading: false })
-  }
-
-  async updateRoutesJson() {
-    let routesJson = await this.callRouteServer()
+  async updateRoutesJson(shift) {
+    let routesJson = await routeAPI.routeServer(shift)
 
     if (!routesJson.error) {
-      this.setState({ routesJson: routesJson.rotas })
+      this.setState({ routesJson })
     }
     else {
       alert(routesJson.error)
     }
   }
 
-  async callRouteServer() {
-    let responseJson = {}
+  updateVehicle(vehicle) {
+    this.setState({ vehicle })
+  };
 
-    try {
-      responseJson = await this.returnRouteList()
-    }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
-    }
-
-    return responseJson
-  }
-
-  async returnRouteList() {
-    let link = URL_API + '/rotas.json'
-
-    const routes = await fetch(link);
-    const routesJson = await routes.json();
-
-    return routesJson
-  }
-
-  async updateShiftsJson() {
-    let shiftsJson = await this.callShiftServer()
-
-    if (!shiftsJson.error) {
-      this.setState({ shiftsJson: shiftsJson.turnos })
-    }
-    else {
-      alert(shiftsJson.error)
-    }
-  }
-
-  async callShiftServer() {
-    let responseJson = {}
-
-    try {
-      responseJson = await this.returnShiftList()
-    }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
-    }
-
-    return responseJson
-  }
-
-  async returnShiftList() {
-    let link = URL_API + '/turnos.json'
-
-    const shifts = await fetch(link);
-    const shiftsJson = await shifts.json();
-
-    return shiftsJson
-
-  }
+  updateRoute(route) {
+    this.setState({ route })
+  };
 
   async updateVehiclesJson() {
     let vehiclesJson = await this.callVehicleServer()
@@ -257,9 +192,7 @@ class RegistraRota extends Component {
           navigationProps={this.props.navigation.toggleDrawer}
         />
 
-        <ScrollView contentContainerStyle={stylesContainer.conteiner}
-          refreshControl={this.ScrollRefreshControl()}
-        >
+        <ScrollView contentContainerStyle={stylesContainer.conteiner}>
 
           <KeyboardAvoidingView style={styles.viewPicker} behavior="height" enabled>
 
@@ -267,28 +200,28 @@ class RegistraRota extends Component {
               dates={this.state.shiftsJson}
               text={"TURNO:"}
               iconName={"ios-partly-sunny"}
-              onValueChange={this.updateShift}
+              onValueChange={(item) => this.updateShift(item)}
             />
 
             <PickerItem
               dates={this.state.routesJson}
               text={"ROTA:"}
               iconName={"md-git-network"}
-              onValueChange={this.updateRoute}
+              onValueChange={(item) => this.updateRoute(item)}
             />
 
             <PickerItem
               dates={this.state.vehiclesJson}
               text={"VEÍCULO:"}
               iconName={"ios-bus"}
-              onValueChange={this.updateVehicle}
+              onValueChange={(item) => this.updateVehicle(item)}
             />
 
             <View style={{ flex: 4 }}>
               <Notes
                 text="Notas: "
                 secureText={false}
-                updateParameter={this.updateNotes}
+                updateParameter={(notes) => this.updateNotes(notes)}
               />
             </View>
 
