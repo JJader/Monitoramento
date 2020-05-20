@@ -89,7 +89,7 @@ class RegistraRota extends Component {
     let vehiclesJson = await vehicleAPI.vehicleServer()
 
     if (!vehiclesJson.error) {
-      this.setState({ vehiclesJson})
+      this.setState({ vehiclesJson })
     }
     else {
       alert(vehiclesJson.error)
@@ -197,13 +197,12 @@ class RegistraRota extends Component {
               onValueChange={(item) => this.updateVehicle(item)}
             />
 
-            <View style={{ flex: 4 }}>
-              <Notes
-                text="Notas: "
-                secureText={false}
-                updateParameter={(notes) => this.updateNotes(notes)}
-              />
-            </View>
+            <Notes
+              style={{ flex: 4 }}
+              text="Notas: "
+              secureText={false}
+              updateParameter={(notes) => this.updateNotes(notes)}
+            />
 
           </KeyboardAvoidingView >
 
