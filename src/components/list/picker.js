@@ -57,12 +57,12 @@ export default class pickerItem extends Component {
           <Picker.Item label={this.props.text} value="" />
 
           {
-            this.state.dates.map((item) => {
+            this.state.dates.map((item,index) => {
               return (
                 <Picker.Item 
-                  label={"   " + item.value} 
+                  label={"   " + item.name} 
                   value={item.value} 
-                  key={item.id} 
+                  key={index} 
                 />
               )
             })
