@@ -15,6 +15,7 @@ import LoadingButton from '../../components/button/loadingButton'
 import Notes from '../../components/input/inputVertical'
 
 import routeAPI from '../../api/registrarRota/routeServer'
+import vehicleAPI from '../../api/registrarRota/vehicleServer'
 import dadosUserStore from '../../api/offline/dadosUser'
 
 class RegistraRota extends Component {
@@ -55,7 +56,8 @@ class RegistraRota extends Component {
         alert(dadosUser.error)
       }
       else {
-        await this.updateRoutesJson(shift)
+        await this.updateRoutesJson()
+        await this.updateVehiclesJson()
       }
     }
   };
@@ -72,8 +74,8 @@ class RegistraRota extends Component {
     }
   }
 
-  async updateRoutesJson(shift) {
-    let routesJson = await routeAPI.routeServer(shift)
+  async updateRoutesJson() {
+    let routesJson = await routeAPI.routeServer()
 
     if (!routesJson.error) {
       this.setState({ routesJson })
@@ -83,48 +85,26 @@ class RegistraRota extends Component {
     }
   }
 
-  updateVehicle(vehicle) {
-    this.setState({ vehicle })
-  };
-
-  updateRoute(route) {
-    this.setState({ route })
-  };
-
   async updateVehiclesJson() {
-    let vehiclesJson = await this.callVehicleServer()
+    let vehiclesJson = await vehicleAPI.vehicleServer()
 
     if (!vehiclesJson.error) {
-      this.setState({ vehiclesJson: vehiclesJson.veiculos })
+      this.setState({ vehiclesJson})
     }
     else {
       alert(vehiclesJson.error)
     }
   }
 
-  async callVehicleServer() {
-    let responseJson = {}
+  updateRoute(route) {
+    this.setState({ route })
+  };
 
-    try {
-      responseJson = await this.returnVehicleList()
-    }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
-    }
+  updateVehicle(vehicle) {
+    this.setState({ vehicle })
+  };
 
-    return responseJson
-  }
 
-  async returnVehicleList() {
-    let link = URL_API + '/veiculos.json'
-
-    const vehicles = await fetch(link);
-    const vehiclesJson = await vehicles.json();
-
-    return vehiclesJson
-  }
 
   async buttonEnterEvent() {
     let mapDate = await this.callDaylyServe()
