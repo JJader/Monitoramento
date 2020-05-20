@@ -1,11 +1,12 @@
 import * as SecureStore from "expo-secure-store";
+import _ from "lodash";
 
 async function set(data) {
   try {
 
     let dadosUser = JSON.stringify(data)
     await SecureStore.setItemAsync('dadosUser', dadosUser);
-    return this.returnUserData()
+    return await get()
 
   }
   catch (error) {
@@ -26,7 +27,7 @@ async function tryGet() {
   const dados = await SecureStore.getItemAsync('dadosUser');
 
   if (dados) {
-    return JSON.parse(dados);
+    return _.cloneDeep(JSON.parse(dados));
   }
   else {
     return { error: "Não existe a sessão dadosUser" }

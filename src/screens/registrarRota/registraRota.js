@@ -51,12 +51,12 @@ class RegistraRota extends Component {
   async updateShift(shift) {
     if (shift != '') {
       let dadosUser = await this.updateUserShifts(shift)
-      if (dadosUser.error){
-        alert(dadosUser.error)      
+      if (dadosUser.error) {
+        alert(dadosUser.error)
       }
-      else{
-      await this.updateRoutesJson(shift)
-    }
+      else {
+        await this.updateRoutesJson(shift)
+      }
     }
   };
 
