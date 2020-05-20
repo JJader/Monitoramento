@@ -17,6 +17,7 @@ import Notes from '../../components/input/inputVertical'
 import routeAPI from '../../api/registrarRota/routeServer'
 import vehicleAPI from '../../api/registrarRota/vehicleServer'
 import dadosUserStore from '../../api/offline/dadosUser'
+import dailyPlanAPI from '../../api/registrarRota/dailyPlanning'
 
 class RegistraRota extends Component {
   constructor(props) {
@@ -31,8 +32,8 @@ class RegistraRota extends Component {
       route: '',
       notes: '',
 
-      routesJson: [{ id: 0, value: 'Null' }],
-      vehiclesJson: [{ id: 0, value: 'Null' }],
+      routesJson: [{ value: '', name: 'Null' }],
+      vehiclesJson: [{ value: '', name: 'Null' }],
       shiftsJson: [
         { value: "M", name: "Manhã" },
         { value: "A", name: "Tarde" },
@@ -104,63 +105,41 @@ class RegistraRota extends Component {
     this.setState({ vehicle })
   };
 
-
-
   async buttonEnterEvent() {
-    let mapDate = await this.callDaylyServe()
+    let { route, vehicle, notes } = this.state
+    if (route == '' || vehicle == ''){
+      this.setState({ loading: false })
+      return false
+    }
+
+    let mapDate = await dailyPlanAPI.submit(route, vehicle, notes)
 
     if (!mapDate.error) {
-
-      this.callNewScreen(mapDate)
-
-    } else {
+      let response = await this.updateDadosUser(mapDate)
+      this.callNewScreen(response)
+    }
+    else {
       alert(mapDate.error)
       this.setState({ loading: false })
     }
   }
 
-  async callDaylyServe() {
-    let responseJson = {}
+  async updateDadosUser(response) {
+    let dadosUser = await dadosUserStore.get()
+    dadosUser.idDailyPlanning = response.id;
+    dadosUser.idTrip = response.id_trip
+    dadosUser.idVehicle = this.state.vehicle
 
-    try {
-      responseJson = await this.sendDailyInformationToServer()
-    }
-    catch (error) {
-      responseJson = {
-        error: "There's something wrong with the server"
-      }
-    }
-
-    return responseJson
+    return await dadosUserStore.set(dadosUser)
   }
 
-  async sendDailyInformationToServer() {
-    let link = URL_API + '/registrar/rota'
-
-    const dailyInfor = {
-      id: this.state.id,
-      turno: this.state.shift,
-      rota: this.state.route,
-      veiculo: this.state.vehicle,
-      nota: this.state.notes,
-    };
-
-    const response = await fetch(link, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dailyInfor),
-    });
-
-    let responseJson = await response.json();
-    return responseJson
-  }
-
-  callNewScreen(mapDate) {
-    this.props.navigation.navigate('Iniciar', {
-      id: this.state.id,
-    })
+  callNewScreen(response) {
+    if (response.error) {
+      alert(response.error)
+    }
+    else {
+      this.props.navigation.navigate('Iniciar')
+    }
   }
 
   render() {
