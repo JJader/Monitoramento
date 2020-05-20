@@ -1,8 +1,8 @@
 import dadosUserStore from '../offline/dadosUser'
 
-async function routeServer(shift) {
+async function routeServer() {
 
-  let routes = await tryServer(shift)
+  let routes = await tryServer()
 
   if (routes.error) {
     return routes
@@ -12,11 +12,11 @@ async function routeServer(shift) {
   }
 }
 
-async function tryServer(shift) {
+async function tryServer() {
   let responseJson = {}
 
   try {
-    responseJson = await sendShiftToServer(shift)
+    responseJson = await sendShiftToServer()
   }
   catch (error) {
     responseJson = {
@@ -27,9 +27,9 @@ async function tryServer(shift) {
   return responseJson
 }
 
-async function sendShiftToServer(shift) {
+async function sendShiftToServer() {
   let dadosUser = await dadosUserStore.get();
-  let link = URL_API + 'trip/turn/' + shift + '/' + dadosUser.idCity
+  let link = URL_API + 'trip/turn/' + dadosUser.turn + '/' + dadosUser.idCity
 
   const routes = await fetch(link,
     {
