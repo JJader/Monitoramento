@@ -11,7 +11,7 @@ export default class pickerItem extends Component {
     super(props);
     this.state = {
       selectedItem : '',
-      dates: [{ id: 0, value: 'Null' }],
+      dates: [{ name: 'NULL', value: '' }],
     };
   }
 
@@ -27,18 +27,22 @@ export default class pickerItem extends Component {
     catch (error) {
     
     }
-
   }
 
   updateDates(dates){
-    if (dates[0].id != this.state.dates[0].id){
+    if (dates[0].value != this.state.dates[0].value){
       this.setState({dates})
     }
   }
 
   updateSelectedItem(selectedItem){
-    this.setState({selectedItem})
-    this.props.onValueChange(selectedItem)
+    if (selectedItem != ''){
+      this.setState({selectedItem})
+      this.props.onValueChange(selectedItem)
+    }
+    else{
+      this.setState({selectedItem: this.props.text})
+    }  
   }
 
   render() {
