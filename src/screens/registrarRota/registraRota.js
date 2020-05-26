@@ -32,8 +32,8 @@ class RegistraRota extends Component {
       route: '',
       notes: '',
 
-      routesJson: [{ value: '', name: 'Null' }],
-      vehiclesJson: [{ value: '', name: 'Null' }],
+      routesJson: [{ name: 'NULL', value: '' }],
+      vehiclesJson: [{ name: 'NULL', value: '' }],
       shiftsJson: [
         { value: "M", name: "Manhã" },
         { value: "A", name: "Tarde" },
@@ -44,6 +44,11 @@ class RegistraRota extends Component {
 
       loading: false
     };
+  }
+
+  async componentDidMount() {
+    let statusDaily = await dailyPlanAPI.verifyDailyPlanning()
+    this.callNewScreen(statusDaily, true)
   }
 
   updateNotes(notes) {
@@ -107,7 +112,7 @@ class RegistraRota extends Component {
 
   async buttonEnterEvent() {
     let { route, vehicle, notes } = this.state
-    if (route == '' || vehicle == ''){
+    if (route == '' || vehicle == '') {
       this.setState({ loading: false })
       return false
     }
@@ -133,12 +138,14 @@ class RegistraRota extends Component {
     return await dadosUserStore.set(dadosUser)
   }
 
-  callNewScreen(response) {
+  callNewScreen(response, alert) {
     if (response.error) {
-      alert(response.error)
+      if (!alert) {
+        alert(response.error)
+      }
     }
     else {
-      this.props.navigation.navigate('Iniciar')
+      this.props.navigation.navigate('IniciarRota')
     }
   }
 
@@ -188,7 +195,7 @@ class RegistraRota extends Component {
           <View style={styles.buttonConteiner}>
             <LoadingButton
               onPress={() => this.buttonEnterEvent()}
-              text={"Iniciar Rota"}
+              text={"Registrar rota"}
               loading={this.state.loading}
             />
           </View>

@@ -12,14 +12,15 @@ import Desembarque from './registrosView/desembarque/desembarque';
 import Login from './login/login';
 import Exit from './exit';
 import Start from './start'
+import IniciarRota from './iniciarRota/iniciarRota'
 
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
 const CustomDrawerContentComponent = props => (
-  <ScrollView style={{ flex: 1, backgroundColor: '#43484d', flexDirection: 'column'}}>
+  <ScrollView style={{ flex: 1, backgroundColor: '#43484d', flexDirection: 'column' }}>
     <View
-      style={{ marginTop: 30, justifyContent: 'space-around', alignItems: 'center' , flex: 1}}
+      style={{ marginTop: 30, justifyContent: 'space-around', alignItems: 'center', flex: 1 }}
     >
       <Image
         source={require('../assets/logo/logo.png')}
@@ -39,31 +40,38 @@ const MyDrawerNavigation =
     {
       Login: {
         screen: Login,
-        navigationOptions: ({navigation}) => ({
+        navigationOptions: ({ navigation }) => ({
           drawerLabel: () => null,
           drawerLockMode: 'locked-closed',
         })
       },
 
-      Start: {
-        screen: Start,
-        navigationOptions: ({navigation}) => ({
-          drawerLabel: 'Entrada',
+      IniciarRota: {
+        screen: IniciarRota,
+        navigationOptions: ({ navigation }) => ({
+          drawerLabel: 'Iniciar rota',
           drawerIcon: <Ionicons name="ios-cloud-upload" size={30} color="white" />
         })
       },
-      
+
+      Start: {
+        screen: Start,
+        navigationOptions: ({ navigation }) => ({
+          drawerLabel: () => null
+        })
+      },
+
       RegistraR: {
         screen: RegistraRota,
-        navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Registrar rota',
-            drawerIcon: <Ionicons name="md-bus" size={30} color="white" />,
-          })
+        navigationOptions: ({ navigation }) => ({
+          drawerLabel: 'Registrar rota',
+          drawerIcon: <Ionicons name="md-bus" size={30} color="white" />,
+        })
       },
 
       Iniciar: {
         screen: Iniciar,
-        navigationOptions: ({navigation}) => ({
+        navigationOptions: ({ navigation }) => ({
           drawerLabel: 'Iniciar rota',
           drawerIcon: <Ionicons name="md-speedometer" size={30} color="white" />,
         })
@@ -71,31 +79,31 @@ const MyDrawerNavigation =
 
       RegistraE: {
         screen: RegistraEmbarque,
-        navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Embarcar',
-            drawerIcon: <Ionicons name="md-person-add" size={30} color="white" />,
-          })
+        navigationOptions: ({ navigation }) => ({
+          drawerLabel: 'Embarcar',
+          drawerIcon: <Ionicons name="md-person-add" size={30} color="white" />,
+        })
       },
-      
+
       Desembarque: {
         screen: Desembarque,
-        navigationOptions: ({navigation}) => ({
-            drawerLabel: 'Desembarcar',
-            drawerIcon: <Ionicons name="md-pin" size={30} color="white" />,
-          })
+        navigationOptions: ({ navigation }) => ({
+          drawerLabel: 'Desembarcar',
+          drawerIcon: <Ionicons name="md-pin" size={30} color="white" />,
+        })
       },
-      
+
       Sair: {
         screen: Exit,
-        navigationOptions: ({navigation}) => ({
+        navigationOptions: ({ navigation }) => ({
           drawerLabel: 'Sair',
           drawerIcon: <Ionicons name="md-bed" size={30} color="white" />,
         })
       },
     },
-    
+
     {
-      initialRouteName: 'Login',
+      initialRouteName: 'IniciarRota',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',
