@@ -79,7 +79,7 @@ class login extends Component {
 
         <KeyboardAvoidingView style={styles.background} behavior="height" enabled>
 
-          <Header text="Login" />
+          <Header text="Login" img={require("../../assets/logo/logo.png")} />
 
           <View style={styles.viewTextInput}>
             <Input

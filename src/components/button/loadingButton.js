@@ -11,9 +11,9 @@ class loadingButton extends Component {
     };
   }
 
-  onPress(parameter) {
+  async onPress(parameter) {
     this.setState({ loading: true })
-    this.props.onPress(parameter)
+    await this.props.onPress(parameter)
     this.setState({ loading: false })
   }
 
