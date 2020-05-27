@@ -1,26 +1,22 @@
-async function polyRoute(id) {
-  let dataArray = await callPolyRouteServer(id)
+import dadosUserStore from '../offline/dadosUser'
+
+async function polyRoute() {
+  let dataArray = await callPolyRouteServer()
 
   if (dataArray.error) {
     return dataArray
   }
   else {
-    let coords = dataArray.map((point, index) => {
-      return {
-        latitude: point[0],
-        longitude: point[1]
-      }
-    })
-
-    return coords
+    let arrayPoints = dataArray.geom.coordinates
+    return traitPolyPoint(arrayPoints)
   }
 }
 
-async function callPolyRouteServer(id) {
+async function callPolyRouteServer() {
   let responseJson = {}
 
   try {
-    responseJson = await polyRouteServer(id)
+    responseJson = await polyRouteServer()
   }
   catch (error) {
     responseJson = {
@@ -31,13 +27,36 @@ async function callPolyRouteServer(id) {
   return responseJson
 }
 
-async function polyRouteServer(id) {
-  let link = globalThis.URL_API + '/polyline/' + id
+async function polyRouteServer() {
+  let dadosUser = await dadosUserStore.get();
+  if (dadosUser.error) {
+    return dadosUser
+  }
 
-  const response = await fetch(link);
-  const responseJson = await response.json();
+  let link = globalThis.URL_API + 'trip/optimized/route/' +
+    dadosUser.turn + '/' + dadosUser.idVehicle + '/' + dadosUser.idCity
 
-  return responseJson
+  const polyPoint = await fetch(link,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + dadosUser.token,
+      },
+    }
+  )
+
+  const polyPointJson = await polyPoint.json();
+  return polyPointJson
+}
+
+async function traitPolyPoint(dataArray) {
+  return coords = dataArray.map((point, index) => {
+    return {
+      latitude: point[0],
+      longitude: point[1]
+    }
+  })
 }
 
 const responseApi = {
