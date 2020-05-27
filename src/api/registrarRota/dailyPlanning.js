@@ -1,15 +1,12 @@
 import dadosUserStore from '../offline/dadosUser'
+import Moment, { now } from 'moment'
 
 async function submit(route, vehicle, note) {
   let response = await trySendToServer(route, vehicle, note)
   console.log(response)
 
-  if (response.error) {
-    return response
-  }
-  else {
-    return response
-  }
+  return response
+
 }
 
 async function trySendToServer(route, vehicle, note) {
@@ -34,17 +31,20 @@ async function sendDailyPlanningToServer(route, vehicle, note) {
   }
 
   let link = URL_API + 'dailyplanning/' + route + '/' + dadosUser.id + '/' + vehicle
-  let date = new Date()
-  let dateFormat = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+  
+  let date = new Date(now());
+  Moment.locale('en');
+  date = Moment(date).format('YYYY-MM-DD');
+
 
   let dailyInfor = {
-    dateTrip: dateFormat,
+    dateTrip: date,
     note: note,
     version: 1,
     idTrip: route,
-	idEmployee: dadosUser.id,
-	idVehicle: vehicle,
-	status: "TNS",
+    idEmployee: dadosUser.id,
+    idVehicle: vehicle,
+    status: "TNS",
   }
 
   const response = await fetch(link,
