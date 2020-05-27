@@ -46,14 +46,6 @@ const MyDrawerNavigation =
         })
       },
 
-      IniciarRota: {
-        screen: IniciarRota,
-        navigationOptions: ({ navigation }) => ({
-          drawerLabel: 'Iniciar rota',
-          drawerIcon: <Ionicons name="ios-cloud-upload" size={30} color="white" />
-        })
-      },
-
       Start: {
         screen: Start,
         navigationOptions: ({ navigation }) => ({
@@ -69,10 +61,18 @@ const MyDrawerNavigation =
         })
       },
 
+      IniciarRota: {
+        screen: IniciarRota,
+        navigationOptions: ({ navigation }) => ({
+          drawerLabel: 'Iniciar rota',
+          drawerIcon: <Ionicons name="ios-cloud-upload" size={30} color="white" />
+        })
+      },
+
       Iniciar: {
         screen: Iniciar,
         navigationOptions: ({ navigation }) => ({
-          drawerLabel: 'Iniciar rota',
+          drawerLabel: 'Mapa',
           drawerIcon: <Ionicons name="md-speedometer" size={30} color="white" />,
         })
       },
