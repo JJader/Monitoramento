@@ -15,7 +15,9 @@ class busStopMarker extends Component {
   componentDidMount() {
     let busStopList = this.props.busStopList
     try {
-      this.updateBusStopList(busStopList)
+      if (busStopList) {
+        this.updateBusStopList(busStopList)
+      }
     }
     catch (error) {
     }
@@ -29,15 +31,14 @@ class busStopMarker extends Component {
     }
   }
 
-  updateBusStopList = (busStopList) => {
+  updateBusStopList(busStopList){
     // trocar essa comparação com o id do busStopList
-    if (busStopList[0] != this.state.busStopList[0]) {
+    if (busStopList.length != this.state.busStopList.length) {
       this.setState({ busStopList })
-
     }
   }
 
-  renderBusStops(marker,index) {
+  renderBusStops(marker, index) {
     return (
       <Marker
         coordinate={{
@@ -46,8 +47,7 @@ class busStopMarker extends Component {
           latitudeDelta: this.props.latitudeDelta,
           longitudeDelta: this.props.longitudeDelta,
         }}
-        title={marker.value}
-        key={marker.value}
+        key={marker.id}
         description={marker.description}
         onPress={() => this.props.onPress(index)}
       >
@@ -78,7 +78,7 @@ class busStopMarker extends Component {
   render() {
     return (
       this.state.busStopList && this.state.busStopList.length > 0 ?
-        this.state.busStopList.map((marker,index) => this.renderBusStops(marker,index))
+        this.state.busStopList.map((marker, index) => this.renderBusStops(marker, index))
         :
         null
     );

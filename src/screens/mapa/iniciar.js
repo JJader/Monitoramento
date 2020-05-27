@@ -65,6 +65,7 @@ export default class App extends React.Component {
 
       ready: false,
       error: null,
+      apiRoute: true,
     }
   }
 
@@ -132,10 +133,15 @@ export default class App extends React.Component {
         this.setState({ polyToNextBusStop: APIpoly.coordinates })
         this.updateColor(APIpoly.distance)
         this.updateNextPolyPoint(APIpoly.distance)
+        this.setState({ apiRoute: true })
+      }
+      else {
+        this.setState({ apiRoute: false })
+        console.log(APIpoly.error)
       }
     }
     else {
-      //await this.updateBuStops()
+      await this.updateBuStops()
       await this.updatePolyRoute()
     }
   }
@@ -196,7 +202,7 @@ export default class App extends React.Component {
       this.setState({ busStops })
     }
     else {
-      console.log("Erro no updateBusStops");
+      console.log(busStops.error);
     }
   }
 
@@ -208,7 +214,7 @@ export default class App extends React.Component {
       this.setState({ polyRoute })
     }
     else {
-      console.log("Erro no updatePolyRoute");
+      console.log(polyRoute.error);
     }
   }
 
@@ -228,7 +234,7 @@ export default class App extends React.Component {
 
   componentWillReceiveProps(newProps) {
     let indexBusWithStudent = newProps.navigation.getParam('index', null)
-    
+
     if (indexBusWithStudent != null) {
 
       this.arriveAtBusStop(indexBusWithStudent)
@@ -265,7 +271,7 @@ export default class App extends React.Component {
       await this.updateUserLocation(position)
     }
     catch (error) {
-      console.log("Erro no userLocationChange");
+      console.log("Error on userLocationChange");
     }
   }
 
@@ -281,7 +287,7 @@ export default class App extends React.Component {
     await userLocationAPI.updateLocation(newlat, newlon)
     // precisa criar uma função que armazene as informações offline
     this.setState({ userLocation })
-    
+
   }
 
   centerRegion() {
@@ -294,7 +300,7 @@ export default class App extends React.Component {
   }
 
   changeScreen(index) {
-    this.props.navigation.navigate('RegistraE',{index})
+    this.props.navigation.navigate('RegistraE', { index })
   }
 
   showMap() {
@@ -305,7 +311,7 @@ export default class App extends React.Component {
         <MapView
           ref={ref => { this.map = ref; }}
           style={stylesContainer.conteiner}
-          //region={this.state.userLocation}
+          //region={this.state.region}
           onRegionChangeComplete={(region) => this.updateRegion(region)}
           //onUserLocationChange={(position) => this.onUserLocationChange(position)}
           onPress={(position) => this.onUserLocationChange(position)}
@@ -318,11 +324,19 @@ export default class App extends React.Component {
 
           <TileComponent />
 
-          <PolylineComponent
-            id={'wrongPoly'}
-            polyline={this.state.polyToNextBusStop}
-            color={this.state.polycolor}
-          />
+          {this.state.apiRoute ?
+            <PolylineComponent
+              id={'wrongPoly'}
+              polyline={this.state.polyToNextBusStop}
+              color={this.state.polycolor}
+            />
+            :
+            <PolylineComponent
+              id={'polyRoute'}
+              polyline={this.state.polyRoute}
+              color={stylesContainer.background.backgroundColor}
+            />
+          }
 
           <BusStopMarker
             busStopList={this.state.busStops}
@@ -342,9 +356,9 @@ export default class App extends React.Component {
 
         <IconButton
           style={styles.buttonUpdatePoly}
-          onPress={ async () => {
+          onPress={async () => {
             await this.updatePolyRoute()
-            //await this.updateBuStops()
+            await this.updateBuStops()
           }}
           name={"update"}
           text={"Update polyline"}
