@@ -20,6 +20,7 @@ import IconButton from '../../components/button/iconButton'
 import busStopAPI from '../../api/busStop/getBusStop'
 import openRouteAPI from '../../api/polyline/openRoute'
 import polyRouteAPI from '../../api/polyline/polyRoute'
+import userLocationAPI from '../../api/monitoramento/userLocation'
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -27,7 +28,7 @@ const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const minDistanceForReDPoly = 100
-const distanceForStayOnPoint = 80
+const distanceForStayOnPoint = 60
 
 export default class App extends React.Component {
   constructor() {
@@ -134,7 +135,7 @@ export default class App extends React.Component {
       }
     }
     else {
-      await this.updateBuStops()
+      //await this.updateBuStops()
       await this.updatePolyRoute()
     }
   }
@@ -195,7 +196,7 @@ export default class App extends React.Component {
       this.setState({ busStops })
     }
     else {
-      alert(busStops.error)
+      console.log("Erro no updateBusStops");
     }
   }
 
@@ -207,7 +208,7 @@ export default class App extends React.Component {
       this.setState({ polyRoute })
     }
     else {
-      alert(serverPoly.error)
+      console.log("Erro no updatePolyRoute");
     }
   }
 
@@ -259,15 +260,16 @@ export default class App extends React.Component {
     return this.props.provider === PROVIDER_DEFAULT ? MAP_TYPES.STANDARD : MAP_TYPES.NONE;
   }
 
-  onUserLocationChange = (position) => {
+  async onUserLocationChange(position) {
     try {
-      this.updateUserLocation(position)
+      await this.updateUserLocation(position)
     }
     catch (error) {
+      console.log("Erro no userLocationChange");
     }
   }
 
-  updateUserLocation(position) {
+  async updateUserLocation(position) {
     let userLocation = _.cloneDeep(this.state.userLocation)
 
     let newlat = position.nativeEvent.coordinate.latitude
@@ -275,7 +277,11 @@ export default class App extends React.Component {
 
     userLocation.latitude = newlat
     userLocation.longitude = newlon
+
+    await userLocationAPI.updateLocation(newlat, newlon)
+    // precisa criar uma função que armazene as informações offline
     this.setState({ userLocation })
+    
   }
 
   centerRegion() {
@@ -299,11 +305,10 @@ export default class App extends React.Component {
         <MapView
           ref={ref => { this.map = ref; }}
           style={stylesContainer.conteiner}
-          initialRegion={this.state.userLocation}
-          region={this.state.userLocation}
-          //onRegionChangeComplete={(region) => this.updateRegion(region)}
-          //onUserLocationChange={this.onUserLocationChange}
-          onPress={this.onUserLocationChange}
+          //region={this.state.userLocation}
+          onRegionChangeComplete={(region) => this.updateRegion(region)}
+          //onUserLocationChange={(position) => this.onUserLocationChange(position)}
+          onPress={(position) => this.onUserLocationChange(position)}
           provider={null}
           mapType={this.mapType}
           showsUserLocation={true}
@@ -339,7 +344,7 @@ export default class App extends React.Component {
           style={styles.buttonUpdatePoly}
           onPress={ async () => {
             await this.updatePolyRoute()
-            await this.updateBuStops()
+            //await this.updateBuStops()
           }}
           name={"update"}
           text={"Update polyline"}
@@ -349,7 +354,7 @@ export default class App extends React.Component {
           style={styles.buttonCenterRegion}
           onPress={() => this.centerRegion()}
           name={"center-focus-weak"}
-          text={"Update polyline"}
+          text={"Center user location"}
         />
       </View>
     )
