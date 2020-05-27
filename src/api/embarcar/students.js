@@ -6,7 +6,7 @@ async function sendStudents(students) {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the students server"
     }
   }
 

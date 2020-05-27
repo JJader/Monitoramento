@@ -17,7 +17,7 @@ async function trySendToServer(lat, lon) {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the monitoring server"
     }
   }
 

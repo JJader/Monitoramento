@@ -17,7 +17,7 @@ async function BusStopsToMap() {
     }
     catch (error) {
       responseJson = {
-        error: "There's something wrong with the server"
+        error: "There's something wrong with the bus stop server"
       }
     }
 

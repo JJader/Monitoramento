@@ -29,7 +29,7 @@ async function callServer(start, end) {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the openRoute poly server"
     }
   }
 

@@ -17,7 +17,7 @@ async function trySendToServer(route, vehicle, note) {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the submit daily Plan server"
     }
   }
 
@@ -69,7 +69,7 @@ async function verifyDailyPlanning() {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the verify Daily plan server"
     }
   }
 
@@ -107,7 +107,7 @@ async function changeDailyPlanStatus(param) {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the change daily plan server"
     }
   }
 

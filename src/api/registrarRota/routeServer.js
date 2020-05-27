@@ -20,7 +20,7 @@ async function tryServer() {
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the server"
+      error: "There's something wrong with the route server"
     }
   }
 
