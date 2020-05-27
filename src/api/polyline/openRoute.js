@@ -5,21 +5,9 @@ async function polyToNextPoint(start, end) {
     return dataArray
   }
   else {
-    let coords = dataArray.coordinates.map((point, index) => {
-      return {
-        latitude: point[1],
-        longitude: point[0]
-      }
-    })
-
-    return polyFormat = {
-      distance: dataArray.distance,
-      duration: dataArray.duration,
-      coordinates: coords,
-    }
+    return traitPoly(dataArray)
   }
 }
-
 
 async function callServer(start, end) {
   let responseJson = {}
@@ -53,6 +41,21 @@ async function callpolyAPI(start, end) {
   }
 
   return polyFormat
+}
+
+function traitPoly(dataArray) {
+  let coords = dataArray.coordinates.map((point, index) => {
+    return {
+      latitude: point[1],
+      longitude: point[0]
+    }
+  })
+
+  return polyFormat = {
+    distance: dataArray.distance,
+    duration: dataArray.duration,
+    coordinates: coords,
+  }
 }
 
 const responseApi = {
