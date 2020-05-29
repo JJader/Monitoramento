@@ -3,8 +3,7 @@ import Moment, { now } from 'moment'
 
 async function updateLocation(lat, lon) {
   let response = await trySendToServer(lat, lon)
-  console.log(response)
-
+  
   return response
 
 }

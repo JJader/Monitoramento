@@ -103,7 +103,7 @@ const MyDrawerNavigation =
     },
 
     {
-      initialRouteName: 'Iniciar',
+      initialRouteName: 'IniciarRota',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

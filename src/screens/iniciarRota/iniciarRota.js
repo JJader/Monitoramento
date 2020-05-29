@@ -8,6 +8,7 @@ import LoadingButton from '../../components/button/loadingButton'
 
 import dadosUserStore from '../../api/offline/dadosUser'
 import dailyPlanAPI from '../../api/registrarRota/dailyPlanning'
+import queueMonitoring from '../../api/offline/queueMonitoring'
 
 export default class iniciarRota extends Component {
   constructor(props) {
@@ -19,8 +20,8 @@ export default class iniciarRota extends Component {
 
   async componentDidMount(){
     let statusDaily = await dailyPlanAPI.verifyDailyPlanning()
-    console.log(statusDaily);
     
+    let x = new queueMonitoring()
   }
 
   returnView() {
