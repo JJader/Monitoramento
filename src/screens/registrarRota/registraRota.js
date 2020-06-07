@@ -14,6 +14,8 @@ import PickerItem from '../../components/list/picker'
 import LoadingButton from '../../components/button/loadingButton'
 import Notes from '../../components/input/inputVertical'
 
+URL_API = globalThis.URL_API
+
 class RegistraRota extends Component {
   constructor(props) {
     super(props);

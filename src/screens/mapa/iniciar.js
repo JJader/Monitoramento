@@ -23,7 +23,7 @@ import polyRouteAPI from '../../api/polyline/polyRoute'
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
-const LATITUDE_DELTA = 0.000922;
+const LATITUDE_DELTA = 0.00122;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const minDistanceForReDPoly = 100
@@ -64,6 +64,7 @@ export default class App extends React.Component {
 
       ready: false,
       error: null,
+      apiPoly : true,
     }
   }
 
@@ -114,11 +115,16 @@ export default class App extends React.Component {
     let longitude = position.coords.longitude
 
     let userLocation = _.cloneDeep(this.state.userLocation)
+    let region = _.cloneDeep(this.state.region)
     userLocation.latitude = latitude
     userLocation.longitude = longitude
 
+    region.latitude = latitude
+    region.longitude = longitude
+
     this.setState({ ready: true })
     this.setState({ userLocation })
+    this.setState({ region })
   }
 
   async getPolyToNextPoint() {
@@ -131,6 +137,10 @@ export default class App extends React.Component {
         this.setState({ polyToNextBusStop: APIpoly.coordinates })
         this.updateColor(APIpoly.distance)
         this.updateNextPolyPoint(APIpoly.distance)
+        this.setState({ apiPoly: true })
+      }
+      else {
+        this.setState({ apiPoly: false })
       }
     }
     else {
@@ -195,7 +205,7 @@ export default class App extends React.Component {
       this.setState({ busStops })
     }
     else {
-      alert(busStops.error)
+      console.log(busStops.error)
     }
   }
 
@@ -207,7 +217,7 @@ export default class App extends React.Component {
       this.setState({ polyRoute })
     }
     else {
-      alert(serverPoly.error)
+      console.log(polyRoute.error)
     }
   }
 
@@ -227,7 +237,7 @@ export default class App extends React.Component {
 
   componentWillReceiveProps(newProps) {
     let indexBusWithStudent = newProps.navigation.getParam('index', null)
-    
+
     if (indexBusWithStudent != null) {
 
       this.arriveAtBusStop(indexBusWithStudent)
@@ -288,7 +298,7 @@ export default class App extends React.Component {
   }
 
   changeScreen(index) {
-    this.props.navigation.navigate('RegistraE',{index})
+    this.props.navigation.navigate('RegistraE', { index })
   }
 
   showMap() {
@@ -300,9 +310,9 @@ export default class App extends React.Component {
           ref={ref => { this.map = ref; }}
           style={stylesContainer.conteiner}
           initialRegion={this.state.userLocation}
-          region={this.state.userLocation}
-          //onRegionChangeComplete={(region) => this.updateRegion(region)}
-          //onUserLocationChange={this.onUserLocationChange}
+          region={this.state.region}
+          onRegionChangeComplete={(region) => this.updateRegion(region)}
+          onUserLocationChange={this.onUserLocationChange}
           onPress={this.onUserLocationChange}
           provider={null}
           mapType={this.mapType}
@@ -313,11 +323,19 @@ export default class App extends React.Component {
 
           <TileComponent />
 
-          <PolylineComponent
-            id={'wrongPoly'}
-            polyline={this.state.polyToNextBusStop}
-            color={this.state.polycolor}
-          />
+          {this.state.apiPoly ?
+            <PolylineComponent
+              id={'wrongPoly'}
+              polyline={this.state.polyToNextBusStop}
+              color={this.state.polycolor}
+            />
+            :
+            <PolylineComponent
+              id={'routePoly'}
+              polyline={this.state.polyRoute}
+              color={stylesContainer.background.backgroundColor}
+            />
+          }
 
           <BusStopMarker
             busStopList={this.state.busStops}
@@ -337,7 +355,7 @@ export default class App extends React.Component {
 
         <IconButton
           style={styles.buttonUpdatePoly}
-          onPress={ async () => {
+          onPress={async () => {
             await this.updatePolyRoute()
             await this.updateBuStops()
           }}
@@ -349,7 +367,7 @@ export default class App extends React.Component {
           style={styles.buttonCenterRegion}
           onPress={() => this.centerRegion()}
           name={"center-focus-weak"}
-          text={"Update polyline"}
+          text={"Center region"}
         />
       </View>
     )
