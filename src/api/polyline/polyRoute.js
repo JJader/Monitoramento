@@ -33,7 +33,7 @@ async function polyRouteServer() {
     return dadosUser
   }
 
-  let link = globalThis.URL_API + 'trip/optimized/route/' +
+  let link = global.URL_API + 'trip/optimized/route/' +
     dadosUser.turn + '/' + dadosUser.idVehicle + '/' + dadosUser.idCity
 
   const polyPoint = await fetch(link,

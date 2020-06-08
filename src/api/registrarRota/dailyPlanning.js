@@ -30,7 +30,7 @@ async function sendDailyPlanningToServer(route, vehicle, note) {
     return dadosUser
   }
 
-  let link = URL_API + 'dailyplanning/' + route + '/' + dadosUser.id + '/' + vehicle
+  let link = global.URL_API + 'dailyplanning/' + route + '/' + dadosUser.id + '/' + vehicle
   
   let date = new Date(now());
   Moment.locale('en');
@@ -83,7 +83,7 @@ async function getDailyPlanning() {
     return dadosUser
   }
 
-  let link = URL_API + 'dailyplanning/router/control/' + dadosUser.idCity + '/' +
+  let link = global.URL_API + 'dailyplanning/router/control/' + dadosUser.idCity + '/' +
     dadosUser.id;
 
   const response = await fetch(link,
@@ -122,7 +122,7 @@ async function submitStatus(param) {
 
   let status = param ? 'TS' : 'TF'
 
-  let link = URL_API + 'dailyplanning/change/status/' + dadosUser.idDailyPlanning +
+  let link = global.URL_API + 'dailyplanning/change/status/' + dadosUser.idDailyPlanning +
     '?status=' + status
 
   const response = await fetch(link,

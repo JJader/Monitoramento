@@ -29,7 +29,7 @@ async function tryServer() {
 
 async function sendRouteToServer() {
   let dadosUser = await dadosUserStore.get();
-  let link = URL_API + 'vehicle/' + dadosUser.idCity
+  let link = global.URL_API + 'vehicle/' + dadosUser.idCity
 
   const vehicle = await fetch(link,
     {

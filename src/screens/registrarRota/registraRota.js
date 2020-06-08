@@ -25,8 +25,6 @@ class RegistraRota extends Component {
     this.state = {
 
       id: 1,
-      token: globalThis.token,
-
       shift: '',
       vehicle: '',
       route: '',

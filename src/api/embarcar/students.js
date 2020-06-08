@@ -14,7 +14,7 @@ async function sendStudents(students) {
 }
 
 async function sendStudentsListToServer(students) {
-  let link = URL_API + '/pontos.json'
+  let link = global.URL_API + '/pontos.json'
 
   const dados = {
     alunos: students

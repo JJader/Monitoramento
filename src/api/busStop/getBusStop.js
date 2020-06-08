@@ -30,7 +30,7 @@ async function BusStopsToMap() {
       return dadosUser
     }
 
-    let link = globalThis.URL_API + 'busstop'
+    let link = global.URL_API + 'busstop'
 
     const busStops = await fetch(link,
       {

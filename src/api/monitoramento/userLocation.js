@@ -29,7 +29,7 @@ async function sendLatLonToServer(lat, lon) {
     return dadosUser
   }
 
-  let link = globalThis.URL_API + 'monitoring/' + dadosUser.idDailyPlanning
+  let link = global.URL_API + 'monitoring/' + dadosUser.idDailyPlanning
   let date = new Date(now());
   Moment.locale('en');
   date = Moment(date).format('YYYY-MM-DD HH:mm:ss');

@@ -29,7 +29,7 @@ async function tryServer() {
 
 async function sendShiftToServer() {
   let dadosUser = await dadosUserStore.get();
-  let link = URL_API + 'trip/turn/' + dadosUser.turn + '/' + dadosUser.idCity
+  let link = global.URL_API + 'trip/turn/' + dadosUser.turn + '/' + dadosUser.idCity
 
   const routes = await fetch(link,
     {

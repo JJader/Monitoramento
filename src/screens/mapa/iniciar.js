@@ -49,7 +49,6 @@ export default class App extends React.Component {
       nextPolyPoint: 0,
 
       id: 1,
-      token: globalThis.token,
       userLocation: {
         latitude: 0,
         longitude: 0,
