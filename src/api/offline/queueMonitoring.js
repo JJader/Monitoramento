@@ -9,6 +9,7 @@ export default class QueueMonitoring {
   collection = [];
   size = 0;
   isConnected = false;
+
   netEvent;
 
   constructor() {
@@ -17,37 +18,85 @@ export default class QueueMonitoring {
     });
   }
 
-  isEmpty() {
-    return this.size == 0
-  };
-
   async print() {
     let x = await dadosLocation.get()
     console.log(x)
   };
 
   async enqueue(lat, lon) {
-    let responseAPI = await userLocationAPI.updateLocation(lat, lon)
 
-    if (responseAPI.error) {
-      this.collection.push([lat, lon])
-      this.size += 1;
+    this.collection.push([lat, lon])
+
+    if (this.size && this.isConnected) {
+      this.size = await this._dequeue()
     }
+    else if (this.isConnected) {
+      let responseAPI = await this._trySendFirstElement()
 
-    if (this.collection.length >= 10) {
-      let store = await this.storeData()
-
-      if (!store.error) {
-        this.collection = [];
-        this.size = store.length
+      if (responseAPI.error) {
+        await this._tryStoreCollection()
       }
-      else {
-        console.log(store.error)
-      }
+    }
+    else {
+      await this._tryStoreCollection()
     }
   };
 
-  async storeCollection() {
+  async _trySendFirstElement() {
+    let first = this.collection.shift()
+    let responseAPI = await userLocationAPI.updateLocation(
+      first[0],
+      first[1]
+    );
+
+    if (responseAPI.error) {
+      this.collection.unshift(first)
+    }
+
+    return responseAPI
+  }
+
+  async _dequeue() {
+    let dados = await this._tryStoreCollection()
+    if (dados.error) {
+      return dados
+    }
+
+    let dadosElement, responseAPI;
+    let size = dados.length
+
+    while (size) {
+      dadosElement = dados.shift()
+      responseAPI = await userLocationAPI.updateLocation(
+        dadosElement[0],
+        dadosElement[1]
+      );
+
+      size = dados.length
+
+      if (responseAPI.error) {
+        dados.unshift(dadosElement)
+        break;
+      }
+    }
+    
+    await dadosLocation.set(dados);
+    return dados.length
+  };
+
+  async _tryStoreCollection() {
+    let store = await this._storeCollection()
+
+    if (!store.error) {
+      this.collection = [];
+      this.size = store.length
+    }
+
+    return store
+
+  }
+
+  async _storeCollection() {
     let dados = await dadosLocation.get()
 
     if (dados.error) {
@@ -59,29 +108,9 @@ export default class QueueMonitoring {
     return locationStore = await dadosLocation.set(dados);
   }
 
-  async dequeue() {
-    let dados = await dadosLocation.get()
-    if (dados.error) {
-      return dados
-    }
+  async deletArq(){
+    await dadosLocation.delet()
+  }
 
-    let dadosElement, responseAPI;
-
-    do {
-      dadosElement = dados.shift()
-      responseAPI = await userLocationAPI.updateLocation(
-        dadosElement[0],
-        dadosElement[1]
-      );
-
-      this.size = dados.length
-
-    } while (!responseAPI.error && this.size);
-
-    if(responseAPI.error){
-      dados = dados.concat(dadosElement)
-      return locationStore = await dadosLocation.set(dados);
-    }
-  };
 };
 
