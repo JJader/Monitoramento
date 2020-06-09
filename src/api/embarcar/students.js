@@ -1,23 +1,24 @@
-async function sendStudents(students) {
+async function sendStudent(cell) {
   let responseJson = {}
 
   try {
-    responseJson = await sendStudentsListToServer(students)
+    responseJson = await sendStudentListToServer(cell)
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the students server"
+      error: "There's something wrong with the student server"
     }
   }
 
   return responseJson
 }
 
-async function sendStudentsListToServer(students) {
+async function sendStudentListToServer(cell) {
   let link = global.URL_API + '/pontos.json'
 
   const dados = {
-    alunos: students
+    alunos: cell.students,
+    id : cell.id
   };
 
   const response = await fetch(link, {
@@ -31,8 +32,8 @@ async function sendStudentsListToServer(students) {
   return responseJson = await response.json();
 }
 
-const responseStudentsServer = {
-  sendStudents,
+const responseStudentServer = {
+  sendStudent,
 };
 
-export default responseStudentsServer;
+export default responseStudentServer;
