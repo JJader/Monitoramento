@@ -80,8 +80,8 @@ const MyDrawerNavigation =
       RegistraE: {
         screen: RegistraEmbarque,
         navigationOptions: ({ navigation }) => ({
-          drawerLabel: 'Embarcar',
-          drawerIcon: <Ionicons name="md-person-add" size={30} color="white" />,
+          drawerLabel: () => null,
+          //drawerIcon: <Ionicons name="md-person-add" size={30} color="white" />,
         })
       },
 

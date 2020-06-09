@@ -18,9 +18,9 @@ export default class iniciarRota extends Component {
     };
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     let statusDaily = await dailyPlanAPI.verifyDailyPlanning()
-    
+
     let x = new queueMonitoring()
   }
 
@@ -57,10 +57,12 @@ export default class iniciarRota extends Component {
   async stopWork() {
     let status = await dailyPlanAPI.changeDailyPlanStatus(false)
     console.log(status);
-    
+
     if (!status.error && status == 'TF') {
       this.setState({ work: false })
       alert("You stopped work")
+      this.props.navigation.navigate("Iniciar", { isWork: false });
+      this.props.navigation.navigate("IniciarRota")
     }
     else {
       alert(status.error)
@@ -91,11 +93,11 @@ export default class iniciarRota extends Component {
   async startWork() {
     let status = await dailyPlanAPI.changeDailyPlanStatus(true)
     console.log(status);
-    
+
     if (!status.error && status == 'TS') {
       this.setState({ work: true })
       alert("You are working")
-      this.props.navigation.navigate("Iniciar");
+      this.props.navigation.navigate("Iniciar", { isWork: true });
     }
     else {
       alert(status.error)

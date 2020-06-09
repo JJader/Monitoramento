@@ -1,7 +1,8 @@
 import React from 'react';
-import { Dimensions, Text, View, StyleSheet } from 'react-native';
+import { Dimensions, Text, View, StyleSheet, Image } from 'react-native';
 
 import MapView, { MAP_TYPES, PROVIDER_DEFAULT } from 'react-native-maps'
+import { withNavigationFocus } from 'react-navigation'
 
 import _ from "lodash";
 
@@ -16,11 +17,13 @@ import PolylineComponent from '../../components/map/polyline'
 import BusStopMarker from '../../components/map/busStopMarker'
 import UserMarker from '../../components/map/marker'
 import IconButton from '../../components/button/iconButton'
+import ErrorComponent from '../../components/mensagen/error'
 
 import busStopAPI from '../../api/busStop/getBusStop'
 import openRouteAPI from '../../api/polyline/openRoute'
 import polyRouteAPI from '../../api/polyline/polyRoute'
 import userLocationAPI from '../../api/monitoramento/userLocation'
+import dadosUserStore from '../../api/offline/dadosUser'
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -30,7 +33,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const minDistanceForReDPoly = 100
 const distanceForStayOnPoint = 60
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -65,6 +68,42 @@ export default class App extends React.Component {
       ready: false,
       error: null,
       apiRoute: true,
+
+      isFocused: false,
+      intervalID: [],
+      isWork: false,
+    }
+  }
+
+  async componentWillUpdate(param) {
+    if (param.isFocused != this.state.isFocused) {
+      this.setState({ isFocused: param.isFocused })
+
+      if (param.isFocused) {
+        this.updateIntervalId(this.state.isWork)
+      }
+      else {
+        this.updateIntervalId(param.isFocused)
+      }
+    }
+  }
+
+  updateIntervalId(isFocused) {
+    var intervalID = this.state.intervalID
+
+    if (intervalID.length == 0 && isFocused) {
+      intervalID.push(setInterval(
+        this.getPolyToNextPoint.bind(this),
+        2000
+      ))
+      this.setState({ intervalID })
+    }
+
+    if (!isFocused) {
+      while (intervalID.length) {
+        clearInterval(intervalID.pop())
+      }
+      this.setState({ intervalID: [] })
     }
   }
 
@@ -73,7 +112,6 @@ export default class App extends React.Component {
 
     if (permission) {
       this.startMap()
-      this.startUser(this.props)
     }
     else {
       this.geoFailure('Location permission not granted');
@@ -102,8 +140,6 @@ export default class App extends React.Component {
         distanceFilter: 10,
       }
     );
-
-    setInterval(this.getPolyToNextPoint.bind(this), 2000);
   }
 
   geoFailure = (err) => {
@@ -206,8 +242,7 @@ export default class App extends React.Component {
   }
 
   async updatePolyRoute() {
-    let id = this.state.id
-    let polyRoute = await polyRouteAPI.polyRoute(id)
+    let polyRoute = await polyRouteAPI.polyRoute()
 
     if (!polyRoute.error) {
       this.setState({ polyRoute })
@@ -217,28 +252,19 @@ export default class App extends React.Component {
     }
   }
 
-  componentWillUpdate(newProps) {
-    if (!this.state.id) {
-      this.startUser(newProps)
-    }
-  }
-
-  startUser(newProps) {
-    let id = newProps.navigation.getParam('id', 1)
-
-    if (id != this.state.id) {
-      this.setState({ id })
-    }
-  }
-
   componentWillReceiveProps(newProps) {
     let indexBusWithStudent = newProps.navigation.getParam('index', null)
+    let isWork = newProps.navigation.getParam('isWork', null)
 
     if (indexBusWithStudent != null) {
 
       this.arriveAtBusStop(indexBusWithStudent)
       this.updateNextBusStop(indexBusWithStudent + 1)
 
+    }
+
+    if (isWork != null) {
+      this.setState({ isWork })
     }
   }
 
@@ -304,9 +330,7 @@ export default class App extends React.Component {
 
   showMap() {
     return (
-      <View style={stylesContainer.background}>
-        <Header title="Mapa" navigationProps={this.props.navigation.toggleDrawer} />
-
+      <View style={{ flex: 1 }}>
         <MapView
           ref={ref => { this.map = ref; }}
           style={stylesContainer.conteiner}
@@ -373,12 +397,26 @@ export default class App extends React.Component {
     )
   }
 
+  showError() {
+    return (
+      <ErrorComponent title={""} />
+    )
+  }
+
   render() {
     return (
-      this.state.ready ? this.showMap() : <Text>{this.state.error}</Text>
+      <View style={stylesContainer.background}>
+        <Header title="Mapa" navigationProps={this.props.navigation.toggleDrawer} />
+        {this.state.ready && this.state.isWork ?
+          this.showMap() :
+          this.showError()
+        }
+      </View>
     );
   }
 }
+
+export default withNavigationFocus(App)
 
 const styles = StyleSheet.create({
   buttonUpdatePoly: {

@@ -8,17 +8,17 @@ import Header from '../components/header/navigationMenu'
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
-export default class start extends Component {
+class start extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ip : globalThis.URL_API
+      ip : global.URL_API,
     };
   }
 
   ipChange = (ip) => {
     this.setState({ ip })
-    globalThis.URL_API = ip
+    global.URL_API = ip
   };
 
   render() {
@@ -43,3 +43,5 @@ export default class start extends Component {
     );
   }
 }
+
+export default start;
