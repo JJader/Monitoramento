@@ -22,7 +22,6 @@ import ErrorComponent from '../../components/mensagen/error'
 import busStopAPI from '../../api/busStop/getBusStop'
 import openRouteAPI from '../../api/polyline/openRoute'
 import polyRouteAPI from '../../api/polyline/polyRoute'
-import userLocationAPI from '../../api/monitoramento/userLocation'
 import queueLocation from '../../api/offline/queueMonitoring'
 
 const { width, height } = Dimensions.get('window');
@@ -109,6 +108,8 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
+    await queueMonitoring.deletArq()
+
     let permission = await this.getUserPermissionLocation();
 
     if (permission) {
@@ -326,8 +327,8 @@ class App extends React.Component {
     this.setState({ region })
   }
 
-  changeScreen(index) {
-    this.props.navigation.navigate('RegistraE', { index })
+  changeScreen(index, id) {
+    this.props.navigation.navigate('RegistraE', { index , id})
   }
 
   showMap() {
@@ -367,7 +368,7 @@ class App extends React.Component {
             busStopList={this.state.busStops}
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
-            onPress={(index) => this.changeScreen(index)}
+            onPress={(index, id) => this.changeScreen(index,id)}
           />
 
           <UserMarker

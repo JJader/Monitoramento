@@ -6,6 +6,9 @@ import ModalButton from '../../components/button/modalButton'
 import stylesContainer from '../../styles/Modal';
 import { Ionicons } from '@expo/vector-icons';
 
+import queue from '../../api/offline/queueStudent'
+const queueStudent = new queue();
+
 export default class BarcodeScannerExample extends React.Component {
   state = {
     hasCameraPermission: null,
@@ -111,6 +114,9 @@ export default class BarcodeScannerExample extends React.Component {
   }
 
   async sendListStudentsToServer(){
+    let idStop = this.props.navigation.getParam('id', null)
+    
+    await queueStudent.enqueue(idStop,this.state.studentOnBus)
     this.setState({studentOnBus: []})
   }
 
