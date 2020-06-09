@@ -79,7 +79,7 @@ export default class QueueMonitoring {
         break;
       }
     }
-    
+
     await dadosLocation.set(dados);
     return dados.length
   };
@@ -108,7 +108,7 @@ export default class QueueMonitoring {
     return locationStore = await dadosLocation.set(dados);
   }
 
-  async deletArq(){
+  async deletArq() {
     await dadosLocation.delet()
   }
 

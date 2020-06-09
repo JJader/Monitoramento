@@ -5,6 +5,7 @@ import HeaderImg from '../../components/header/logoHeader'
 import Header from '../../components/header/navigationMenu'
 import stylesContainer from '../../styles/Modal'
 import LoadingButton from '../../components/button/loadingButton'
+import ErrorComponent from '../../components/mensagen/error'
 
 import dadosUserStore from '../../api/offline/dadosUser'
 import dailyPlanAPI from '../../api/registrarRota/dailyPlanning'
@@ -14,22 +15,51 @@ export default class iniciarRota extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      work: false
+      work: false,
+      teste: true,
     };
   }
 
   async componentDidMount() {
-    let statusDaily = await dailyPlanAPI.verifyDailyPlanning()
+    let dadosUser = await dadosUserStore.get()
 
-    let x = new queueMonitoring()
+    if (!dadosUser.error && dadosUser.idDailyPlanning != undefined) {
+      if (dadosUser.controleDeTurno == 'TS') {
+        this.setState({ work: true })
+      }
+      else {
+        this.setState({ work: false })
+      }
+    }
+
+    else {
+      this.setState({ work: undefined })
+    }
+
+    await dadosUserStore.set(dadosUser)
+
+    console.log(dadosUser)
   }
 
   returnView() {
+    if (this.state.work == undefined) {
+      return this.showError()
+    }
+
+    else if (this.state.work == true) {
+      return this.workTrue()
+    }
+
+    else {
+      return this.workFalse()
+    }
+  }
+
+  showError() {
     return (
-      this.state.work ?
-        this.workTrue()
-        :
-        this.workFalse()
+      <View style={stylesContainer.conteiner}>
+        <ErrorComponent title={"This screen is not available"} />
+      </View>
     )
   }
 
@@ -58,7 +88,7 @@ export default class iniciarRota extends Component {
     let status = await dailyPlanAPI.changeDailyPlanStatus(false)
     console.log(status);
 
-    if (!status.error && status == 'TF') {
+    if ((!status.error && status == 'TF') || this.state.teste) {
       this.setState({ work: false })
       alert("You stopped work")
       this.props.navigation.navigate("Iniciar", { isWork: false });
@@ -94,7 +124,7 @@ export default class iniciarRota extends Component {
     let status = await dailyPlanAPI.changeDailyPlanStatus(true)
     console.log(status);
 
-    if (!status.error && status == 'TS') {
+    if ((!status.error && status == 'TS') || this.state.teste ) {
       this.setState({ work: true })
       alert("You are working")
       this.props.navigation.navigate("Iniciar", { isWork: true });
@@ -113,6 +143,7 @@ export default class iniciarRota extends Component {
         />
 
         {this.returnView()}
+
       </View>
     );
   }

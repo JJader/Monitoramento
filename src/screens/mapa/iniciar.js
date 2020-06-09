@@ -23,7 +23,7 @@ import busStopAPI from '../../api/busStop/getBusStop'
 import openRouteAPI from '../../api/polyline/openRoute'
 import polyRouteAPI from '../../api/polyline/polyRoute'
 import userLocationAPI from '../../api/monitoramento/userLocation'
-import dadosUserStore from '../../api/offline/dadosUser'
+import queueLocation from '../../api/offline/queueMonitoring'
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -32,6 +32,7 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 const minDistanceForReDPoly = 100
 const distanceForStayOnPoint = 60
+const queueMonitoring = new queueLocation();
 
 class App extends React.Component {
   constructor() {
@@ -309,8 +310,9 @@ class App extends React.Component {
     userLocation.latitude = newlat
     userLocation.longitude = newlon
 
-    await userLocationAPI.updateLocation(newlat, newlon)
-    // precisa criar uma função que armazene as informações offline
+    await queueMonitoring.enqueue(newlat, newlon)
+    queueMonitoring.print()
+
     this.setState({ userLocation })
 
   }
@@ -399,7 +401,9 @@ class App extends React.Component {
 
   showError() {
     return (
-      <ErrorComponent title={""} />
+      <View style = {stylesContainer.conteiner}>
+      <ErrorComponent title={"This screen is not available"} />
+      </View>
     )
   }
 
@@ -435,5 +439,5 @@ const styles = StyleSheet.create({
     top: '10%',
     right: '0%',
     minHeight: 20,
-  }
+  },
 })
