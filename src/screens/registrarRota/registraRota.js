@@ -190,7 +190,7 @@ class RegistraRota extends Component {
 
           </KeyboardAvoidingView >
 
-          <View style={styles.buttonConteiner}>
+          <View style={[styles.buttonConteiner, styles.BoxShadow]}>
             <LoadingButton
               onPress={() => this.buttonEnterEvent()}
               text={"Registrar rota"}
@@ -220,6 +220,17 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     minHeight: 50,
     borderRadius: 15,
+  },
+
+  BoxShadow: {
+    borderColor: stylesContainer.background.backgroundColor,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 30,
+    elevation: 6,
   },
 
 });

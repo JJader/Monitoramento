@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Iniciar from './mapa/iniciar'
 import RegistraRota from './registrarRota/registraRota';
 import RegistraEmbarque from './Embarque/qrCodeScan';
-import Desembarque from './registrosView/desembarque/desembarque';
+import Desembarque from './desembarque/desembarque';
 import Login from './login/login';
 import Exit from './exit';
 import Start from './start'
@@ -103,7 +103,7 @@ const MyDrawerNavigation =
     },
 
     {
-      initialRouteName: 'IniciarRota',
+      initialRouteName: 'Desembarque',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

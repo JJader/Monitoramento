@@ -69,41 +69,36 @@ class App extends React.Component {
       error: null,
       apiRoute: true,
 
-      isFocused: false,
-      intervalID: [],
+      setIntervalID: [],
       isWork: false,
     }
   }
 
   async componentWillUpdate(param) {
-    if (param.isFocused != this.state.isFocused) {
-      this.setState({ isFocused: param.isFocused })
-
-      if (param.isFocused) {
-        this.updateIntervalId(this.state.isWork)
-      }
-      else {
-        this.updateIntervalId(param.isFocused)
-      }
+    if (param.isFocused) {
+      this.updateIntervalId(this.state.isWork)
+    }
+    else {
+      this.updateIntervalId(param.isFocused)
     }
   }
 
   updateIntervalId(isFocused) {
-    var intervalID = this.state.intervalID
+    var setIntervalID = this.state.setIntervalID
 
-    if (intervalID.length == 0 && isFocused) {
-      intervalID.push(setInterval(
+    if (setIntervalID.length == 0 && isFocused) {
+      setIntervalID.push(setInterval(
         this.getPolyToNextPoint.bind(this),
         2000
       ))
-      this.setState({ intervalID })
+      this.setState({ setIntervalID })
     }
 
     if (!isFocused) {
-      while (intervalID.length) {
-        clearInterval(intervalID.pop())
+      while (setIntervalID.length) {
+        clearInterval(setIntervalID.pop())
       }
-      this.setState({ intervalID: [] })
+      this.setState({ setIntervalID: [] })
     }
   }
 
@@ -328,7 +323,7 @@ class App extends React.Component {
   }
 
   changeScreen(index, id) {
-    this.props.navigation.navigate('RegistraE', { index , id})
+    this.props.navigation.navigate('RegistraE', { index, id })
   }
 
   showMap() {
@@ -368,7 +363,7 @@ class App extends React.Component {
             busStopList={this.state.busStops}
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
-            onPress={(index, id) => this.changeScreen(index,id)}
+            onPress={(index, id) => this.changeScreen(index, id)}
           />
 
           <UserMarker
@@ -402,8 +397,8 @@ class App extends React.Component {
 
   showError() {
     return (
-      <View style = {stylesContainer.conteiner}>
-      <ErrorComponent title={"This screen is not available"} />
+      <View style={stylesContainer.conteiner}>
+        <ErrorComponent title={"This screen is not available"} />
       </View>
     )
   }

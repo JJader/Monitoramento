@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 
 import { withNavigationFocus } from 'react-navigation'
 
@@ -10,9 +10,8 @@ import ErrorComponent from '../../components/mensagen/error'
 
 import dadosUserStore from '../../api/offline/dadosUser'
 import dailyPlanAPI from '../../api/registrarRota/dailyPlanning'
-import queueMonitoring from '../../api/offline/queueMonitoring'
 
-class iniciarRota extends Component {
+class desembarcar extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,28 +38,20 @@ class iniciarRota extends Component {
     if (!dadosUser.error && dadosUser.idDailyPlanning != undefined) {
       if (dadosUser.controleDeTurno == 'TS') {
         this.setState({ work: true })
-      }
-      else {
-        this.setState({ work: false })
+        return true
       }
     }
 
-    else {
-      this.setState({ work: undefined })
-    }
+    this.setState({ work: undefined })
   }
 
   returnView() {
-    if (this.state.work == undefined) {
-      return this.showError()
-    }
 
-    else if (this.state.work == true) {
+    if (this.state.work) {
       return this.workTrue()
     }
-
     else {
-      return this.workFalse()
+      return this.showError()
     }
   }
 
@@ -77,7 +68,7 @@ class iniciarRota extends Component {
       <View style={stylesContainer.conteiner}>
         <View style={styles.imgView}>
           <Image
-            source={require("../../assets/start/map2G.png")}
+            source={require("../../assets/arrive/arrive.png")}
             style={{ flex: 1 }}
             resizeMode="contain"
           />
@@ -85,69 +76,24 @@ class iniciarRota extends Component {
 
         <LoadingButton
           style={[styles.buttonConteiner, styles.BoxShadow]}
-          onPress={() => this.stopWork()}
-          text={"Stop route"}
-          loading={false}
+          onPress={() => this.arriveOnSchool()}
+          text={"Disembark"}
         />
       </View>
     )
   }
 
-  async stopWork() {
-    let status = await dailyPlanAPI.changeDailyPlanStatus(false)
-    console.log(status);
-
-    if ((!status.error && status == 'TF') || this.state.teste) {
-      this.setState({ work: false })
-      alert("You stopped work")
-      this.props.navigation.navigate("Iniciar", { isWork: false });
-      this.props.navigation.navigate("IniciarRota")
-    }
-    else {
-      alert(status.error)
-    }
-  }
-
-  workFalse() {
-    return (
-      <View style={stylesContainer.conteiner}>
-        <View style={styles.imgView}>
-          <Image
-            source={require("../../assets/start/map2R.png")}
-            style={{ flex: 2 }}
-            resizeMode="contain"
-          />
-        </View>
-
-        <LoadingButton
-          style={[styles.buttonConteiner, styles.BoxShadow]}
-          onPress={() => this.startWork()}
-          text={"Start route"}
-          loading={false}
-        />
-      </View>
-    )
-  }
-
-  async startWork() {
-    let status = await dailyPlanAPI.changeDailyPlanStatus(true)
-    console.log(status);
-
-    if ((!status.error && status == 'TS') || this.state.teste) {
-      this.setState({ work: true })
-      alert("You are working")
-      this.props.navigation.navigate("Iniciar", { isWork: true });
-    }
-    else {
-      alert(status.error)
-    }
+  async arriveOnSchool() {
+    this.props.navigation.navigate('Iniciar', {
+      index: this.props.navigation.getParam('index', null)
+    })
   }
 
   render() {
     return (
       <View style={stylesContainer.background}>
         <Header
-          title="Iniciar rota"
+          title="Desembarcar"
           navigationProps={this.props.navigation.toggleDrawer}
         />
 
@@ -158,7 +104,7 @@ class iniciarRota extends Component {
   }
 }
 
-export default withNavigationFocus(iniciarRota);
+export default withNavigationFocus(desembarcar);
 
 const styles = StyleSheet.create({
   buttonConteiner: {
@@ -184,6 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 7,
+    padding: 40,
     marginHorizontal: 10,
   }
 })
