@@ -20,6 +20,7 @@ import IconButton from '../../components/button/iconButton'
 import ErrorComponent from '../../components/mensagen/error'
 
 import busStopAPI from '../../api/busStop/getBusStop'
+import stopAPI from '../../api/busStop/getStop'
 import openRouteAPI from '../../api/polyline/openRoute'
 import polyRouteAPI from '../../api/polyline/polyRoute'
 import queueLocation from '../../api/offline/queueMonitoring'
@@ -49,6 +50,10 @@ class App extends React.Component {
         // arrive : false
       ],
 
+      stops: [
+
+      ],
+
       nextPolyPoint: 0,
 
       id: 1,
@@ -71,15 +76,21 @@ class App extends React.Component {
 
       setIntervalID: [],
       isWork: false,
+      isFocused: false
     }
   }
 
   async componentWillUpdate(param) {
-    if (param.isFocused) {
-      this.updateIntervalId(this.state.isWork)
-    }
-    else {
-      this.updateIntervalId(param.isFocused)
+    if (param.isFocused != this.state.isFocused) {
+
+      if (param.isFocused) {
+        this.updateIntervalId(this.state.isWork)
+      }
+      else {
+        this.updateIntervalId(param.isFocused)
+      }
+
+      this.setState({isFocused: param.isFocused})
     }
   }
 
@@ -103,8 +114,6 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    await queueMonitoring.deletArq()
-
     let permission = await this.getUserPermissionLocation();
 
     if (permission) {
@@ -174,6 +183,7 @@ class App extends React.Component {
     }
     else {
       await this.updateBuStops()
+      await this.updateStops()
       await this.updatePolyRoute()
     }
   }
@@ -238,6 +248,17 @@ class App extends React.Component {
     }
   }
 
+  async updateStops() {
+    const stops = await stopAPI.getStops();
+
+    if (!stops.error) {
+      this.setState({ stops })
+    }
+    else {
+      console.log(stops.error);
+    }
+  }
+
   async updatePolyRoute() {
     let polyRoute = await polyRouteAPI.polyRoute()
 
@@ -250,14 +271,16 @@ class App extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    let indexBusWithStudent = newProps.navigation.getParam('index', null)
+    let indexBusWithStudent = newProps.navigation.getParam('busStop', null)
+    let indexStopArrive = newProps.navigation.getParam('stop', null)
     let isWork = newProps.navigation.getParam('isWork', null)
 
     if (indexBusWithStudent != null) {
-
       this.arriveAtBusStop(indexBusWithStudent)
-      this.updateNextBusStop(indexBusWithStudent + 1)
+    }
 
+    if (indexStopArrive != null) {
+      this.arriveAtStop(indexBusWithStudent)
     }
 
     if (isWork != null) {
@@ -280,8 +303,19 @@ class App extends React.Component {
     this.setState({ busStops })
   }
 
-  updateNextBusStop(nextBusStop) {
-    this.setState({ nextBusStop })
+  arriveAtStop(index) {
+    try {
+      this.changeStopsArrive(index)
+    }
+    catch (error) {
+    }
+  }
+
+  changeStopsArrive(index) {
+    let stops = this.state.stops
+
+    stops[index].arrive = true
+    this.setState({ stops })
   }
 
   get mapType() {
@@ -322,8 +356,12 @@ class App extends React.Component {
     this.setState({ region })
   }
 
-  changeScreen(index, id) {
+  embarcarScreen(index, id) {
     this.props.navigation.navigate('RegistraE', { index, id })
+  }
+
+  desembarcarScreen(index, id) {
+    this.props.navigation.navigate('Desembarque', { index, id })
   }
 
   showMap() {
@@ -363,7 +401,14 @@ class App extends React.Component {
             busStopList={this.state.busStops}
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
-            onPress={(index, id) => this.changeScreen(index, id)}
+            onPress={(index, id) => this.embarcarScreen(index, id)}
+          />
+
+          <BusStopMarker
+            busStopList={this.state.stops}
+            latitudeDelta={LATITUDE_DELTA}
+            longitudeDelta={LONGITUDE_DELTA}
+            onPress={(index, id) => this.desembarcarScreen(index, id)}
           />
 
           <UserMarker
@@ -380,6 +425,7 @@ class App extends React.Component {
           onPress={async () => {
             await this.updatePolyRoute()
             await this.updateBuStops()
+            await this.updateStops()
           }}
           name={"update"}
           text={"Update polyline"}
