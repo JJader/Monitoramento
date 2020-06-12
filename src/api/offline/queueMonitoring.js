@@ -23,12 +23,22 @@ export default class QueueMonitoring {
     console.log(x)
   };
 
+  async isEmpty() {
+    let x = await dadosLocation.get()
+    if (x.error) {
+      return true
+    }
+    else {
+      return x.length == 0
+    }
+  }
+
   async enqueue(lat, lon) {
 
     this.collection.push([lat, lon])
 
     if (this.size && this.isConnected) {
-      this.size = await this._dequeue()
+      this.size = await this.dequeue()
     }
     else if (this.isConnected) {
       let responseAPI = await this._trySendFirstElement()
@@ -56,7 +66,7 @@ export default class QueueMonitoring {
     return responseAPI
   }
 
-  async _dequeue() {
+  async dequeue() {
     let dados = await this._tryStoreCollection()
     if (dados.error) {
       return dados
@@ -103,7 +113,9 @@ export default class QueueMonitoring {
       dados = []
     }
 
-    dados = dados.concat(this.collection)
+    if (this.collection.length) {
+      dados = dados.concat(this.collection)
+    }
 
     return locationStore = await dadosLocation.set(dados);
   }

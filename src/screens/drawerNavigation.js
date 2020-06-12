@@ -10,8 +10,8 @@ import RegistraRota from './registrarRota/registraRota';
 import RegistraEmbarque from './Embarque/qrCodeScan';
 import Desembarque from './desembarque/desembarque';
 import Login from './login/login';
-import Exit from './exit';
-import Start from './start'
+import Exit from './static/exit';
+import Start from './static/start'
 import IniciarRota from './iniciarRota/iniciarRota'
 
 
@@ -103,7 +103,7 @@ const MyDrawerNavigation =
     },
 
     {
-      initialRouteName: 'Desembarque',
+      initialRouteName: 'Sair',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

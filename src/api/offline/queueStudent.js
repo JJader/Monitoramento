@@ -23,17 +23,27 @@ export default class QueueStudent {
     console.log(x)
   };
 
-  async enqueue(idStop,Students) {
+  async isEmpty() {
+    let x = await dadosStudent.get()
+    if (x.error) {
+      return true
+    }
+    else {
+      return x.length == 0
+    }
+  }
+
+  async enqueue(idStop, Students) {
 
     let cell = {
-      id : idStop,
+      id: idStop,
       students: Students,
     }
 
     this.collection.push(cell)
 
     if (this.size && this.isConnected) {
-      this.size = await this._dequeue()
+      this.size = await this.dequeue()
     }
     else if (this.isConnected) {
       let responseAPI = await this._trySendFirstElement()
@@ -58,7 +68,7 @@ export default class QueueStudent {
     return responseAPI
   }
 
-  async _dequeue() {
+  async dequeue() {
     let dados = await this._tryStoreCollection()
     if (dados.error) {
       return dados
@@ -101,7 +111,9 @@ export default class QueueStudent {
       dados = []
     }
 
-    dados = dados.concat(this.collection)
+    if (this.collection.length) {
+      dados = dados.concat(this.collection)
+    }
 
     return locationStore = await dadosStudent.set(dados);
   }

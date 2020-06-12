@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, Image, Dimensions, TextInput } from 'react-native';
 
-import stylesText from '../styles/text';
-import stylesComponets from '../styles/componets';
-import stylesContainer from '../styles/Modal';
-import Header from '../components/header/navigationMenu'
+import stylesText from '../../styles/text';
+import stylesContainer from '../../styles/Modal';
+import Header from '../../components/header/navigationMenu'
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 
@@ -34,7 +33,7 @@ class start extends Component {
               autoCorrect={false}
           />
           <Image
-                source={require('../assets/logo/splash.png')}
+                source={require('../../assets/logo/splash.png')}
                 style={{ flex: 1 , width: WINDOW_WIDTH}}
                 resizeMode="cover"
           />
