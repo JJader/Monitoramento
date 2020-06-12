@@ -1,7 +1,7 @@
 import dadosUserStore from '../offline/dadosUser'
 
-async function BusStopsToMap() {
-  let busStops = await callBusStopsServer()
+async function getStops() {
+  let busStops = await tryStopServer()
   if (busStops.error) {
     return busStops
   }
@@ -10,41 +10,48 @@ async function BusStopsToMap() {
   }
 }
 
-async function callBusStopsServer() {
+async function tryStopServer() {
   let responseJson = {}
 
   try {
-    responseJson = await getBusStopsFromServer()
+    responseJson = await stopServer()
   }
   catch (error) {
     responseJson = {
-      error: "There's something wrong with the bus stop server"
+      error: "There's something wrong with the stop server"
     }
   }
 
   return responseJson
 }
 
-async function getBusStopsFromServer() {
+async function stopServer() {
   let dadosUser = await dadosUserStore.get();
   if (dadosUser.error) {
     return dadosUser
   }
 
-  let link = global.URL_API + 'busstop'
+  let link = global.URL_API + 'school/search'
 
-  const busStops = await fetch(link,
+  let dados = {
+    city:{
+      id: dadosUser.idCity
+    }
+  }
+
+  const stops = await fetch(link,
     {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + dadosUser.token,
       },
+      body: JSON.stringify(dados),
     }
   )
 
-  const busStopsJson = await busStops.json();
-  return busStopsJson
+  const stopsJson = await stops.json();
+  return stopsJson
 }
 
 async function traitPolyPoint(busStops) {
@@ -61,7 +68,7 @@ async function traitPolyPoint(busStops) {
 }
 
 const busStopsJson = {
-  BusStopsToMap,
+  getStops,
 };
 
 export default busStopsJson;
