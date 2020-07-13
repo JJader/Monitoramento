@@ -24,27 +24,13 @@ export default class exit extends Component {
     };
   }
 
-  async onRefresh() {
-    this.setState({ refreshing: true })
-    let { isConnected, isReady } = this.state
-
-    if (isConnected && !isReady) {
-      await monitoring.dequeue()
-      await student.dequeue()
-      await dadosUserAPI.delet()
-
-      await this.updateIsReady()
-    }
-
-    this.setState({ refreshing: false })
-  }
-
   async componentDidMount() {
     this.netEvent = Netinfo.addEventListener(state => {
       this.setState({ isConnected: state.isConnected })
     });
 
     await this.updateIsReady()
+    await this.onRefresh()
   }
 
   async updateIsReady() {
@@ -56,6 +42,20 @@ export default class exit extends Component {
     console.log(isReadyStud)
 
     this.setState({ isReady })
+  }
+
+  async onRefresh() {
+    this.setState({ refreshing: true })
+
+    let { isConnected, isReady } = this.state
+
+    if (isConnected && isReady) {
+      await monitoring.dequeue()
+      await student.dequeue()
+      await dadosUserAPI.delet()
+    }
+
+    this.setState({ refreshing: false })
   }
 
   showError() {

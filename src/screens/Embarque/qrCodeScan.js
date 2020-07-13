@@ -104,7 +104,7 @@ export default class BarcodeScannerExample extends React.Component {
       
       await this.sendListStudentsToServer()
       this.props.navigation.navigate('Iniciar', {
-        index: this.props.navigation.getParam('index', null)
+        busStop: this.props.navigation.getParam('index', null)
       })
 
     }

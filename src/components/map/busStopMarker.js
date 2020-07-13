@@ -62,13 +62,13 @@ class busStopMarker extends Component {
     return (
       arrived ?
         <FontAwesome
-          name="map-marker"
+          name= {this.props.icon ? this.props.icon : "map-marker"}
           size={40}
           color="#32CD32"
         />
         :
         <FontAwesome
-          name="map-marker"//"nature-people" 
+          name= {this.props.icon ? this.props.icon : "map-marker"}//"nature-people" 
           size={40}
           color="#bc3422" //#72bcd4
         />

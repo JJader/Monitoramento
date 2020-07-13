@@ -85,7 +85,7 @@ class desembarcar extends Component {
 
   async arriveOnSchool() {
     this.props.navigation.navigate('Iniciar', {
-      index: this.props.navigation.getParam('index', null)
+      stop: this.props.navigation.getParam('index', null)
     })
   }
 

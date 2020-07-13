@@ -24,6 +24,7 @@ import stopAPI from '../../api/busStop/getStop'
 import openRouteAPI from '../../api/polyline/openRoute'
 import polyRouteAPI from '../../api/polyline/polyRoute'
 import queueLocation from '../../api/offline/queueMonitoring'
+import dadosUserStore from '../../api/offline/dadosUser'
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -118,9 +119,23 @@ class App extends React.Component {
 
     if (permission) {
       this.startMap()
+      await this.updateWork()
     }
     else {
       this.geoFailure('Location permission not granted');
+    }
+  }
+
+  async updateWork() {
+    let dadosUser = await dadosUserStore.get()
+
+    if (!dadosUser.error) {
+      if (dadosUser.controleDeTurno == 'TS') {
+        this.setState({ isWork: true })
+      }
+      else {
+        this.setState({ isWork: false })
+      }
     }
   }
 
@@ -409,6 +424,7 @@ class App extends React.Component {
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
             onPress={(index, id) => this.desembarcarScreen(index, id)}
+            icon = {"building"}
           />
 
           <UserMarker

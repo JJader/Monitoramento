@@ -50,8 +50,8 @@ async function getBusStopsFromServer() {
 async function traitPolyPoint(busStops) {
   return data = busStops.map((point, index) => {
     return {
-      latitude: point.geom.coordinates[0],
-      longitude: point.geom.coordinates[1],
+      latitude: point.geomProposed.coordinates[0],
+      longitude: point.geomProposed.coordinates[1],
       description: point.description,
       arrive: false,
       index: index,
