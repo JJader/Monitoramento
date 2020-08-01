@@ -21,28 +21,22 @@ import ErrorComponent from '../../components/mensagen/error'
 
 import busStopAPI from '../../api/busStop/getBusStop'
 import stopAPI from '../../api/busStop/getStop'
-import openRouteAPI from '../../api/polyline/openRoute'
-import polyRouteAPI from '../../api/polyline/polyRoute'
 import queueLocation from '../../api/offline/queueMonitoring'
 import dadosUserStore from '../../api/offline/dadosUser'
+import polyClass from '../../api/polyline/PolyClass'
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.000922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-const minDistanceForReDPoly = 100
-const distanceForStayOnPoint = 60
 const queueMonitoring = new queueLocation();
+const polyRoute = new polyClass();
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-
-      polyRoute: [],
-      polyToNextBusStop: [],
-      polycolor: 'red',
 
       busStops: [
         //latitude: '',
@@ -51,11 +45,12 @@ class App extends React.Component {
         // arrive : false
       ],
 
+      polyline: [],
+      polyColor: 'red',
+
       stops: [
 
       ],
-
-      nextPolyPoint: 0,
 
       id: 1,
       userLocation: {
@@ -73,7 +68,6 @@ class App extends React.Component {
 
       ready: false,
       error: null,
-      apiRoute: true,
 
       setIntervalID: [],
       isWork: false,
@@ -85,13 +79,14 @@ class App extends React.Component {
     if (param.isFocused != this.state.isFocused) {
 
       if (param.isFocused) {
+        await this.updateWork()
         this.updateIntervalId(this.state.isWork)
       }
       else {
         this.updateIntervalId(param.isFocused)
       }
 
-      this.setState({isFocused: param.isFocused})
+      this.setState({ isFocused: param.isFocused })
     }
   }
 
@@ -99,6 +94,7 @@ class App extends React.Component {
     var setIntervalID = this.state.setIntervalID
 
     if (setIntervalID.length == 0 && isFocused) {
+
       setIntervalID.push(setInterval(
         this.getPolyToNextPoint.bind(this),
         2000
@@ -107,6 +103,7 @@ class App extends React.Component {
     }
 
     if (!isFocused) {
+
       while (setIntervalID.length) {
         clearInterval(setIntervalID.pop())
       }
@@ -120,6 +117,7 @@ class App extends React.Component {
     if (permission) {
       this.startMap()
       await this.updateWork()
+      this.updateIntervalId(this.state.isWork)
     }
     else {
       this.geoFailure('Location permission not granted');
@@ -132,6 +130,7 @@ class App extends React.Component {
     if (!dadosUser.error) {
       if (dadosUser.controleDeTurno == 'TS') {
         this.setState({ isWork: true })
+
       }
       else {
         this.setState({ isWork: false })
@@ -180,75 +179,21 @@ class App extends React.Component {
   }
 
   async getPolyToNextPoint() {
-    let isRead = this.state.polyRoute.length
 
-    if (isRead) {
-      let APIpoly = await this.sendStartEndPointToServe()
+    if (polyRoute.isReady) {
 
-      if (!APIpoly.error) {
-        this.setState({ polyToNextBusStop: APIpoly.coordinates })
-        this.updateColor(APIpoly.distance)
-        this.updateNextPolyPoint(APIpoly.distance)
-        this.setState({ apiRoute: true })
-      }
-      else {
-        this.setState({ apiRoute: false })
-        console.log(APIpoly.error)
-      }
+      await polyRoute.UpdatePolyline(this.state.userLocation)
+
+      this.setState({
+        polyline: polyRoute.polyline,
+        polyColor: polyRoute.color
+      })
+
     }
     else {
       await this.updateBuStops()
       await this.updateStops()
-      await this.updatePolyRoute()
-    }
-  }
-
-  async sendStartEndPointToServe() {
-    let nextPoint = await this.returnNextPoint()
-
-    if (!nextPoint.error) {
-      let start = {
-        longitude: this.state.userLocation.longitude,
-        latitude: this.state.userLocation.latitude
-      }
-
-      let end = {
-        longitude: nextPoint.longitude,
-        latitude: nextPoint.latitude,
-      }
-
-      return await openRouteAPI.polyToNextPoint(start, end)
-    }
-    else {
-      return nextPoint
-    }
-  }
-
-  async returnNextPoint() {
-    let nextPoint = this.state.nextPolyPoint
-    let polyRoute = this.state.polyRoute
-
-    if (polyRoute.length > nextPoint) {
-      return polyRoute[nextPoint]
-    }
-    else {
-      return polyRoute[polyRoute.length - 1]
-    }
-  }
-
-  updateColor(distance) {
-    if (distance > minDistanceForReDPoly) {
-      this.setState({ polycolor: 'red' })
-    }
-    else {
-      this.setState({ polycolor: stylesContainer.background.backgroundColor })
-    }
-  }
-
-  updateNextPolyPoint(distance) {
-    if (distance <= distanceForStayOnPoint) {
-      let nextPolyPoint = this.state.nextPolyPoint
-      this.setState({ nextPolyPoint: nextPolyPoint + 1 })
+      await polyRoute.startPolyline()
     }
   }
 
@@ -271,17 +216,6 @@ class App extends React.Component {
     }
     else {
       console.log(stops.error);
-    }
-  }
-
-  async updatePolyRoute() {
-    let polyRoute = await polyRouteAPI.polyRoute()
-
-    if (!polyRoute.error) {
-      this.setState({ polyRoute })
-    }
-    else {
-      console.log(polyRoute.error);
     }
   }
 
@@ -355,9 +289,7 @@ class App extends React.Component {
     userLocation.latitude = newlat
     userLocation.longitude = newlon
 
-    await queueMonitoring.enqueue(newlat, newlon)
-    queueMonitoring.print()
-
+    //await queueMonitoring.enqueue(newlat, newlon)
     this.setState({ userLocation })
 
   }
@@ -398,19 +330,11 @@ class App extends React.Component {
 
           <TileComponent />
 
-          {this.state.apiRoute ?
-            <PolylineComponent
-              id={'wrongPoly'}
-              polyline={this.state.polyToNextBusStop}
-              color={this.state.polycolor}
-            />
-            :
-            <PolylineComponent
-              id={'polyRoute'}
-              polyline={this.state.polyRoute}
-              color={stylesContainer.background.backgroundColor}
-            />
-          }
+          <PolylineComponent
+            id={'PolyRoute'}
+            polyline={this.state.polyline}
+            color={this.state.polyColor}
+          />
 
           <BusStopMarker
             busStopList={this.state.busStops}
@@ -424,7 +348,7 @@ class App extends React.Component {
             latitudeDelta={LATITUDE_DELTA}
             longitudeDelta={LONGITUDE_DELTA}
             onPress={(index, id) => this.desembarcarScreen(index, id)}
-            icon = {"building"}
+            icon={"building"}
           />
 
           <UserMarker
@@ -439,7 +363,7 @@ class App extends React.Component {
         <IconButton
           style={styles.buttonUpdatePoly}
           onPress={async () => {
-            await this.updatePolyRoute()
+            await polyRoute.startPolyline()
             await this.updateBuStops()
             await this.updateStops()
           }}
@@ -494,7 +418,7 @@ const styles = StyleSheet.create({
   buttonCenterRegion: {
     position: 'absolute',
     alignItems: 'flex-end',
-    top: '10%',
+    top: '0%',
     right: '0%',
     minHeight: 20,
   },
