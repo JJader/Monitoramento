@@ -5,12 +5,13 @@ import { withNavigationFocus } from 'react-navigation'
 
 import Header from '../../components/header/navigationMenu'
 import stylesContainer from '../../styles/Modal'
+import stylesComponent from '../../styles/componets'
 import LoadingButton from '../../components/button/loadingButton'
 import ErrorComponent from '../../components/mensagen/error'
 
 import dadosUserStore from '../../api/offline/dadosUser'
 import dailyPlanAPI from '../../api/registrarRota/dailyPlanning'
-import queueMonitoring from '../../api/offline/queueMonitoring'
+
 
 class iniciarRota extends Component {
   constructor(props) {
@@ -84,7 +85,7 @@ class iniciarRota extends Component {
         </View>
 
         <LoadingButton
-          style={[styles.buttonConteiner, styles.BoxShadow]}
+          style={[stylesComponent.button, stylesComponent.BoxShadow]}
           onPress={() => this.stopWork()}
           text={"Stop route"}
           loading={false}
@@ -120,7 +121,7 @@ class iniciarRota extends Component {
         </View>
 
         <LoadingButton
-          style={[styles.buttonConteiner, styles.BoxShadow]}
+          style={[stylesComponent.button, stylesComponent.BoxShadow]}
           onPress={() => this.startWork()}
           text={"Start route"}
           loading={false}
@@ -161,25 +162,6 @@ class iniciarRota extends Component {
 export default withNavigationFocus(iniciarRota);
 
 const styles = StyleSheet.create({
-  buttonConteiner: {
-    flex: 1,
-    backgroundColor: stylesContainer.background.backgroundColor,
-    borderRadius: 15,
-    marginVertical: 20,
-    borderRadius: 15,
-  },
-
-  BoxShadow: {
-    borderColor: stylesContainer.background.backgroundColor,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 30,
-    elevation: 6,
-  },
-
   imgView: {
     justifyContent: 'center',
     alignItems: 'center',

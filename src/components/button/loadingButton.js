@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 
-import stylesContainer from '../../styles/Modal'
-
 class loadingButton extends Component {
   constructor(props) {
     super(props);

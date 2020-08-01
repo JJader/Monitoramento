@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { View, Modal, StyleSheet } from 'react-native';
 
-import stylesContainer from '../../styles/Modal'
-import stylesComponets from '../../styles/componets';
-
 import LoadingButton from './loadingButton';
 import IconButton from './iconButton'
 
