@@ -93,12 +93,19 @@ class App extends React.Component {
   updateIntervalId(isFocused) {
     var setIntervalID = this.state.setIntervalID
 
+
     if (setIntervalID.length == 0 && isFocused) {
 
       setIntervalID.push(setInterval(
         this.getPolyToNextPoint.bind(this),
         2000
       ))
+
+      setIntervalID.push(setInterval(
+        this.monitoringFunction.bind(this),
+        2000
+      ))
+      
       this.setState({ setIntervalID })
     }
 
@@ -197,6 +204,15 @@ class App extends React.Component {
     }
   }
 
+  async monitoringFunction() {
+    var userLocation = this.state.userLocation
+
+    await queueMonitoring.enqueue(
+      userLocation.latitude,
+      userLocation.longitude
+    )
+  }
+
   async updateBuStops() {
     const busStops = await busStopAPI.BusStopsToMap();
 
@@ -288,8 +304,6 @@ class App extends React.Component {
 
     userLocation.latitude = newlat
     userLocation.longitude = newlon
-
-    //await queueMonitoring.enqueue(newlat, newlon)
     this.setState({ userLocation })
 
   }
