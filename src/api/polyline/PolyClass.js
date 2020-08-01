@@ -2,7 +2,7 @@ import polyRouteAPI from './polyRoute'
 import openRouteAPI from './openRoute'
 import _ from "lodash";
 
-const minDistanceForReDPoly = 200
+const minDistanceForReDPoly = 150
 const distanceForStayOnPoint = 10
 
 
