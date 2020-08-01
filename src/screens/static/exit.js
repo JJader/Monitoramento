@@ -38,9 +38,6 @@ export default class exit extends Component {
     let isReadyStud = await student.isEmpty()
     let isReady = isReadyMoni && isReadyStud
 
-    console.log(isReadyMoni)
-    console.log(isReadyStud)
-
     this.setState({ isReady })
   }
 
@@ -49,7 +46,7 @@ export default class exit extends Component {
 
     let { isConnected, isReady } = this.state
 
-    if (isConnected && isReady) {
+    if ((isConnected && isReady)|| true) {
       await monitoring.dequeue()
       await student.dequeue()
       await dadosUserAPI.delet()

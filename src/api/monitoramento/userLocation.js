@@ -34,9 +34,6 @@ async function sendLatLonToServer(lat, lon) {
   Moment.locale('en');
   date = Moment(date).format('YYYY-MM-DD HH:mm:ss');
 
-
-  console.log(dateFormat);
-
   let dailyInfor = {
     type: "Feature",
     properties: {

@@ -64,7 +64,7 @@ class login extends Component {
 
   callNewScreen(user) {
     if (user.name) {
-      this.props.navigation.navigate('RegistraR')
+      //this.props.navigation.navigate('RegistraR')
       this.props.navigation.navigate('Start', { name: user.name })
     }
     else {

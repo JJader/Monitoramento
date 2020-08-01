@@ -17,7 +17,7 @@ class iniciarRota extends Component {
     super(props);
     this.state = {
       work: false,
-      teste: true,
+      teste: false,
     };
   }
 

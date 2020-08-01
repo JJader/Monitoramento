@@ -58,8 +58,45 @@ function traitPoly(dataArray) {
   }
 }
 
+function tryGetDistance(start, end) {
+  let responseJson = {}
+
+  try {
+    responseJson.distance = getDistanceFromLatLonInM(start, end)
+  } 
+  catch (error) {
+    responseJson = {
+      error: "There's something wrong with the openRoute poly server"
+    }
+  }
+
+  return responseJson;
+}
+
+function getDistanceFromLatLonInM(start, end) {
+  var earthRadius = 6371000;
+  var dLat = deg2rad(end.latitude - start.latitude);
+  var dLon = deg2rad(end.longitude - start.longitude);
+
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(start.latitude)) * Math.cos(deg2rad(end.latitude)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    ;
+
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  var d = earthRadius * c;
+
+  return Number(d);
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180)
+}
+
 const responseApi = {
-  polyToNextPoint,
+  polyToNextPoint, tryGetDistance, 
 };
 
 export default responseApi;

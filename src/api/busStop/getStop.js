@@ -2,7 +2,6 @@ import dadosUserStore from '../offline/dadosUser'
 
 async function getStops() {
   let busStops = await tryStopServer()
-  console.log(busStops)
   if (busStops.error) {
     return busStops
   }

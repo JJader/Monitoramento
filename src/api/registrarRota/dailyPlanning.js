@@ -3,8 +3,6 @@ import Moment, { now } from 'moment'
 
 async function submit(route, vehicle, note) {
   let response = await trySendToServer(route, vehicle, note)
-  console.log(response)
-
   return response
 
 }
