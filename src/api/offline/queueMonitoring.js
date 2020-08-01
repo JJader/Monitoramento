@@ -7,8 +7,10 @@ import _ from "lodash";
 export default class QueueMonitoring {
 
   collection = [];
+  first = [];
   size = 0;
   isConnected = false;
+  isStartNow = true;
 
   netEvent;
 
@@ -35,89 +37,104 @@ export default class QueueMonitoring {
 
   async enqueue(lat, lon) {
 
+    if (this.isStartNow){
+      await this.dequeue()
+      this.isStartNow = false;
+    }
+
     this.collection.push([lat, lon])
+    
+    if (this.collection.length > 10) {
+      await this._storeColletion()
+    }
+
+    if (this.first.length == 0){
+      this.first = [lat,lon]
+    }
+
+    let responseAPI = await this.sendElementToServer(this.first)
+
+    if (responseAPI.error) {
+      console.log(responseAPI.error)
+      return responseAPI
+    }
 
     if (this.size && this.isConnected) {
       this.size = await this.dequeue()
     }
-    else if (this.isConnected) {
-      let responseAPI = await this._trySendFirstElement()
 
-      if (responseAPI.error) {
-        await this._tryStoreCollection()
-      }
-    }
-    else {
-      await this._tryStoreCollection()
+    if (this.isConnected) {
+      this.collection = await this._dequeueArray(this.collection)
     }
   };
-
-  async _trySendFirstElement() {
-    let first = this.collection.shift()
-    let responseAPI = await userLocationAPI.updateLocation(
-      first[0],
-      first[1]
-    );
-
-    if (responseAPI.error) {
-      this.collection.unshift(first)
-    }
-
-    return responseAPI
-  }
 
   async dequeue() {
-    let dados = await this._tryStoreCollection()
+    
+    let dados = await dadosLocation.get()
     if (dados.error) {
+      console.log(dados.error)
       return dados
     }
+   
+    dados = await this._dequeueArray(dados)
 
-    let dadosElement, responseAPI;
-    let size = dados.length
+    dados = await dadosLocation.set(dados);
+    console.log(dados)
+    if (!dados.error) {
+      this.size = dados.length
+      this.first = dados.slice(0, 1)
+    }
+    else {
+      console.log(store.error)
+    }
+    
+  }
 
-    while (size) {
-      dadosElement = dados.shift()
-      responseAPI = await userLocationAPI.updateLocation(
-        dadosElement[0],
-        dadosElement[1]
-      );
+  async _dequeueArray(arrayParam) {
+    while (arrayParam.length) {
 
-      size = dados.length
+      let first = arrayParam.shift()
+      let responseAPI = await this.sendElementToServer(first)
 
       if (responseAPI.error) {
-        dados.unshift(dadosElement)
-        break;
+        console.log(responseAPI.error)
+        arrayParam.unshift(first)
+        break
       }
     }
 
-    await dadosLocation.set(dados);
-    return dados.length
-  };
-
-  async _tryStoreCollection() {
-    let store = await this._storeCollection()
-
-    if (!store.error) {
-      this.collection = [];
-      this.size = store.length
-    }
-
-    return store
-
+    return arrayParam
   }
 
-  async _storeCollection() {
+  async sendElementToServer(element) {
+    return await userLocationAPI.updateLocation(
+      element[0],
+      element[1]
+    );
+  }
+
+  async _storeColletion() {
+    let dados = await this._storeArray(this.collection)
+
+    if (!dados.error) {
+      this.collection = []
+      this.size = dados.length
+      this.first = dados.slice(0, 1)
+    }
+    else {
+      console.log(store.error)
+    }
+  }
+
+  async _storeArray(arrayParam) {
     let dados = await dadosLocation.get()
 
     if (dados.error) {
       dados = []
     }
-
-    if (this.collection.length) {
-      dados = dados.concat(this.collection)
-    }
-
-    return locationStore = await dadosLocation.set(dados);
+    
+    dados = dados.concat(arrayParam)
+    return await dadosLocation.set(dados);
   }
 
   async deletArq() {
