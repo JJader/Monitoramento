@@ -24,8 +24,7 @@ export default StyleSheet.create({
   button: {
     backgroundColor: stylesContainer.background.backgroundColor,
     marginVertical: 20,
-    minHeight: 50,
-    maxHeight: 70,
+    height: 60,
     borderRadius: 15,
   },
 

@@ -103,7 +103,7 @@ const MyDrawerNavigation =
     },
 
     {
-      initialRouteName: 'IniciarRota',
+      initialRouteName: 'RegistraR',
       contentOptions: {
         activeTintColor: '#548ff7',
         activeBackgroundColor: 'transparent',

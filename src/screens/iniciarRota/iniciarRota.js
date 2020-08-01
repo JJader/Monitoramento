@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   imgView: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 7,
+    flex: 8,
     marginHorizontal: 10,
   }
 })
