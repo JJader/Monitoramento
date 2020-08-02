@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { BackHandler, View, ScrollView, RefreshControl } from 'react-native';
-import Netinfo from '@react-native-community/netinfo';
 
 import Mensagem from '../../components/mensagen/error';
 import Header from '../../components/header/navigationMenu'
+import LoadingButton from '../../components/button/loadingButton'
 
 import QueueMonitoring from '../../api/offline/queueMonitoring'
 import QueueStudent from '../../api/offline/queueStudent'
 import dadosUserAPI from '../../api/offline/dadosUser'
 
+import stylesComponent from '../../styles/componets'
 import stylesContainer from '../../styles/Modal';
 
 let monitoring = new QueueMonitoring();
@@ -19,18 +20,30 @@ export default class exit extends Component {
     super(props);
     this.state = {
       isReady: false,
-      isConnected: false,
       refreshing: false,
     };
   }
 
   async componentDidMount() {
-    this.netEvent = Netinfo.addEventListener(state => {
-      this.setState({ isConnected: state.isConnected })
-    });
-
-    await this.updateIsReady()
     await this.onRefresh()
+  }
+
+  async onRefresh() {
+    this.setState({ refreshing: true })
+
+    await this.dequeueAllFiles()
+    await this.updateIsReady()
+
+    if (this.state.isReady) {
+      await this.deletInformation()
+    }
+
+    this.setState({ refreshing: false })
+  }
+
+  async dequeueAllFiles() {
+    await monitoring.dequeue()
+    await student.dequeue()
   }
 
   async updateIsReady() {
@@ -41,33 +54,42 @@ export default class exit extends Component {
     this.setState({ isReady })
   }
 
-  async onRefresh() {
-    this.setState({ refreshing: true })
+  async pressButton(){
+    await this.deletInformation()
+    this.setState({isReady: true})
+  }
 
-    let { isConnected, isReady } = this.state
+  async deletInformation() {
+    await dadosUserAPI.delet()
+    await monitoring.deletArq()
+    await student.deletArq()
+  }
 
-    if ((isConnected && isReady)|| true) {
-      await monitoring.dequeue()
-      await student.dequeue()
-      await dadosUserAPI.delet()
-    }
-
-    this.setState({ refreshing: false })
+  refreshControl() {
+    return (
+      <RefreshControl
+        refreshing={this.state.refreshing}
+        onRefresh={() => this.onRefresh()}
+      />
+    )
   }
 
   showError() {
     return (
       <ScrollView contentContainerStyle={stylesContainer.conteiner}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={() => this.onRefresh()}
-          />
-        }
+        refreshControl={this.refreshControl()}
       >
         <Mensagem
-          title={"there is some unsent information"}
+          title={"some information was not sent, please update this screen"}
         />
+
+        <View style={[stylesComponent.button, stylesComponent.BoxShadow]}>
+          <LoadingButton
+            onPress={() => this.pressButton()}
+            text={"delet anyway"}
+            loading={this.state.refreshing}
+          />
+        </View>
 
       </ScrollView>
     )

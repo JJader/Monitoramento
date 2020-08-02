@@ -60,7 +60,7 @@ export default class QueueMonitoring {
     }
 
     if (this.size && this.isConnected) {
-      this.size = await this.dequeue()
+      await this.dequeue()
     }
 
     if (this.isConnected) {
@@ -79,7 +79,7 @@ export default class QueueMonitoring {
     dados = await this._dequeueArray(dados)
 
     dados = await dadosLocation.set(dados);
-    console.log(dados)
+    console.log("Dequeue " + dados)
     if (!dados.error) {
       this.size = dados.length
       this.first = dados.slice(0, 1)
@@ -91,6 +91,9 @@ export default class QueueMonitoring {
   }
 
   async _dequeueArray(arrayParam) {
+    
+    arrayParam.shift() // Eu já enviei o primeiro elemento
+
     while (arrayParam.length) {
 
       let first = arrayParam.shift()
@@ -115,6 +118,8 @@ export default class QueueMonitoring {
 
   async _storeColletion() {
     let dados = await this._storeArray(this.collection)
+
+    console.log("Store coletion " + dados.length)
 
     if (!dados.error) {
       this.collection = []

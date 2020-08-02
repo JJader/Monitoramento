@@ -7,8 +7,10 @@ import _ from "lodash";
 export default class QueueStudent {
 
   collection = [];
+  first = {};
   size = 0;
   isConnected = false;
+  isStartNow = true;
 
   netEvent;
 
@@ -35,6 +37,11 @@ export default class QueueStudent {
 
   async enqueue(idStop, Students) {
 
+    if (this.isStartNow) {
+      await this.dequeue()
+      this.isStartNow = false;
+    }
+
     let cell = {
       id: idStop,
       students: Students,
@@ -42,80 +49,97 @@ export default class QueueStudent {
 
     this.collection.push(cell)
 
-    if (this.size && this.isConnected) {
-      this.size = await this.dequeue()
+    if (this.collection.length > 10) {
+      await this._storeColletion()
     }
-    else if (this.isConnected) {
-      let responseAPI = await this._trySendFirstElement()
 
-      if (responseAPI.error) {
-        await this._tryStoreCollection()
-      }
+    if (!this.first || this.first.id == undefined) {
+      this.first = cell
     }
-    else {
-      await this._tryStoreCollection()
+
+    let responseAPI = await this.sendElementToServer(this.first)
+
+    if (responseAPI.error) {
+      console.log(responseAPI.error)
+      return responseAPI
+    }
+
+    if (this.size && this.isConnected) {
+      await this.dequeue()
+    }
+
+    if (this.isConnected) {
+      this.collection = await this._dequeueArray(this.collection)
     }
   };
 
-  async _trySendFirstElement() {
-    let cell = this.collection.shift()
-    let responseAPI = await studentAPI.sendStudent(cell);
-
-    if (responseAPI.error) {
-      this.collection.unshift(cell)
-    }
-
-    return responseAPI
-  }
-
   async dequeue() {
-    let dados = await this._tryStoreCollection()
+
+    let dados = await dadosStudent.get()
     if (dados.error) {
+      console.log(dados.error)
       return dados
     }
 
-    let cell, responseAPI;
-    let size = dados.length
+    dados = await this._dequeueArray(dados)
 
-    while (size) {
-      cell = dados.shift()
-      responseAPI = await studentAPI.sendStudent(cell);
+    dados = await dadosStudent.set(dados);
 
-      size = dados.length
+    if (!dados.error) {
+      this.size = dados.length
+      this.first = dados.slice(0, 1)
+    }
+    else {
+      console.log(store.error)
+    }
+
+  }
+
+  async _dequeueArray(arrayParam) {
+
+    arrayParam.shift() // Eu já enviei o primeiro elemento
+
+    while (arrayParam.length) {
+
+      let first = arrayParam.shift()
+      let responseAPI = await this.sendElementToServer(first)
 
       if (responseAPI.error) {
-        dados.unshift(cell)
-        break;
+        console.log(responseAPI.error)
+        arrayParam.unshift(first)
+        break
       }
     }
 
-    await dadosStudent.set(dados);
-    return dados.length
-  };
-
-  async _tryStoreCollection() {
-    let store = await this._storeCollection()
-
-    if (!store.error) {
-      this.collection = [];
-      this.size = store.length
-    }
-
-    return store
+    return arrayParam
   }
 
-  async _storeCollection() {
-    let dados = await dadosStudent.get()
+  async sendElementToServer(element) {
+    return await studentAPI.sendStudent(element);
+  }
+
+  async _storeColletion() {
+    let dados = await this._storeArray(this.collection)
+
+    if (!dados.error) {
+      this.collection = []
+      this.size = dados.length
+      this.first = dados.slice(0, 1)
+    }
+    else {
+      console.log(store.error)
+    }
+  }
+
+  async _storeArray(arrayParam) {
+    let dados = await await dadosStudent.get()
 
     if (dados.error) {
       dados = []
     }
 
-    if (this.collection.length) {
-      dados = dados.concat(this.collection)
-    }
-
-    return locationStore = await dadosStudent.set(dados);
+    dados = dados.concat(arrayParam)
+    return await dadosStudent.set(dados);
   }
 
   async deletArq() {
